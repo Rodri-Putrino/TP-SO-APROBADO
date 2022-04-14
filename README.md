@@ -8,7 +8,7 @@
 
 |Apellido, Nombre| Curso | Legajo |
 |:-|:-|:-|
-|DAlessio Poisson, Julia| K3013 | 170.806-5 | 
+|D'Alessio Poisson, Julia| K3013 | 170.806-5 | 
 |García, Ignacio| K3154 | 167.347-6 |
 |Petronacci, Lautaro| K3153 | 172.777-1 |
 |Putrino, Rodrigo| K3052 | 171.515-0 |

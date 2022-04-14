@@ -50,3 +50,20 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Eclipse files
+**/RemoteSystemsTempFiles/
+**/Debug/
+**/Release/
+**/.settings/
+**/.cproject
+**/.project
+
+# Visual Studio Code files
+**/.vscode/
+*.code-workspace
+
+# Other
+**/bin/
+**/obj/
+*.log
