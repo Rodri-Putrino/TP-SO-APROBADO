@@ -6,7 +6,7 @@
  */
 
 
-#include "../headers/servidor.h"
+#include "../include/shared_servidor.h"
 
 // INICIA SERVER ESCUCHANDO EN IP:PUERTO
 int iniciar_servidor(t_log* logger, const char* name, char* ip, char* puerto) {
