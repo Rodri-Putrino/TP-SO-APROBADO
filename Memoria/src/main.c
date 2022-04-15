@@ -8,7 +8,7 @@
  ============================================================================
  */
 
-#include <main.h>
+#include "../include/main.h"
 
 int main(void) {
 	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */

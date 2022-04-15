@@ -8,6 +8,6 @@
 #ifndef HEADERS_MAIN_H_
 #define HEADERS_MAIN_H_
 
-#include <shared_utils.h>
+#include "../../shared/include/shared_utils.h"
 
 #endif /* HEADERS_MAIN_H_ */
