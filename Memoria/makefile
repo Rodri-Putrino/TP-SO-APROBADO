@@ -1,4 +1,4 @@
-PROCESS_NAME=Memoria
+PROCESS_NAME=Memoria.out
 IDIR =./include
 SHARED_IDIR = ../shared/include
 CC=gcc

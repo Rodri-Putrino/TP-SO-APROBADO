@@ -1,4 +1,4 @@
-PROCESS_NAME=CPU
+PROCESS_NAME=CPU.out
 IDIR =./include
 SHARED_IDIR = ../shared/include
 CC=gcc

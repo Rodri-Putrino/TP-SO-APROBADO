@@ -1,4 +1,4 @@
-PROCESS_NAME=Kernel.out
+PROCESS_NAME=Consola.out
 IDIR =./include
 SHARED_IDIR = ../shared/include
 CC=gcc
