@@ -8,7 +8,7 @@
  ============================================================================
  */
 
-#include <main.h>
+#include "../include/main.h"
 
 int main(void) {
 	t_log* logger = log_create("./cfg/proceso1.log", "PROCESO1", true, LOG_LEVEL_INFO);
