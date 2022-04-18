@@ -28,7 +28,7 @@ SHARED_SRC = $(wildcard $(SHARED_SRCDIR)/*.c)
 SHARED_OBJ = $(patsubst $(SHARED_SRCDIR)/%.c,$(SHARED_ODIR)/%.o,$(SHARED_SRC))
 
 $(PROCESS_NAME): $(OBJ) $(SHARED_OBJ)
-	$(CC) -o "$@" "$^" $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
