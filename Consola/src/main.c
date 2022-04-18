@@ -10,27 +10,20 @@
 
 #include "../include/main.h"
 
-#define IP "127.0.0.1"
-#define PUERTO "8000"
-
 int main(int argc, char** argv) {
 
     if(argc < 3) {
         printf("Cantidad de argumentos insuficientes \n");
-        return -1;
+        return EXIT_FAILURE;
     }
 
 	printf("Path del archivo: %s \n", argv[1]);
     printf("Tamaño del proceso: %s \n", argv[2]); 
 
-    t_log* logger = log_create("./cfg/proceso1.log", "PROCESO1", true, LOG_LEVEL_INFO);
-    log_info(logger, "Soy el proceso 1! %s", mi_funcion_compartida());
+    iniciar_config();
+    iniciar_logger();
 
-
-    /*--------------------------------------*/
-
-
-    int conexion_kernel = crear_conexion(logger, "KERNEL", IP, PUERTO);
+    int conexion_kernel = crear_conexion(logger_consola, "KERNEL", ip_kernel, puerto_kernel);
 
     t_paquete *codigo = crear_paquete();
     codigo->codigo_operacion = MENSAJE;
@@ -38,7 +31,7 @@ int main(int argc, char** argv) {
     codigo = leer_archivo(argv[1]);
     agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int));
 
-    enviar_paquete(codigo, conexion_kernel, logger);
+    enviar_paquete(codigo, conexion_kernel, logger_consola);
 
     eliminar_paquete(codigo);
 
@@ -46,5 +39,5 @@ int main(int argc, char** argv) {
 
     /*--------------------------------------*/
 
-    log_destroy(logger);
+    log_destroy(logger_consola);
 }

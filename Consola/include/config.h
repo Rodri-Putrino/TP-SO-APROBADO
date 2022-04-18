@@ -1,8 +1,13 @@
-#include <config.h>
+#ifndef CONFIG
+#define CONFIG
 
-typedef struct tipo_config_consola {
+#include <commons/config.h>
+#include <stdio.h>
 
-  char *ip_kernel;
-  char *puerto_kernel;
+void iniciar_config();
+void procesar_archivo_config_consola(t_config*); 
 
-} tipo_config_consola;
+char* ip_kernel;
+char* puerto_kernel;
+
+#endif
