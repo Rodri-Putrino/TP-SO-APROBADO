@@ -4,6 +4,7 @@ char* leer_instruccion(FILE *f)
 {
     char *linea = (char*)malloc(LARGO_LINEA_MAX);
     int i = 0;
+    *linea = '\0';
     char c = fgetc(f);
     while(c != '\n' && c != EOF)
     {
@@ -14,7 +15,7 @@ char* leer_instruccion(FILE *f)
 
     linea[i + 1] = '\0';
 
-    string_trim_right(&linea);
+    string_trim_right((char**)(&linea));
 
     return linea;
 }
@@ -25,11 +26,15 @@ t_paquete* leer_archivo(char *path)
 
     t_paquete *p = crear_paquete();
 
+    char *instruccion = leer_instruccion(codigo);
     while(!feof(codigo))
     {
-        char *instruccion = leer_instruccion(codigo);
+        printf("%s\n",instruccion);
         agregar_a_paquete(p, instruccion, string_length(instruccion) +1);
+        free(instruccion);
+        instruccion = leer_instruccion(codigo);
     }
+    free(instruccion);
     fclose(codigo);
 
     return p;

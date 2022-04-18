@@ -20,13 +20,15 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-	printf("Path del archivo: %d \n", argv[1]);
+	printf("Path del archivo: %s \n", argv[1]);
     printf("Tamaño del proceso: %s \n", argv[2]); 
 
     t_log* logger = log_create("./cfg/proceso1.log", "PROCESO1", true, LOG_LEVEL_INFO);
     log_info(logger, "Soy el proceso 1! %s", mi_funcion_compartida());
 
+
     /*--------------------------------------*/
+
 
     int conexion_kernel = crear_conexion(logger, "KERNEL", IP, PUERTO);
 
@@ -38,7 +40,7 @@ int main(int argc, char** argv) {
 
     enviar_paquete(codigo, conexion_kernel, logger);
 
-    recibir_num(conexion_kernel, logger);
+    eliminar_paquete(codigo);
 
     close(conexion_kernel);
 

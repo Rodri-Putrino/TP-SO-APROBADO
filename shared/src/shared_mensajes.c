@@ -118,7 +118,7 @@ void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger)
 	printf("Msg %s \n", (char*)(a_enviar + 2*sizeof(int)));
 
 	int check;
-	if(check = send(socket_cliente, a_enviar, bytes, 0) <= 0)
+	if( (check = send(socket_cliente, a_enviar, bytes, 0)) <= 0)
 		log_error(logger, "Mensaje no se envio correctamente");
 
 	log_info(logger, "Se enviaron %d bytes", check);
