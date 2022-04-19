@@ -29,6 +29,8 @@ int main(void) {
         printf("Instruccion %s\n", i);
     }
 
+    
+
     list_iterator_destroy(iterador);
     list_destroy(instrucciones);
 
