@@ -1,11 +1,3 @@
-/*
- * servidor.c
- *
- *  Created on: 9 abr. 2022
- *      Author: utnso
- */
-
-
 #include "shared_servidor.h"
 
 // INICIA SERVER ESCUCHANDO EN IP:PUERTO
