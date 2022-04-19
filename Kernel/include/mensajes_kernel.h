@@ -1,5 +1,5 @@
-#ifndef HEADERS_MENSAJES_MEMORIA_H_
-#define HEADERS_MENSAJES_MEMORIA_H_
+#ifndef HEADERS_MENSAJES_KERNEL_H_
+#define HEADERS_MENSAJES_KERNEL_H_
 
 #include <stdio.h>
 #include <commons/log.h>
@@ -7,4 +7,4 @@
 
 void gestionar_mensaje(t_paquete*, int, t_log);
 
-#endif /* HEADERS_MENSAJES_MEMORIA_H_ */
+#endif /* HEADERS_MENSAJES_KERNEL_H_ */

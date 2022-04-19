@@ -1,8 +1,8 @@
 #include "../include/mensajes_memoria.h"
 
-void gestionarMensaje (t_paquete* paqueteRecibido, int socketCliente, t_log* logger) {
+void gestionar_mensaje (t_paquete* paquete_recibido, int socket_cliente, t_log* logger) {
 
-		switch(paqueteRecibido->codigo_operacion) {
+		switch(paquete_recibido->codigo_operacion) {
 
 			case ENVIAR_HANDSHAKE:
 				log_info(logger, "Se recibió un handshake");
