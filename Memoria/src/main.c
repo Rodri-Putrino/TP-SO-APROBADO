@@ -19,6 +19,7 @@ int main(void) {
 	int conexion_cpu = esperar_cliente(logger, "CPU", socket_servidor);
 	int conexion_kernel = esperar_cliente(logger, "KERNEL", socket_servidor);
 
+
 	close(conexion_kernel);
 	close(conexion_cpu);
 	close(socket_servidor);

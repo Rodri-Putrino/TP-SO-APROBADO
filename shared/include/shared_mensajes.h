@@ -35,7 +35,7 @@ typedef enum
 	SOLICITUD_TABLA_PAGINAS,
 	SOLICITUD_MARCO,
 	SOLICITUD_DIRECCION_FISICA
-}cod_mensajes
+}cod_mensajes;
 
 typedef struct
 {
