@@ -2,7 +2,6 @@
 
 int main(void) {
 	t_log* logger = log_create("./cfg/proceso1.log", "PROCESO1", true, LOG_LEVEL_INFO);
-    log_info(logger, "Soy el proceso 1! %s", mi_funcion_compartida());
 
     int socket_servidor = iniciar_servidor(logger, "KERNEL", "127.0.0.1", "8000");
     int conexion_consola = esperar_cliente(logger, "CONSOLA", socket_servidor);

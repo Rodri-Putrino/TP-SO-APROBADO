@@ -10,6 +10,8 @@
 
 #include "../include/main.h"
 
+#define CONFIG_FILE_PATH "./cfg/Consola.config"
+
 int main(int argc, char** argv) {
 
     t_config* config_consola;
@@ -22,7 +24,7 @@ int main(int argc, char** argv) {
 	printf("Path del archivo: %s \n", argv[1]);
     printf("Tamaño del proceso: %s \n", argv[2]); 
 
-    config_consola = iniciar_config();
+    config_consola = iniciar_config(CONFIG_FILE_PATH);
     procesar_archivo_config_consola(config_consola);
     iniciar_logger();
 
@@ -45,6 +47,5 @@ int main(int argc, char** argv) {
 
     /*--------------------------------------*/
 
-    log_destroy(logger_consola);
-    config_destroy(config_consola);
+    finalizar_programa(logger_consola, config_consola);
 }
