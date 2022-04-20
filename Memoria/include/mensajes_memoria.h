@@ -5,6 +5,6 @@
 #include <commons/log.h>
 #include "../../shared/include/shared_mensajes.h"
 
-void gestionar_mensaje(t_paquete*, int, t_log);
+void gestionar_mensaje(t_paquete*, int, t_log*);
 
 #endif /* HEADERS_MENSAJES_MEMORIA_H_ */
