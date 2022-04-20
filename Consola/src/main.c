@@ -28,9 +28,6 @@ int main(int argc, char** argv) {
     procesar_archivo_config_consola(config_consola);
     iniciar_logger();
 
-    printf("IP_KERNEL: %s \n", ip_kernel);
-    printf("PUERTO_KERNEL: %s \n", puerto_kernel); 
-
     int conexion_kernel = crear_conexion(logger_consola, "KERNEL", ip_kernel, puerto_kernel);
 
     t_paquete *codigo = crear_paquete();

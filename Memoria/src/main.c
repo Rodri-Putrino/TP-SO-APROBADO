@@ -11,7 +11,7 @@ int main(void) {
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
 
-	int socket_servidor = iniciar_servidor(logger, "MEMORIA", "127.0.0.1", "8001");
+	int socket_servidor = iniciar_servidor(logger, "MEMORIA", ip_escucha, puerto_escucha);
 
 	int conexion_cpu = esperar_cliente(logger, "CPU", socket_servidor);
 	int conexion_kernel = esperar_cliente(logger, "KERNEL", socket_servidor);

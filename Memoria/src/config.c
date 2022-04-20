@@ -2,7 +2,8 @@
 
 void procesar_archivo_config_memoria(t_config* config_consola) {
     
-    puerto_escucha = config_get_int_value(config_consola, "PUERTO_ESCUCHA");
+    ip_escucha = config_get_string_value(config_consola, "IP_ESCUCHA");
+    puerto_escucha = config_get_string_value(config_consola, "PUERTO_ESCUCHA");
     tam_memoria = config_get_int_value(config_consola, "TAM_MEMORIA");
     tam_pagina = config_get_int_value(config_consola, "TAM_PAGINA");
     paginas_por_tabla = config_get_int_value(config_consola, "PAGINAS_POR_TABLA");

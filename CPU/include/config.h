@@ -9,8 +9,9 @@ int entradas_tlb;
 char* reemplazo_tlb;
 int retardo_noop;
 char* ip_memoria;
-int puerto_memoria;
-int puerto_escucha_dispatch;
-int puerto_escucha_interrupt;
+char* puerto_memoria;
+char* ip_escucha;
+char* puerto_escucha_dispatch;
+char* puerto_escucha_interrupt;
 
 #endif
