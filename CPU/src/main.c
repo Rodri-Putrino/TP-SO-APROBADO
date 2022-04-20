@@ -1,13 +1,3 @@
-/*
- ============================================================================
- Name        : MóduloB.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
-
 #include "../include/main.h"
 
 #define CONFIG_FILE_PATH "./cfg/CPU.config"

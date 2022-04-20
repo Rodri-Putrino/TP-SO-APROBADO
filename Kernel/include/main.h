@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <commons/log.h>
 #include <stdbool.h>
+#include "./config.h"
 #include "../../shared/include/shared_servidor.h"
 #include "../../shared/include/shared_utils.h"
 #include "../../shared/include/shared_mensajes.h"
