@@ -12,6 +12,8 @@
 
 int main(int argc, char** argv) {
 
+    t_config* config_consola;
+
     if(argc < 3) {
         printf("Cantidad de argumentos insuficientes \n");
         return EXIT_FAILURE;
@@ -20,8 +22,12 @@ int main(int argc, char** argv) {
 	printf("Path del archivo: %s \n", argv[1]);
     printf("Tamaño del proceso: %s \n", argv[2]); 
 
-    iniciar_config();
+    config_consola = iniciar_config();
+    procesar_archivo_config_consola(config_consola);
     iniciar_logger();
+
+    printf("IP_KERNEL: %s \n", ip_kernel);
+    printf("PUERTO_KERNEL: %s \n", puerto_kernel); 
 
     int conexion_kernel = crear_conexion(logger_consola, "KERNEL", ip_kernel, puerto_kernel);
 
@@ -40,4 +46,5 @@ int main(int argc, char** argv) {
     /*--------------------------------------*/
 
     log_destroy(logger_consola);
+    config_destroy(config_consola);
 }

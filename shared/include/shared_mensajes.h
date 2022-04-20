@@ -12,11 +12,7 @@
 typedef enum
 {
 	MENSAJE,
-	PAQUETE
-}op_code;
-
-typedef enum
-{
+	PAQUETE,
 	FINALIZAR_PROCESO,
 	NUEVO_PROCESO,
 	INICIALIZAR_ESTRUCTURAS,
@@ -35,7 +31,7 @@ typedef enum
 	SOLICITUD_TABLA_PAGINAS,
 	SOLICITUD_MARCO,
 	SOLICITUD_DIRECCION_FISICA
-}cod_mensajes;
+}op_code;
 
 typedef struct
 {

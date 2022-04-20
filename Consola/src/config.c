@@ -2,13 +2,11 @@
 
 #define CONFIG_FILE_PATH "./cfg/Consola.config"
 
-void iniciar_config() {
+t_config* iniciar_config() {
 
   t_config* config_consola = config_create(CONFIG_FILE_PATH);
 
-  procesar_archivo_config_consola(config_consola);
-
-  //config_destroy(config_consola);
+  return config_consola;
 }
 
 void procesar_archivo_config_consola(t_config* config_consola) {
