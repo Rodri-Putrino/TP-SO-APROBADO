@@ -1,11 +1,13 @@
 #include "../include/main.h"
 
 #define CONFIG_FILE_PATH "./cfg/CPU.config"
+#define LOG_FILE_PATH "./cfg/CPU.log"
+#define NOMBRE_MODULO "CPU"
 
 int main(void) {
 
 	t_config* config_cpu;
-	t_log *logger = log_create("./cfg/CPU.log", "CPU", 1, LOG_LEVEL_INFO);
+	t_log* logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
 	config_cpu = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_cpu(config_cpu);

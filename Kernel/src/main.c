@@ -1,11 +1,13 @@
 #include "../include/main.h"
 
 #define CONFIG_FILE_PATH "./cfg/Kernel.config"
+#define LOG_FILE_PATH "./cfg/Kernel.log"
+#define NOMBRE_MODULO "KERNEL"
 
 int main(void) {
 
     t_config* config_kernel;
-	t_log* logger = log_create("./cfg/Kernel.log", "KERNEL", true, LOG_LEVEL_INFO);
+	t_log* logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
 	config_kernel = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_kernel(config_kernel);

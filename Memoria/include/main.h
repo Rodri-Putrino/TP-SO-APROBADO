@@ -2,8 +2,8 @@
 #define HEADERS_MAIN_H_
 
 #include <stdio.h>
-#include <commons/log.h>
 #include "./config.h"
+#include "../../shared/include/shared_log.h"
 #include "../../shared/include/shared_utils.h"
 #include "../../shared/include/shared_mensajes.h"
 #include "../../shared/include/shared_servidor.h"

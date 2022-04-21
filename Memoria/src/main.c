@@ -1,12 +1,13 @@
 #include "../include/main.h"
 
 #define CONFIG_FILE_PATH "./cfg/Memoria.config"
+#define LOG_FILE_PATH "./cfg/Memoria.log"
+#define NOMBRE_MODULO "MEMORIA"
 
 int main(void) {
 
 	t_config* config_memoria;
-
-	t_log *logger = log_create("./cfg/Memoria.log", "MEMORIA", 1, LOG_LEVEL_INFO);
+	t_log* logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
