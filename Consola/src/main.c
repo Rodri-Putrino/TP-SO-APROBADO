@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
-    shared_log_info(logger, "Módulo Consola iniciado");
+    log_info(logger, "Módulo Consola iniciado");
 	printf("Path del archivo: %s \n", argv[1]);
     printf("Tamaño del proceso: %s \n", argv[2]); 
 
@@ -23,11 +23,8 @@ int main(int argc, char** argv) {
 
     int conexion_kernel = crear_conexion(logger, "KERNEL", ip_kernel, puerto_kernel);
 
-    t_paquete *codigo = crear_paquete();
-    codigo->codigo_operacion = NUEVO_PROCESO;
-
-    codigo = leer_archivo(argv[1]);
-    agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int));
+    t_paquete* codigo = leer_archivo(argv[1]);
+    agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int) + 1);
 
     enviar_paquete(codigo, conexion_kernel, logger);
 

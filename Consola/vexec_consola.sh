@@ -2,4 +2,4 @@
 
 make
 
-valgrind ./Consola.out ./cfg/proceso1.txt 1
+valgrind --leak-check=full ./Consola.out ./cfg/proceso1.txt 1

@@ -137,7 +137,7 @@ void crear_buffer(t_paquete* paquete)
 t_paquete* crear_paquete(void)
 {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
-	paquete->codigo_operacion = PAQUETE;
+	paquete->codigo_operacion = NUEVO_PROCESO;
 	crear_buffer(paquete);
 	return paquete;
 }

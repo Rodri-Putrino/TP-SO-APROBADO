@@ -54,12 +54,7 @@ int esperar_cliente(t_log* logger, const char* name, int socket_servidor) {
 
     int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
 
-
-    ///////////////////////////////////////
-    ///// LO SACO PARA PROBAR LA GUI //////
-    ///////////////////////////////////////
-
-    // log_info(logger, "Cliente conectado (a %s)\n", name);
+    log_info(logger, "Cliente conectado (a %s)\n", name);
 
     return socket_cliente;
 }

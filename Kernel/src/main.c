@@ -41,11 +41,11 @@ int main(void) {
     list_iterator_destroy(iterador);
     list_destroy(instrucciones);
 
+	close(socket_servidor);
     close(conexion_consola);
 	close(conexion_dispatch);
 	close(conexion_interrupt);
 	close(conexion_memoria);
-	close(socket_servidor);
 
     finalizar_programa(logger, config_kernel);
 }
