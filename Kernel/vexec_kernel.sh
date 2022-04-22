@@ -2,4 +2,4 @@
 
 make
 
-valgrind ./Kernel.out
+valgrind --leak-check=full ./Kernel.out
