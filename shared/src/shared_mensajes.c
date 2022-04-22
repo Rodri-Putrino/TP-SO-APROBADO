@@ -144,6 +144,18 @@ t_paquete* crear_paquete(void)
 
 /*-----------------------------------*/
 
+int recibir_operacion(int socket_cliente)
+{
+	int cod_op;
+	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0)
+		return cod_op;
+	else
+	{
+		close(socket_cliente);
+		return -1;
+	}
+}
+
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger)
 {
 	void * buffer;
@@ -190,7 +202,7 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 		desplazamiento+=sizeof(int);
 		
 		//Asigna espacio segun tamanio recibido
-		char* valor = malloc(tamanio); //NOTA: CAMBIAR DE char* A void*
+		void* valor = malloc(tamanio); //NOTA: CAMBIAR DE char* A void*
 		
 		//Copia valor recibido
 		memcpy(valor, buffer+desplazamiento, tamanio);
@@ -200,7 +212,9 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 
 		//Enlistar dato
 		list_add(valores, valor);
+		//free(valor);
 	}
-	free(buffer);
+
 	return valores;
+	return NULL;
 }

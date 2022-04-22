@@ -60,6 +60,7 @@ void eliminar_paquete(t_paquete* paquete);
 void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger);
 
 //RECIBIR
+int recibir_operacion(int);
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger);
 char* recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);

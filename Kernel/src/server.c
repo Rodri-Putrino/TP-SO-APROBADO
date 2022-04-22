@@ -19,18 +19,45 @@ void escuchar_procesos_nuevos() {
 void atender_procesos_nuevos(void* conexion) {
     int conexion_consola = (int) conexion;
 
-    recibir_num(conexion_consola, logger);
-    t_list *instrucciones = recibir_paquete(conexion_consola, logger);
+    //recibir_num(conexion_consola, logger);
+    int op_code = recibir_operacion(conexion_consola);
 
-    t_list_iterator *iterador = list_iterator_create(instrucciones);
-    while(list_iterator_has_next(iterador))
+    switch(op_code)
     {
-        char *i = list_iterator_next(iterador);
-        printf("Instruccion %s\n", i);
+        case NUEVO_PROCESO: 
+
+            log_info(logger, "Nuevo proceso recibido");
+            t_list *instrucciones = recibir_paquete(conexion_consola, logger);
+
+            t_list_iterator *iterador = list_iterator_create(instrucciones);
+            while(list_iterator_has_next(iterador))
+            {
+                char *i = list_iterator_next(iterador);
+                printf("Instruccion %s\n", i);
+            }
+
+            list_iterator_destroy(iterador);
+            list_destroy(instrucciones);
+
+            break;
+
+        case EXIT:
+
+            break;
+
+        case IO:
+
+            break;
+
+        case ACTUALIZAR_PCB:
+
+            break;
+
+        default: 
+            log_error(logger, "El OP_CODE recibido es inválido");
+            break;
     }
 
-    list_iterator_destroy(iterador);
-    list_destroy(instrucciones);
     close(conexion_consola);
 
     log_info(logger, "El cliente se ha desconectado");
