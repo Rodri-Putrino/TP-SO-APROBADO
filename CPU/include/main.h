@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include "./config.h"
+#include "./serverCPU.h"
 #include "../../shared/include/shared_log.h"
 #include "../../shared/include/shared_utils.h"
 #include "../../shared/include/shared_mensajes.h"

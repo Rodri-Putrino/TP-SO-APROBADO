@@ -68,6 +68,8 @@ void atender_peticiones(void* conexion) {
 
         default: 
             log_error(logger, "El OP_CODE recibido es inválido");
+            log_error(logger, "el OP_CODE es %d",op_code);
+            //recibir_mensaje(conexion_general,logger);
             break;
     }
 
