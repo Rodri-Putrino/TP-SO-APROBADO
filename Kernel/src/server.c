@@ -8,7 +8,7 @@ void escuchar_procesos_nuevos() {
 
     while(1) 
     {
-        int conexion_consola = esperar_cliente(logger, "CONSOLA", socket_servidor);
+        int conexion_consola = esperar_cliente(socket_servidor);
         pthread_create(&atender_consola, NULL, (void*) atender_procesos_nuevos, (void*) conexion_consola);
         pthread_detach(atender_consola);
     }

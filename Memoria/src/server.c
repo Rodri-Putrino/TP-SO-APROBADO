@@ -4,26 +4,22 @@ void servidor() {
     int socket_servidor = iniciar_servidor(logger, "Memoria", ip_escucha, puerto_escucha);
     log_info(logger, "Servidor Memoria iniciado");
 
-    pthread_t hilo_escucha_cpu;
-    pthread_t hilo_escucha_kernel;
+    pthread_t hilo_escucha;
 
     while(1) 
     {
-        int conexion_cpu = esperar_cliente(logger, "CPU", socket_servidor);
-	    int conexion_kernel = esperar_cliente(logger, "KERNEL", socket_servidor);
-        pthread_create(&hilo_escucha_cpu, NULL, (void*) atender_peticiones_cpu, (void*) conexion_cpu);
-        pthread_create(&hilo_escucha_kernel, NULL, (void*) atender_peticiones_kernel, (void*) conexion_kernel);
-        pthread_detach(hilo_escucha_cpu);
-        pthread_detach(hilo_escucha_kernel);
+        int conexion_general = esperar_cliente(socket_servidor);
+        pthread_create(&hilo_escucha, NULL, (void*) atender_peticiones, (void*) conexion_general);
+        pthread_detach(hilo_escucha);
     }
 
     close(socket_servidor);
 }
 
-void atender_peticiones_cpu(void* conexion) {
-    int conexion_cpu = (int) conexion;
-
-    int op_code = recibir_operacion(conexion_cpu);
+void atender_peticiones(void* conexion) {
+    int conexion_general = (int) conexion;
+    log_info(logger, "Cliente conectado\n");
+    int op_code = recibir_operacion(conexion_general);
 
     switch(op_code)
     {
@@ -62,17 +58,25 @@ void atender_peticiones_cpu(void* conexion) {
 
             break;
 
+        case INICIALIZAR_ESTRUCTURAS: 
+
+            break;
+
+        case SUSPENDER_PROCESO:
+
+            break;
+
         default: 
             log_error(logger, "El OP_CODE recibido es inválido");
             break;
     }
 
-    close(conexion_cpu);
+    close(conexion_general);
 
     log_info(logger, "El cliente se ha desconectado");
 }
 
-void atender_peticiones_kernel(void* conexion) {
+/*void atender_peticiones_kernel(void* conexion) {
     int conexion_kernel = (int) conexion;
 
     int op_code = recibir_operacion(conexion_kernel);
@@ -95,4 +99,4 @@ void atender_peticiones_kernel(void* conexion) {
     close(conexion_kernel);
 
     log_info(logger, "El cliente se ha desconectado");
-}
+}*/
