@@ -7,6 +7,6 @@ t_config* iniciar_config(char* CONFIG_FILE_PATH) {
   return config_consola;
 }
 
-t_config* destruir_config(t_config* config) {
+void destruir_config(t_config* config) {
   config_destroy(config);
 }
