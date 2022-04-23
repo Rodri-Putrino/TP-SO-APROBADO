@@ -8,7 +8,7 @@ void escuchar_procesos_nuevos() {
 
     while(1) 
     {
-        int conexion_consola = esperar_cliente(logger, "CONSOLA", socket_servidor);
+        int conexion_consola = esperar_cliente(socket_servidor);
         pthread_create(&atender_consola, NULL, (void*) atender_procesos_nuevos, (void*) conexion_consola);
         pthread_detach(atender_consola);
     }
@@ -25,7 +25,7 @@ void atender_procesos_nuevos(void* conexion) {
     {
         case NUEVO_PROCESO: 
 
-            log_info(logger, "Nuevo proceso recibido");
+            log_info(logger, "Petición recibida: NUEVO_PROCESO");
             t_list *instrucciones = recibir_paquete(conexion_consola, logger);
 
             t_list_iterator *iterador = list_iterator_create(instrucciones);
@@ -43,15 +43,15 @@ void atender_procesos_nuevos(void* conexion) {
             break;
 
         case EXIT:
-
+            log_info(logger, "Petición recibida: EXIT"); 
             break;
 
         case IO:
-
+            log_info(logger, "Petición recibida: IO"); 
             break;
 
         case ACTUALIZAR_PCB:
-
+            log_info(logger, "Petición recibida: ACTUALIZAR_PCB"); 
             break;
 
         default: 

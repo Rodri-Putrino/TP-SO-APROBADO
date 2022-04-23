@@ -8,7 +8,7 @@ void servidor() {
 
     while(1) 
     {
-        int conexion = esperar_cliente(logger, "KERNEL", socket_servidor);
+        int conexion = esperar_cliente(socket_servidor);
         pthread_create(&hilo_escucha, NULL, (void*) atender_peticiones, (void*) conexion);
         pthread_detach(hilo_escucha);
     }
@@ -18,44 +18,53 @@ void servidor() {
 
 void atender_peticiones(void* conexion) {
     int una_conexion = (int) conexion;
-
+    log_info(logger, "Cliente conectado \n");
     int op_code = recibir_operacion(una_conexion);
 
     switch(op_code)
     {
-        case ENVIAR_HANDSHAKE: 
+        case ENVIAR_HANDSHAKE:
+            log_info(logger, "Petición recibida: ENVIAR_HANDSHAKE"); 
 
             break;
 
         case PEDIDO_LECTURA:
+            log_info(logger, "Petición recibida: PEDIDO_LECTURA");
 
             break;
 
         case PEDIDO_ESCRITURA:
+            log_info(logger, "Petición recibida: PEDIDO_ESCRITURA");
 
             break;
 
         case PEDIDO_COPIA:
+            log_info(logger, "Petición recibida: PEDIDO_COPIA");
 
             break;
 
         case SOLICITUD_TABLA_PAGINAS: 
+            log_info(logger, "Petición recibida: SOLICITUD_TABLA_PAGINAS");
 
             break;
 
         case SOLICITUD_MARCO:
+            log_info(logger, "Petición recibida: SOLICITUD_MARCO");
 
             break;
 
         case SOLICITUD_DIRECCION_FISICA:
+            log_info(logger, "Petición recibida: SOLICITUD_DIRECCION_FISICA");
 
             break;
 
         case INICIALIZAR_ESTRUCTURAS:
+            log_info(logger, "Petición recibida: INICIALIZAR_ESTRUCTURAS");
 
             break;
 
         case SUSPENDER_PROCESO:
+            log_info(logger, "Petición recibida: SUSPENDER_PROCESO");
 
             break;
 

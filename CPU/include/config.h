@@ -4,7 +4,7 @@
 #include "../../shared/include/shared_config.h"
 
 void procesar_archivo_config_cpu(t_config*); 
-
+t_log* logger;
 int entradas_tlb;
 char* reemplazo_tlb;
 int retardo_noop;
