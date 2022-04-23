@@ -115,13 +115,14 @@ void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger)
 
 	//De paquete a *void
 	void* a_enviar = serializar_paquete(paquete, bytes);
-	printf("Msg %s \n", (char*)(a_enviar + 2*sizeof(int)));
+	send(socket_cliente, a_enviar, bytes, 0);
+	/*printf("Msg %s \n", (char*)(a_enviar + 2*sizeof(int)));
 
 	int check;
 	if( (check = send(socket_cliente, a_enviar, bytes, 0)) <= 0)
 		log_error(logger, "Mensaje no se envio correctamente");
 
-	log_info(logger, "Se enviaron %d bytes", check);
+	log_info(logger, "Se enviaron %d bytes", check);*/
 	free(a_enviar);
 	eliminar_paquete(paquete);
 }
@@ -134,10 +135,10 @@ void crear_buffer(t_paquete* paquete)
 	paquete->buffer->stream = NULL;
 }
 
-t_paquete* crear_paquete(void)
+t_paquete* crear_paquete(op_code cod_op)
 {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
-	paquete->codigo_operacion = NUEVO_PROCESO;
+	paquete->codigo_operacion = cod_op;
 	crear_buffer(paquete);
 	return paquete;
 }
@@ -158,7 +159,7 @@ int recibir_operacion(int socket_cliente)
 
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger)
 {
-	void * buffer;
+	/*void* buffer;
 
 	//Recibir tamanio de buffer
 	if(recv(socket_cliente, size, sizeof(int), MSG_WAITALL) <= 0)
@@ -171,14 +172,23 @@ void* recibir_buffer(int* size, int socket_cliente, t_log *logger)
 	if(recv(socket_cliente, buffer, *size, MSG_WAITALL) <= 0)
 		log_error(logger, "Error al recibir buffer");
 
+	return buffer;*/
+
+	void * buffer;
+
+	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(*size);
+	recv(socket_cliente, buffer, *size, MSG_WAITALL);
+
 	return buffer;
 }
 
-char* recibir_mensaje(int socket_cliente, t_log *logger)
+void recibir_mensaje(int socket_cliente, t_log *logger)
 {
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente, logger);
-	return buffer;
+	log_info(logger, "Mensaje recibido: \"%s\"", buffer);
+	free(buffer);
 }
 
 t_list* recibir_paquete(int socket_cliente, t_log *logger)
@@ -215,6 +225,7 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 		//free(valor);
 	}
 
+	free(buffer);
 	return valores;
 	return NULL;
 }

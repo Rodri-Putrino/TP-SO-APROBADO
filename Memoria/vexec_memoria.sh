@@ -2,4 +2,4 @@
 
 make
 
-valgrind ./Memoria.out
+valgrind --leak-check=full ./Memoria.out

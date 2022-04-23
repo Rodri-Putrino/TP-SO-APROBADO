@@ -2,9 +2,11 @@
 #define CONFIG
 
 #include "../../shared/include/shared_config.h"
+#include "../../shared/include/shared_log.h"
 
 void procesar_archivo_config_memoria(t_config*); 
 
+t_log* logger;
 char* ip_escucha;
 char* puerto_escucha;
 int tam_memoria;

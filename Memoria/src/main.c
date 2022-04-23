@@ -7,20 +7,15 @@
 int main(void) {
 
 	t_config* config_memoria;
-	t_log* logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
+	logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
 
-	int socket_servidor = iniciar_servidor(logger, "MEMORIA", ip_escucha, puerto_escucha);
+	pthread_t hilo_servidor;
+    pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);
 
-	int conexion_cpu = esperar_cliente(logger, "CPU", socket_servidor);
-	int conexion_kernel = esperar_cliente(logger, "KERNEL", socket_servidor);
-
-
-	close(conexion_kernel);
-	close(conexion_cpu);
-	close(socket_servidor);
+	pthread_join(hilo_servidor, NULL);
 
 	finalizar_programa(logger, config_memoria);
 

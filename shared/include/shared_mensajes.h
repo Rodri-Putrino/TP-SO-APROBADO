@@ -13,21 +13,20 @@ typedef enum
 {
 	MENSAJE,
 	PAQUETE,
-	FINALIZAR_PROCESO,
+	//FINALIZAR_PROCESO,
 	NUEVO_PROCESO,
-	INICIALIZAR_ESTRUCTURAS,
 	RECIBIR_PCB,
 	INTERRUPCION,
-	SUSPENDER_PROCESO,
-	PROCESO_SUSPENDIDO,
 	EXIT,
 	IO,
+	ACTUALIZAR_PCB,
 	DESALOJAR_PROCESO,
+	INICIALIZAR_ESTRUCTURAS,
+	SUSPENDER_PROCESO,
 	ENVIAR_HANDSHAKE,
 	PEDIDO_LECTURA,
 	PEDIDO_ESCRITURA,
 	PEDIDO_COPIA,
-	ACTUALIZAR_PCB,
 	SOLICITUD_TABLA_PAGINAS,
 	SOLICITUD_MARCO,
 	SOLICITUD_DIRECCION_FISICA
@@ -48,7 +47,7 @@ typedef struct
 
 //ESTRUCTURAS
 void crear_buffer(t_paquete* paquete);
-t_paquete* crear_paquete(void);
+t_paquete* crear_paquete(op_code);
 
 //ENVIAR
 int enviar_num(int coneccion, int num, t_log *logger);
@@ -62,7 +61,7 @@ void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger);
 //RECIBIR
 int recibir_operacion(int);
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger);
-char* recibir_mensaje(int socket_cliente, t_log *logger);
+void recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);
 
 

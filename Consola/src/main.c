@@ -14,9 +14,8 @@ int main(int argc, char** argv) {
         return EXIT_FAILURE;
     }
 
+    // Path del archivo: argv[1] && Tamaño del proceso: argv[2]
     log_info(logger, "Módulo Consola iniciado");
-	printf("Path del archivo: %s \n", argv[1]);
-    printf("Tamaño del proceso: %s \n", argv[2]); 
 
     config_consola = iniciar_config(CONFIG_FILE_PATH);
     procesar_archivo_config_consola(config_consola);
@@ -29,6 +28,9 @@ int main(int argc, char** argv) {
     enviar_paquete(codigo, conexion_kernel, logger);
 
     eliminar_paquete(codigo);
+
+    int op_code = recibir_operacion(conexion_kernel);
+    recibir_mensaje(conexion_kernel, logger);
 
     close(conexion_kernel);
 

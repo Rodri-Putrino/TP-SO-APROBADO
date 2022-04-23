@@ -25,7 +25,7 @@ t_paquete* leer_archivo(char *path)
     FILE *codigo = fopen(path, "r");
     char *linea = (char*)malloc(LARGO_LINEA_MAX);
 
-    t_paquete *paquete = crear_paquete();
+    t_paquete *paquete = crear_paquete(NUEVO_PROCESO);
     
     while(!feof(codigo))
     {

@@ -37,7 +37,10 @@ void atender_procesos_nuevos(void* conexion) {
             }
 
             list_iterator_destroy(iterador);
+            //list_clean(instrucciones);
             list_destroy(instrucciones);
+
+            enviar_mensaje("Proceso registrado correctamente", conexion_consola, logger);
 
             break;
 
