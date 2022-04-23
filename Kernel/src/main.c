@@ -17,18 +17,19 @@ int main(void) {
 
     //Conexiones con módulo CPU
 
-    int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
-    int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
+    //int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
+    //int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
 
     //Conexion con módulo Memoria
 
-    int conexion_memoria = crear_conexion(logger, "MEMORIA", ip_memoria, puerto_memoria);
-
-	close(conexion_dispatch);
-	close(conexion_interrupt);
-	close(conexion_memoria);
-
+    
+    
     pthread_join(hilo_escucha, NULL);
+
+	//close(conexion_dispatch);
+	//close(conexion_interrupt);
+	//close(conexion_memoria);
+
 
     finalizar_programa(logger, config_kernel);
 }

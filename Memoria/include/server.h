@@ -9,7 +9,6 @@
 #include <commons/collections/list.h>
 
 void servidor();
-void atender_peticiones_cpu(void*);
-void atender_peticiones_kernel(void*);
+void atender_peticiones(void*);
 
 #endif

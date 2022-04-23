@@ -19,7 +19,6 @@ void escuchar_procesos_nuevos() {
 void atender_procesos_nuevos(void* conexion) {
     int conexion_consola = (int) conexion;
 
-    //recibir_num(conexion_consola, logger);
     int op_code = recibir_operacion(conexion_consola);
 
     switch(op_code)
