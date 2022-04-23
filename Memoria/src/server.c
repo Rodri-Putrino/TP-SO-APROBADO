@@ -59,11 +59,11 @@ void atender_peticiones(void* conexion) {
             break;
 
         case INICIALIZAR_ESTRUCTURAS: 
-
+            log_info(logger, "Petición recibida: INICIALIZAR_ESTRUCTURAS");
             break;
 
         case SUSPENDER_PROCESO:
-
+            log_info(logger, "Petición recibida: SUSPENDER_PROCESO");
             break;
 
         default: 
