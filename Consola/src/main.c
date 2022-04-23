@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
         printf("Cantidad de argumentos insuficientes \n");
         return EXIT_FAILURE;
     }
-
+    
     // Path del archivo: argv[1] && Tamaño del proceso: argv[2]
     log_info(logger, "Módulo Consola iniciado");
 
