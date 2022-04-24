@@ -1,18 +1,17 @@
-#include "../include/serverCPU.h"
-
+#include "../include/server.h"
 
 void servidor_interrupt() {
     int socket_servidor = iniciar_servidor(logger, "CPU", ip_escucha, puerto_escucha_interrupt);
-    log_info(logger, "Servidor CPU INTERRUPT iniciado");
+    //log_info(logger, "Servidor CPU INTERRUPT iniciado");
 
-    pthread_t hilo_escucha;
+    /*pthread_t hilo_escucha;
 
     while(1) 
     {
         int conexion_kernel = esperar_cliente(socket_servidor);
         pthread_create(&hilo_escucha, NULL, (void*) atender_peticiones_interrupt, (void*) conexion_kernel);
         pthread_detach(hilo_escucha);
-    }
+    }*/
 
     close(socket_servidor);
 }
