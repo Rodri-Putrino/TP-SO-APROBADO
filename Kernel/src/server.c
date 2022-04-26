@@ -18,7 +18,7 @@ void escuchar_procesos_nuevos() {
 
 void atender_procesos_nuevos(void* conexion) {
     int conexion_consola = (int) conexion;
-
+    log_info(logger, "Cliente conectado \n");
     int op_code = recibir_operacion(conexion_consola);
 
     switch(op_code)
