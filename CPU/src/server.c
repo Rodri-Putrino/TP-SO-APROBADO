@@ -1,78 +1,77 @@
 #include "../include/server.h"
 
 void servidor_interrupt() {
-    int socket_servidor = iniciar_servidor(logger, "CPU", ip_escucha, puerto_escucha_interrupt);
-    //log_info(logger, "Servidor CPU INTERRUPT iniciado");
 
-    /*pthread_t hilo_escucha;
+    int socket_servidor = iniciar_servidor(logger_CPU, "CPU", ip_escucha, puerto_escucha_interrupt);
+    log_info(logger_CPU, "Servidor CPU Interrupciones iniciado");
 
-    while(1) 
-    {
-        int conexion_kernel = esperar_cliente(socket_servidor);
-        pthread_create(&hilo_escucha, NULL, (void*) atender_peticiones_interrupt, (void*) conexion_kernel);
-        pthread_detach(hilo_escucha);
-    }*/
-
-    close(socket_servidor);
-}
-
-void servidor_dispatch() {
-    int socket_servidor = iniciar_servidor(logger, "CPU", ip_escucha, puerto_escucha_interrupt);
-    log_info(logger, "Servidor CPU DISPATCH iniciado");
-
-    pthread_t hilo_escucha;
+    pthread_t hilo_interrupt;
 
     while(1) 
     {
-        int conexion_kernel = esperar_cliente(socket_servidor);
-        pthread_create(&hilo_escucha, NULL, (void*) atender_peticiones_dispatch, (void*) conexion_kernel);
-        pthread_detach(hilo_escucha);
+        int conexion = esperar_cliente(socket_servidor);
+        pthread_create(&hilo_interrupt, NULL, (void*) atender_interrupciones, (void*) conexion);
+        pthread_detach(hilo_interrupt);
     }
 
     close(socket_servidor);
 }
 
-void atender_peticiones_interrupt(void* conexion) {
-    int conexion_kernel = (int) conexion;
-    log_info(logger, "Cliente conectado modo INTERRUPT\n");
-    int op_code = recibir_operacion(conexion_kernel);
+void atender_interrupciones(void* conexion) {
+    int una_conexion = (int) conexion;
+    log_info(logger_CPU, "Cliente conectado \n");
+    int op_code = recibir_operacion(una_conexion);
 
     switch(op_code)
     {
         case INTERRUPCION:
-            log_info(logger, "Petición recibida: INTERRUPCION");
+            log_info(logger_CPU, "Petición recibida: INTERRUPCION"); 
+
             break;
 
-        default: 
-            log_error(logger, "El OP_CODE recibido es inválido");
-            break;
+        default:
+            log_error(logger_CPU, "El OP_CODE recibido es inválido");            
     }
 
+    liberar_conexion(una_conexion);
 
-    close(conexion_kernel);
-
-    log_info(logger, "El cliente se ha desconectado");
+    log_info(logger_CPU, "El cliente se ha desconectado");
 }
 
+void servidor_dispatch() {
 
-void atender_peticiones_dispatch(void* conexion) {
-    int conexion_kernel = (int) conexion;
-    log_info(logger, "Cliente conectado modo DISPATCH\n");
-    int op_code = recibir_operacion(conexion_kernel);
+    int socket_servidor = iniciar_servidor(logger_CPU, "CPU", ip_escucha, puerto_escucha_dispatch);
+    log_info(logger_CPU, "Servidor CPU Dispatch iniciado");
+
+    pthread_t hilo_dispatch;
+
+    while(1) 
+    {
+        int conexion = esperar_cliente(socket_servidor);
+        pthread_create(&hilo_dispatch, NULL, (void*) atender_pcb_para_ejecutar, (void*) conexion);
+        pthread_detach(hilo_dispatch);
+    }
+
+    close(socket_servidor);
+}
+
+void atender_pcb_para_ejecutar(void* conexion) {
+    int una_conexion = (int) conexion;
+    log_info(logger_CPU, "Cliente conectado \n");
+    int op_code = recibir_operacion(una_conexion);
 
     switch(op_code)
     {
-
         case RECIBIR_PCB:
-            log_info(logger, "Petición recibida: RECIBIR_PCB");
+            log_info(logger_CPU, "Petición recibida: RECIBIR_PCB"); 
+
             break;
 
-        default: 
-            log_error(logger, "El OP_CODE recibido es inválido");
-            break;
+        default:
+            log_error(logger_CPU, "El OP_CODE recibido es inválido");
     }
-    
-    close(conexion_kernel);
 
-    log_info(logger, "El cliente se ha desconectado");
+    liberar_conexion(una_conexion);
+
+    log_info(logger_CPU, "El cliente se ha desconectado");
 }

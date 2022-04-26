@@ -70,7 +70,6 @@ void atender_peticiones(void* conexion) {
 
         default: 
             log_error(logger, "El OP_CODE recibido es inválido");
-            //recibir_mensaje(conexion_consola, logger);
             break;
     }
 

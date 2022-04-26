@@ -15,21 +15,23 @@ int main(void) {
     pthread_t hilo_escucha;
     pthread_create(&hilo_escucha, NULL, (void*) escuchar_procesos_nuevos, NULL);
 
-    //Conexiones con módulo CPU
-
-    //int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
-    //int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
-
-    //Conexion con módulo Memoria
-
+    /* ----- Caso de prueba de conexiones ----
     
+    Conexiones con módulo CPU
+
+    int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
+    int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
+
+    Conexion con módulo Memoria
+
+    int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
     
+    liberar_conexion(conexion_dispatch);
+    liberar_conexion(conexion_interrupt);
+    liberar_conexion(conexion_memoria);
+    */
+
     pthread_join(hilo_escucha, NULL);
-
-	//close(conexion_dispatch);
-	//close(conexion_interrupt);
-	//close(conexion_memoria);
-
 
     finalizar_programa(logger, config_kernel);
 }

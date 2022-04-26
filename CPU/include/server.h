@@ -10,7 +10,7 @@
 
 void servidor_interrupt();
 void servidor_dispatch();
-void atender_peticiones_interrupt(void*);
-void atender_peticiones_dispatch(void*);
+void atender_interrupciones(void*);
+void atender_pcb_para_ejecutar(void*);
 
 #endif

@@ -6,7 +6,7 @@
 
 void procesar_archivo_config_cpu(t_config*); 
 
-t_log* logger;
+t_log* logger_CPU;
 int entradas_tlb;
 char* reemplazo_tlb;
 int retardo_noop;
