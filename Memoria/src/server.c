@@ -18,7 +18,7 @@ void servidor() {
 
 void atender_peticiones(void* conexion) {
     int una_conexion = (int) conexion;
-    log_info(logger, "Cliente conectado \n");
+    log_info(logger, "Cliente conectado");
     int op_code = recibir_operacion(una_conexion);
 
     switch(op_code)

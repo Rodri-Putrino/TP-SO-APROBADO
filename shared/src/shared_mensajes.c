@@ -5,7 +5,7 @@
 
 int enviar_num(int coneccion, int num, t_log *logger)
 {
-    //send() ENVIA POR coneccion EL num Y RETORNA LA CANTIDAD DE BYTES ENVIADOS
+    //send() ENVIA POR conexión EL num Y RETORNA LA CANTIDAD DE BYTES ENVIADOS
 	int ret = send(coneccion, &num, sizeof(uint32_t), 0);
 	if(ret < sizeof(uint32_t))
 		log_error(logger, "Error al enviar numero");
