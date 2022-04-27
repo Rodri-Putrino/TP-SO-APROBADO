@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "./config.h"
 #include "./server.h"
+#include "./procesos.h"
 #include "../../shared/include/shared_log.h"
 #include "../../shared/include/shared_servidor.h"
 #include "../../shared/include/shared_utils.h"
