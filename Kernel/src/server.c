@@ -26,13 +26,23 @@ void atender_procesos_nuevos(void* conexion) {
         case NUEVO_PROCESO: 
 
             log_info(logger, "Petición recibida: NUEVO_PROCESO");
+
             t_list *instrucciones = recibir_paquete(conexion_consola, logger);
+
+            //TOMAR TAMANIO PROCESO (ultimo elemento de lista)
+            char *tamanio_proceso = list_get(instrucciones, list_size(instrucciones) -1);
+            printf("Tamanio proceso: %d\n", atoi(tamanio_proceso));
+            list_remove_and_destroy_element(instrucciones, list_size(instrucciones) -1, free);
 
             t_list_iterator *iterador = list_iterator_create(instrucciones);
             while(list_iterator_has_next(iterador))
             {
-                char *i = list_iterator_next(iterador);
-                printf("Instruccion %s\n", i);
+                //VERSION ANTERIOR
+                //char *i = list_iterator_next(iterador);
+                //printf("Instruccion %s\n", i);
+
+                t_instruccion *i = list_iterator_next(iterador);
+                printf("Instruccion %d\nargumento 1: %d\nargumento 2: %d\n", i->op, i->arg[0], i->arg[1]);
             }
 
             list_iterator_destroy(iterador);

@@ -9,6 +9,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+typedef struct
+{
+    int op;
+    int arg[2];
+}t_instruccion;
+
 typedef enum
 {
 	MENSAJE,
@@ -31,6 +37,15 @@ typedef enum
 	SOLICITUD_MARCO,
 	SOLICITUD_DIRECCION_FISICA
 }op_code;
+
+typedef enum{
+    NO_OP,
+    I_O,
+    READ,
+    WRITE,
+    COPY,
+    EXIT_INST
+}cod_instruccion;
 
 typedef struct
 {
