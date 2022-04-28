@@ -13,7 +13,7 @@ typedef struct
 	ssize_t tam_proceso; //(En bytes)
 	t_list* instrucciones;
 	int program_counter; //Indice de la lista
-	//tabla_paginas;
+	//int tabla_paginas;
 	int estimacion_rafaga;
 } t_pcb;
 

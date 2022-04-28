@@ -35,10 +35,14 @@ void atender_procesos_nuevos(void* conexion) {
                 printf("Instruccion %s\n", i);
             }
 
+            t_pcb* pcb_nuevo = crear_proceso(conexion_consola, 20, instrucciones);
+
+            printf("Tam proceso: %d\n", pcb_nuevo->tam_proceso);
+            printf("Primero de la lista del proceso %s\n", list_get(pcb_nuevo->instrucciones,0));
+            enviar_mensaje("Proceso registrado correctamente", conexion_consola, logger);
+
             list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);
-            
-            enviar_mensaje("Proceso registrado correctamente", conexion_consola, logger);
 
             break;
 

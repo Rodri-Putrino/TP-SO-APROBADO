@@ -8,6 +8,7 @@ static t_list *cola_suspendidos_bloqueados;
 static t_list *cola_suspendidos_listos;
 static t_list *cola_terminados;
 
+pthread_mutex_t proceso_mutex;
 pthread_mutex_t procesos_nuevos_mutex;
 pthread_mutex_t procesos_listos_mutex;
 pthread_mutex_t procesos_ejecutando_mutex;
@@ -25,6 +26,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     cola_suspendidos_listos = list_create();
     cola_terminados = list_create();
 
+    pthread_mutex_init(&proceso_mutex, NULL);
     pthread_mutex_init(&procesos_nuevos_mutex, NULL);
     pthread_mutex_init(&procesos_listos_mutex, NULL);
     pthread_mutex_init(&procesos_ejecutando_mutex, NULL);
@@ -32,6 +34,32 @@ void iniciar_estructuras_de_estados_de_procesos() {
     pthread_mutex_init(&procesos_suspendidos_bloqueados_mutex, NULL);
     pthread_mutex_init(&procesos_suspendidos_listos_mutex, NULL);
     pthread_mutex_init(&procesos_terminados_mutex, NULL);
+}
+
+t_pcb* crear_proceso(int id, ssize_t tam, t_list* lista_instrucciones) {
+    
+    pthread_mutex_lock(&proceso_mutex);
+
+    t_pcb* pcb_nuevo = malloc(sizeof(t_pcb));
+
+    pcb_nuevo->id = id;
+    pcb_nuevo->tam_proceso = tam;
+    pcb_nuevo->instrucciones = list_create();
+    pcb_nuevo->program_counter = 0;
+    //pcb_nuevo->tabla_paginas = ...
+    pcb_nuevo->estimacion_rafaga = estimacion_inicial;
+
+    t_list_iterator *iterador_proceso = list_iterator_create(lista_instrucciones);
+    while(list_iterator_has_next(iterador_proceso))
+    {
+        char *i = list_iterator_next(iterador_proceso);
+        list_add(pcb_nuevo->instrucciones, i);
+    }
+    list_iterator_destroy(iterador_proceso);
+
+    pthread_mutex_unlock(&proceso_mutex);
+
+    return pcb_nuevo;
 }
 
 /* --------------- Funciones Procesos Nuevos --------------- */
