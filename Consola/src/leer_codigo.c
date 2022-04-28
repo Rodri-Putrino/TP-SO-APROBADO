@@ -19,50 +19,56 @@ t_instruccion* string_a_instruccion(char* linea)
     switch(ret->op)
     {
         case NO_OP:
-        ret->arg[0] = atoi(palabras_linea[1]);
-        ret->arg[1] = -1;
-        //NOTA: en vez de enviar NO_OP 5 enviar 5 veces el codigo NO_OP?
-        break;
-        case I_O:
-        ret->arg[0] = atoi(palabras_linea[1]);
-        ret->arg[1] = -1;
-        free(palabras_linea[0]);
-        free(palabras_linea[1]);
-        break;
-        case READ:
-        ret->arg[0] = atoi(palabras_linea[1]);
-        ret->arg[1] = -1;
-        free(palabras_linea[0]);
-        free(palabras_linea[1]);
-        break;
-        case WRITE:
-        ret->arg[0] = atoi(palabras_linea[1]);
-        ret->arg[1] = atoi(palabras_linea[2]);
-        free(palabras_linea[0]);
-        free(palabras_linea[1]);
-        free(palabras_linea[2]);
-        break;
-        case COPY:
-        ret->arg[0] = atoi(palabras_linea[1]);
-        ret->arg[1] = atoi(palabras_linea[2]);
-        free(palabras_linea[0]);
-        free(palabras_linea[1]);
-        free(palabras_linea[2]);
-        break;
-        case EXIT_INST:
-        ret->arg[0] = -1;
-        ret->arg[1] = -1;
-        free(palabras_linea[0]);
-        //SIN ARGUMENTOS
-        break;
-        default:
-        //ERROR: OPERACION NO VALIDA
-        break;
-    }
-    free(palabras_linea);
+            ret->arg[0] = atoi(palabras_linea[1]);
+            ret->arg[1] = -1;
+            //NOTA: en vez de enviar NO_OP 5 enviar 5 veces el codigo NO_OP? Yes
+            free(palabras_linea[0]);
+            free(palabras_linea[1]);
+            break;
 
-    //NOTA: MEMORY LEAK
-    //SUBNOTA: 9 bytes perdidos en alguna parte de string_split
+        case I_O:
+            ret->arg[0] = atoi(palabras_linea[1]);
+            ret->arg[1] = -1;
+            free(palabras_linea[0]);
+            free(palabras_linea[1]);
+            break;
+
+        case READ:
+            ret->arg[0] = atoi(palabras_linea[1]);
+            ret->arg[1] = -1;
+            free(palabras_linea[0]);
+            free(palabras_linea[1]);
+            break;
+
+        case WRITE:
+            ret->arg[0] = atoi(palabras_linea[1]);
+            ret->arg[1] = atoi(palabras_linea[2]);
+            free(palabras_linea[0]);
+            free(palabras_linea[1]);
+            free(palabras_linea[2]);
+            break;
+
+        case COPY:
+            ret->arg[0] = atoi(palabras_linea[1]);
+            ret->arg[1] = atoi(palabras_linea[2]);
+            free(palabras_linea[0]);
+            free(palabras_linea[1]);
+            free(palabras_linea[2]);
+            break;
+
+        case EXIT_INST:
+            ret->arg[0] = -1;
+            ret->arg[1] = -1;
+            free(palabras_linea[0]);
+            //SIN ARGUMENTOS
+            break;
+
+        default:
+            //ERROR: OPERACION NO VALIDA
+            break;
+    }
+
+    free(palabras_linea);
     return ret;
 }
 
@@ -86,7 +92,6 @@ t_paquete* leer_archivo(char *path)
     }
 
     free(linea);
-    free(inst);
     fclose(codigo);
 
     return paquete;
