@@ -18,6 +18,6 @@ int main(void) {
 	pthread_join(hilo_servidor, NULL);
 
 	finalizar_programa(logger, config_memoria);
-
+	
 	return EXIT_SUCCESS;
 }
