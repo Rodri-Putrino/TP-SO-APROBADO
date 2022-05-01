@@ -37,7 +37,7 @@ void eliminar_archivo(int PID){
 }
 
 
-
+//RECORDAR LIBERAR AUX
 char* devolver_path_archivo(int PID){
 
     char * aux = string_new();
