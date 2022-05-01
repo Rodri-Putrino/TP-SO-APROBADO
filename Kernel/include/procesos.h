@@ -32,6 +32,6 @@ void encolar_proceso_en_suspendidos_listos(t_pcb*);
 t_pcb* desencolar_proceso_suspendido_listo();
 
 void encolar_proceso_en_terminados(t_pcb*);
-t_pcb* desencolar_t_pcberminado();
+t_pcb* desencolar_proceso_terminado();
 
 #endif /* HEADERS_PROCESOS_H_ */
