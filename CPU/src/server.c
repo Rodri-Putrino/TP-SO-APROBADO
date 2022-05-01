@@ -63,8 +63,9 @@ void atender_pcb_para_ejecutar(void* conexion) {
     switch(op_code)
     {
         case RECIBIR_PCB:
-            log_info(logger_CPU, "Petición recibida: RECIBIR_PCB"); 
-
+            log_info(logger_CPU, "Petición recibida: RECIBIR_PCB");
+            t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
+            
             break;
 
         default:

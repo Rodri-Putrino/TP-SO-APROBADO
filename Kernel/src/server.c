@@ -23,7 +23,7 @@ void atender_procesos_nuevos(void* conexion) {
 
     switch(op_code)
     {
-        case NUEVO_PROCESO: 
+        case NUEVO_PROCESO:
 
             log_info(logger, "Petición recibida: NUEVO_PROCESO");
 
@@ -45,11 +45,26 @@ void atender_procesos_nuevos(void* conexion) {
                 printf("Instruccion %d\nargumento 1: %d\nargumento 2: %d\n", i->op, i->arg[0], i->arg[1]);
             }
 
-            /*t_pcb* pcb_nuevo = crear_proceso(conexion_consola, 20, instrucciones);
+            t_pcb* pcb_nuevo = crear_proceso(conexion_consola, 20, instrucciones);
+            encolar_proceso_en_nuevos(pcb_nuevo);
 
             printf("Tam proceso: %d\n", pcb_nuevo->tam_proceso);
-            printf("Primero de la lista del proceso %s\n", list_get(pcb_nuevo->instrucciones,0));*/
-            enviar_mensaje("Proceso registrado correctamente", conexion_consola, logger);
+            printf("Primero de la lista del proceso %s\n", list_get(pcb_nuevo->instrucciones,0));
+            
+            t_pcb* otro_pcb = desencolar_proceso_nuevo();
+            encolar_proceso_en_listos(otro_pcb);
+
+            t_pcb* pcb_listo = desencolar_proceso_listo();
+            encolar_proceso_en_ejecucion(pcb_listo);
+
+            int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
+
+            t_paquete* paquete = crear_paquete(RECIBIR_PCB);
+            agregar_a_paquete(paquete,pcb_listo,sizeof(t_pcb));
+            enviar_paquete(paquete,conexion_dispatch,logger);
+            eliminar_paquete(paquete);
+
+            enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_nuevo->id, logger);
 
             list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);

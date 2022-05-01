@@ -31,6 +31,7 @@ int main(int argc, char** argv) {
 
     int op_code = recibir_operacion(conexion_kernel);
     recibir_mensaje(conexion_kernel, logger);
+    //recv(conexion_kernel, &cod_op, sizeof(int), MSG_WAITALL);
 
     close(conexion_kernel);
 

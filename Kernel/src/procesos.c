@@ -213,7 +213,7 @@ void encolar_proceso_en_terminados(t_pcb* proceso) {
 
 }
 
-t_pcb* desencolar_t_pcberminado() {
+t_pcb* desencolar_proceso_terminado() {
 
     pthread_mutex_lock(&procesos_terminados_mutex);
 

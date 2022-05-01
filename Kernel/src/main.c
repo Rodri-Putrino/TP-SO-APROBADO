@@ -12,6 +12,8 @@ int main(void) {
 	config_kernel = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_kernel(config_kernel);
 
+    iniciar_estructuras_de_estados_de_procesos();
+
     pthread_t hilo_escucha;
     pthread_create(&hilo_escucha, NULL, (void*) escuchar_procesos_nuevos, NULL);
 
