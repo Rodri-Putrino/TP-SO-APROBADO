@@ -56,3 +56,63 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
     }
     return t;
 }
+
+void eliminar_paginas_proceso(t_tablaN1 *t)
+{
+    t_list_iterator *iteradorN1 = list_iterator_create(t);
+    while(list_iterator_has_next(iteradorN1))
+    {
+        entrada_tabla_N1 *e1 = list_iterator_next(iteradorN1);
+        t_list_iterator *iteradorN2 = list_iterator_create(list_get(tablasN2, e1->dir));
+        while(list_iterator_has_next(iteradorN2))
+        {
+            entrada_tabla_N2 *e2 = list_iterator_next(iteradorN2);
+            //NOTA: LIBERAR PAGINA
+        }
+        list_iterator_destroy(iteradorN2);
+    }
+    list_iterator_destroy(iteradorN1);
+}
+
+void iniciar_memoria(void *mem, int tamanio_total)
+{
+    mem = malloc(tamanio_total);
+}
+
+t_bitarray* crear_bitmap(int tamanio_memoria)
+{
+    int cantidad_bits = ceil(tamanio_memoria / tam_pagina);
+    int bytes_necesarios = ceil(cantidad_bits / 8);
+
+    char *bitmap = malloc(bytes_necesarios);
+    t_bitarray *ret = bitarray_create(bitmap, bytes_necesarios);
+
+    for(int i = 0; i < cantidad_bits; i++)
+    {
+        bitarray_set_bit(ret, i);
+    }
+
+    return ret;
+}
+
+void eliminar_bitmap(t_bitarray *bitmap)
+{
+    bitarray_destroy(bitmap);
+}
+
+void eliminar_lista(void *l)
+{
+    list_destroy_and_destroy_elements(l, free);
+}
+
+void crear_listas_tablas()
+{
+    tablasN1 = list_create();
+    tablasN2 = list_create();
+}
+
+void eliminar_listas_tablas()
+{
+    list_destroy_and_destroy_elements(tablasN1, eliminar_lista);
+    list_destroy_and_destroy_elements(tablasN2, eliminar_lista);
+}
