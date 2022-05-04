@@ -30,7 +30,7 @@ void atender_procesos_nuevos(void* conexion) {
             t_list *instrucciones = recibir_paquete(conexion_consola, logger);
 
             //TOMAR TAMANIO PROCESO (ultimo elemento de lista)
-            char *tamanio_proceso = list_get(instrucciones, list_size(instrucciones) -1);
+            char *tamanio_proceso = (char*) list_get(instrucciones, list_size(instrucciones) -1);
             printf("Tamanio proceso: %d\n", atoi(tamanio_proceso));
             list_remove_and_destroy_element(instrucciones, list_size(instrucciones) -1, free);
 
@@ -45,11 +45,8 @@ void atender_procesos_nuevos(void* conexion) {
                 printf("Instruccion %d\nargumento 1: %d\nargumento 2: %d\n", i->op, i->arg[0], i->arg[1]);
             }
 
-            t_pcb* pcb_nuevo = crear_proceso(conexion_consola, 20, instrucciones);
+            t_pcb* pcb_nuevo = crear_proceso(conexion_consola, atoi(tamanio_proceso), instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
-
-            printf("Tam proceso: %d\n", pcb_nuevo->tam_proceso);
-            printf("Primero de la lista del proceso %s\n", list_get(pcb_nuevo->instrucciones,0));
             
             t_pcb* otro_pcb = desencolar_proceso_nuevo();
             encolar_proceso_en_listos(otro_pcb);
@@ -60,8 +57,8 @@ void atender_procesos_nuevos(void* conexion) {
             int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
 
             t_paquete* paquete = crear_paquete(RECIBIR_PCB);
-            agregar_a_paquete(paquete,pcb_listo,sizeof(t_pcb));
-            enviar_paquete(paquete,conexion_dispatch,logger);
+            agregar_a_paquete(paquete, pcb_listo, sizeof(t_pcb));
+            enviar_paquete(paquete, conexion_dispatch, logger);
             eliminar_paquete(paquete);
 
             enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_nuevo->id, logger);
