@@ -49,17 +49,7 @@ void atender_procesos_nuevos(void* conexion) {
             t_pcb* pcb_nuevo = crear_proceso(conexion_consola, atoi(tamanio_proceso), instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
 
-            /*t_pcb* pcb_listo = desencolar_proceso_listo();
-            encolar_proceso_en_ejecucion(pcb_listo);
-
-            int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
-
-            t_paquete* paquete = crear_paquete(RECIBIR_PCB);
-            agregar_a_paquete(paquete, pcb_listo, sizeof(t_pcb));
-            enviar_paquete(paquete, conexion_dispatch, logger);
-            eliminar_paquete(paquete);*/
-
-            enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_nuevo->id, logger);
+            enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_nuevo->id, logger); //TODO borrar llegado el momento
 
             list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);

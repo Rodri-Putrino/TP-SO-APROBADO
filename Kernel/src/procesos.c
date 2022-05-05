@@ -99,6 +99,7 @@ void encolar_proceso_en_listos(t_pcb* proceso) {
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 
+    sem_post(&sem_proceso_listo);
 }
 
 t_pcb* desencolar_proceso_listo() {
