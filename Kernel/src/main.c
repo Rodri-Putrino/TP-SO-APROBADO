@@ -14,6 +14,7 @@ int main(void) {
 
     iniciar_estructuras_de_estados_de_procesos();
     iniciar_planificador_largo_plazo();
+    iniciar_planificador_corto_plazo();
 
     pthread_t hilo_escucha;
     pthread_create(&hilo_escucha, NULL, (void*) escuchar_procesos_nuevos, NULL);

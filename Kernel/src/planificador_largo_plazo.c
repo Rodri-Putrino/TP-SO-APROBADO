@@ -4,7 +4,7 @@ static pthread_t planificador_largo_plazo;
 
 void iniciar_planificador_largo_plazo() {
 
-  pthread_create(&planificador_largo_plazo, NULL, (void *)controlar_grado_de_multiprogramacion, NULL);
+  pthread_create(&planificador_largo_plazo, NULL, (void*) controlar_grado_de_multiprogramacion, NULL);
   pthread_detach(planificador_largo_plazo);
 }
 
@@ -28,9 +28,4 @@ void controlar_grado_de_multiprogramacion() {
 
     }
   }*/
-}
-
-void finalizar_planificador_largo_plazo() {
-
-  pthread_cancel(planificador_largo_plazo);
 }
