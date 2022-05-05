@@ -34,6 +34,9 @@ void iniciar_estructuras_de_estados_de_procesos() {
     pthread_mutex_init(&procesos_suspendidos_bloqueados_mutex, NULL);
     pthread_mutex_init(&procesos_suspendidos_listos_mutex, NULL);
     pthread_mutex_init(&procesos_terminados_mutex, NULL);
+
+    sem_init(&sem_proceso_nuevo, 0, 0);
+    sem_init(&sem_proceso_listo, 0, 0);
 }
 
 t_pcb* crear_proceso(int id, ssize_t tam, t_list* lista_instrucciones) {
@@ -72,7 +75,7 @@ void encolar_proceso_en_nuevos(t_pcb* proceso) {
 
     pthread_mutex_unlock(&procesos_nuevos_mutex);
 
-    //sem_post(&sem_proceso_nuevo);
+    sem_post(&sem_proceso_nuevo);
 }
 
 t_pcb* desencolar_proceso_nuevo() {
@@ -175,7 +178,7 @@ t_pcb* desencolar_proceso_suspendido_bloqueado() {
 
     pthread_mutex_unlock(&procesos_suspendidos_bloqueados_mutex);
 
-  return proceso;
+    return proceso;
 }
 
 /* --------------- Funciones Procesos Suspendidos Listos --------------- */
@@ -198,7 +201,7 @@ t_pcb* desencolar_proceso_suspendido_listo() {
  
     pthread_mutex_unlock(&procesos_suspendidos_listos_mutex);
 
-  return proceso;
+    return proceso;
 }
 
 /* --------------- Funciones Procesos Terminados --------------- */
@@ -221,5 +224,30 @@ t_pcb* desencolar_proceso_terminado() {
 
     pthread_mutex_unlock(&procesos_terminados_mutex);
 
-  return proceso;
+    return proceso;
+}
+
+/* --------------- Funciones Generales --------------- */
+
+int cantidad_procesos_en_sistema() {
+
+    int cantidad_listos, cantidad_ejecutando, cantidad_bloqueados, cantidad_total;
+
+    pthread_mutex_lock(&procesos_listos_mutex);
+    pthread_mutex_lock(&procesos_ejecutando_mutex);
+    pthread_mutex_lock(&procesos_bloqueados_mutex);
+
+    cantidad_listos = list_size(cola_listos);
+    cantidad_ejecutando = list_size(cola_ejecucion);
+    cantidad_bloqueados = list_size(cola_bloqueados);
+
+    pthread_mutex_unlock(&procesos_listos_mutex);
+    pthread_mutex_unlock(&procesos_ejecutando_mutex);
+    pthread_mutex_unlock(&procesos_bloqueados_mutex);
+
+    cantidad_total = cantidad_listos + cantidad_ejecutando + cantidad_bloqueados;
+
+    log_info(logger, "Cantidad de procesos en sistema: %d", cantidad_total);
+
+    return cantidad_total;
 }

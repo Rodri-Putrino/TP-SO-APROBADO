@@ -34,4 +34,9 @@ t_pcb* desencolar_proceso_suspendido_listo();
 void encolar_proceso_en_terminados(t_pcb*);
 t_pcb* desencolar_proceso_terminado();
 
+int cantidad_procesos_en_sistema();
+
+sem_t sem_proceso_nuevo;
+sem_t sem_proceso_listo;
+
 #endif /* HEADERS_PROCESOS_H_ */

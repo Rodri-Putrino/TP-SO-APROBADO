@@ -4,28 +4,39 @@ static pthread_t planificador_largo_plazo;
 
 void iniciar_planificador_largo_plazo() {
 
-  pthread_create(&planificador_largo_plazo, NULL, (void*) controlar_grado_de_multiprogramacion, NULL);
-  pthread_detach(planificador_largo_plazo);
+    pthread_create(&planificador_largo_plazo, NULL, (void*) controlar_grado_de_multiprogramacion, NULL);
+    pthread_detach(planificador_largo_plazo);
 }
 
 void controlar_grado_de_multiprogramacion() {
 
-  log_info(logger, "Planificador de largo plazo iniciado");
+    log_info(logger, "Planificador de largo plazo iniciado");
 
-  /*while (1) {
+    while (1) {
 
-    //sem_wait(&sem_proceso_nuevo);
+        sem_wait(&sem_proceso_nuevo);
 
-    if (!grado_multiprogramacion_completo()) {
+        log_debug(logger, "Plani LP notificado proceso nuevo");
 
-      mover_proceso_a_listo();
-
-    } else if (grado_de_multiprogramacion_ocupado_por_procesos_bloqueados()) {
-
-      sem_post(&sem_grado_multiprogramacion_completo);
-      sem_wait(&sem_proceso_suspendido);
-      sem_post(&sem_proceso_nuevo);
-
+        if (!grado_multiprogramacion_completo()) {
+          
+            log_info(logger, "Hay espacio para admitir al proceso");
+            t_pcb* pcb = desencolar_proceso_nuevo();
+            encolar_proceso_en_listos(pcb);
+            //Enviar mensaje a Memoria para obtener valor de tabla de páginas. 
+        } 
     }
-  }*/
+}
+
+bool grado_multiprogramacion_completo() {
+
+    bool resultado;
+
+    resultado = cantidad_procesos_en_sistema() >= grado_multiprogramacion;
+    if(resultado == true)
+    {
+        log_info(logger, "Grado de multiprogramación completo");
+    }
+
+    return resultado;
 }
