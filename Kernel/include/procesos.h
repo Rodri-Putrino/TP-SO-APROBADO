@@ -30,13 +30,16 @@ t_pcb* desencolar_proceso_suspendido_bloqueado();
 
 void encolar_proceso_en_suspendidos_listos(t_pcb*);
 t_pcb* desencolar_proceso_suspendido_listo();
+bool hay_proceso_suspendido_listo();
 
 void encolar_proceso_en_terminados(t_pcb*);
 t_pcb* desencolar_proceso_terminado();
 
 int cantidad_procesos_en_sistema();
 
+sem_t sem_multiprogramacion;
 sem_t sem_proceso_nuevo;
 sem_t sem_proceso_listo;
+sem_t sem_proceso_suspendido_ready;
 
 #endif /* HEADERS_PROCESOS_H_ */

@@ -15,28 +15,32 @@ void controlar_grado_de_multiprogramacion() {
     while (1) {
 
         sem_wait(&sem_proceso_nuevo);
-
         log_debug(logger, "Plani LP notificado proceso nuevo");
+        mostrar_grado_multiprogramacion_actual();
+        sem_wait(&sem_multiprogramacion);
 
-        if (!grado_multiprogramacion_completo()) {
-          
-            log_info(logger, "Hay espacio para admitir al proceso");
+        if (hay_proceso_suspendido_listo()) {
+            sem_post(&sem_proceso_suspendido_ready);
+        }
+        else {
             t_pcb* pcb = desencolar_proceso_nuevo();
             encolar_proceso_en_listos(pcb);
-            //Enviar mensaje a Memoria para obtener valor de tabla de páginas. 
+            log_info(logger, "Proceso encolado en listos");
+            //Enviar mensaje a Memoria para obtener valor de tabla de páginas.
         } 
     }
 }
 
-bool grado_multiprogramacion_completo() {
+void mostrar_grado_multiprogramacion_actual() {
 
-    bool resultado;
+    int cantidad_procesos_actual = cantidad_procesos_en_sistema();
 
-    resultado = cantidad_procesos_en_sistema() >= grado_multiprogramacion;
-    if(resultado == true)
+    if(cantidad_procesos_actual >= grado_multiprogramacion)
     {
-        log_info(logger, "Grado de multiprogramación completo");
+        log_info(logger, "Grado de multiprogramación completo, %d procesos en sistema", cantidad_procesos_actual);
+    }
+    else {
+        log_info(logger, "Grado de multiprogramación actual: %d", cantidad_procesos_actual);
     }
 
-    return resultado;
 }

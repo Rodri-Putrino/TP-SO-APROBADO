@@ -13,6 +13,6 @@
 
 void iniciar_planificador_largo_plazo();
 void controlar_grado_de_multiprogramacion();
-bool grado_multiprogramacion_completo();
+void mostrar_grado_multiprogramacion_actual();
 
 #endif /* HEADERS_PLANIFICADOR_LARGO_PLAZO_H_ */
