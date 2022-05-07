@@ -138,6 +138,17 @@ t_pcb* desencolar_proceso_en_ejecucion() {
   return proceso;
 }
 
+bool hay_proceso_en_ejecucion() {
+
+    pthread_mutex_lock(&procesos_ejecutando_mutex);
+
+    bool resultado = list_is_empty(cola_ejecucion);
+ 
+    pthread_mutex_unlock(&procesos_ejecutando_mutex);
+
+    return !resultado;
+}
+
 /* --------------- Funciones Procesos Bloqueados --------------- */
 
 void encolar_proceso_en_bloqueados(t_pcb* proceso) {

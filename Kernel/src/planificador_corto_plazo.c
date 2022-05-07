@@ -15,33 +15,46 @@ void planificar_procesos() {
     while (1) {
 
         sem_wait(&sem_proceso_listo);
-
         log_debug(logger, "Plani CP notificado proceso listo");
-
-        /* -------------- Pasos a seguir -------------- */
-
-        /*Enviar interrupción a CPU a través de Interrupt
-        Recibir pcb en ejecución (si había)
-        ordenar_cola_listos();   (si algoritmo = SJF)
-        proceso = desencolar_proceso_listo();
-        encolar_proceso_en_ejecucion(proceso);
-        Enviar pcb a CPU a través de Dispatch*/
-
-        /* -------------------------------------------- */
-
-       
-        /*
-        int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
-        
-        t_pcb* pcb_listo = desencolar_proceso_listo();
-        encolar_proceso_en_ejecucion(pcb_listo);
 
         int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
 
-        t_paquete* paquete = crear_paquete(RECIBIR_PCB);
-        agregar_a_paquete(paquete, pcb_listo, sizeof(t_pcb));
-        enviar_paquete(paquete, conexion_dispatch, logger);
-        eliminar_paquete(paquete);
-        */
+        if(algoritmo_es_srt()) {
+            log_info(logger, "Algoritmo Plani: SRT");
+            
+            if(hay_proceso_en_ejecucion()) {
+                int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
+                //Enviar interrupción a CPU a través de Interrupt
+                //Recibir pcb en ejecución a través de Dispatch
+                close(conexion_interrupt);
+            }
+
+            /* -------------- Pasos a seguir -------------- */
+            /*
+            ordenar_cola_listos();   
+            proceso = desencolar_proceso_listo();
+            encolar_proceso_en_ejecucion(proceso);
+            Enviar pcb a CPU a través de Dispatch
+            */
+            /* -------------------------------------------- */
+            close(conexion_dispatch);
+
+        }
+        else {
+            log_info(logger, "Algoritmo Plani: FIFO");
+
+            t_pcb* pcb_listo = desencolar_proceso_listo();
+            encolar_proceso_en_ejecucion(pcb_listo);
+            t_paquete* paquete = crear_paquete(RECIBIR_PCB);
+            agregar_a_paquete(paquete, pcb_listo, sizeof(t_pcb));
+            enviar_paquete(paquete, conexion_dispatch, logger);
+            eliminar_paquete(paquete);
+
+            close(conexion_dispatch);
+        } 
     }
+}
+
+bool algoritmo_es_srt() {
+    return 0 == strcmp(algoritmo_planificacion, "SRT");
 }

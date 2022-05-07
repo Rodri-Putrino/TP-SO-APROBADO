@@ -21,6 +21,7 @@ t_pcb* desencolar_proceso_listo();
 
 void encolar_proceso_en_ejecucion(t_pcb*);
 t_pcb* desencolar_proceso_en_ejecucion();
+bool hay_proceso_en_ejecucion();
 
 void encolar_proceso_en_bloqueados(t_pcb*);
 t_pcb* desencolar_proceso_bloqueado();
