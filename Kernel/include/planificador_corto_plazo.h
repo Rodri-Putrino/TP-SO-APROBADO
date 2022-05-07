@@ -16,5 +16,6 @@
 void iniciar_planificador_corto_plazo();
 void planificar_procesos();
 bool algoritmo_es_srt();
+void recibir_pcb_luego_de_ejecutar(int);
 
 #endif /* HEADERS_PLANIFICADOR_CORTO_PLAZO_H_ */

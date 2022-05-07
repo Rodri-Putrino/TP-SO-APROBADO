@@ -56,18 +56,6 @@ void atender_procesos_nuevos(void* conexion) {
 
             break;
 
-        case EXIT:
-            log_info(logger, "Petición recibida: EXIT"); 
-            break;
-
-        case IO:
-            log_info(logger, "Petición recibida: IO"); 
-            break;
-
-        case ACTUALIZAR_PCB:
-            log_info(logger, "Petición recibida: ACTUALIZAR_PCB"); 
-            break;
-
         default: 
             log_error(logger, "El OP_CODE recibido es inválido");
             break;

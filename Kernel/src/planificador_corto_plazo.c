@@ -25,7 +25,7 @@ void planificar_procesos() {
             if(hay_proceso_en_ejecucion()) {
                 int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
                 //Enviar interrupción a CPU a través de Interrupt
-                //Recibir pcb en ejecución a través de Dispatch
+                recibir_pcb_luego_de_ejecutar(conexion_dispatch);
                 close(conexion_interrupt);
             }
 
@@ -50,6 +50,8 @@ void planificar_procesos() {
             enviar_paquete(paquete, conexion_dispatch, logger);
             eliminar_paquete(paquete);
 
+            //recibir_pcb_luego_de_ejecutar(conexion_dispatch);
+
             close(conexion_dispatch);
         } 
     }
@@ -57,4 +59,29 @@ void planificar_procesos() {
 
 bool algoritmo_es_srt() {
     return 0 == strcmp(algoritmo_planificacion, "SRT");
+}
+
+void recibir_pcb_luego_de_ejecutar(int conexion) {
+
+    int op_code = recibir_operacion(conexion);
+    //TODO crear funcion => t_pcb* pcb = recibir_pcb(conexion);
+
+    switch(op_code)
+    {
+        case EXIT:
+            log_info(logger, "Petición recibida: EXIT"); 
+            break;
+
+        case IO:
+            log_info(logger, "Petición recibida: IO"); 
+            break;
+
+        case ACTUALIZAR_PCB:
+            log_info(logger, "Petición recibida: ACTUALIZAR_PCB"); 
+            break;
+        
+        default:
+            log_error(logger, "El OP_CODE recibido es inválido");
+            break;
+    }
 }
