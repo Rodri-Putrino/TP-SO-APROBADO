@@ -19,7 +19,7 @@ void servidor_interrupt() {
 
 void atender_interrupciones(void* conexion) {
     int una_conexion = (int) conexion;
-    log_info(logger_CPU, "Cliente conectado \n");
+    log_info(logger_CPU, "Cliente conectado");
     int op_code = recibir_operacion(una_conexion);
 
     switch(op_code)
@@ -57,7 +57,7 @@ void servidor_dispatch() {
 
 void atender_pcb_para_ejecutar(void* conexion) {
     int una_conexion = (int) conexion;
-    log_info(logger_CPU, "Cliente conectado \n");
+    log_info(logger_CPU, "Cliente conectado");
     int op_code = recibir_operacion(una_conexion);
 
     switch(op_code)
@@ -65,6 +65,14 @@ void atender_pcb_para_ejecutar(void* conexion) {
         case RECIBIR_PCB:
             log_info(logger_CPU, "Petición recibida: RECIBIR_PCB");
             t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
+
+            sleep(3);
+
+            t_paquete* paquete = crear_paquete(EXIT);
+            agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
+            enviar_paquete(paquete, una_conexion, logger_CPU);
+            eliminar_paquete(paquete);
+
             
             break;
 

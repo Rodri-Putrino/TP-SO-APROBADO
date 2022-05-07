@@ -40,7 +40,7 @@ int iniciar_servidor(t_log* logger, const char* name, char* ip, char* puerto) {
     listen(socket_servidor, SOMAXCONN); // Escuchando (hasta SOMAXCONN conexiones simultaneas)
 
     // Aviso al logger
-    log_info(logger, "Escuchando en %s:%s (%s)\n", ip, puerto, name);
+    log_info(logger, "Escuchando en %s:%s (%s)", ip, puerto, name);
 
     freeaddrinfo(servinfo); //free
 
@@ -84,11 +84,11 @@ int crear_conexion(t_log* logger, const char* server_name, char* ip, char* puert
 
     // Error conectando
     if(connect(socket_cliente, servinfo->ai_addr, servinfo->ai_addrlen) == -1) {
-        log_error(logger, "Error al conectar (a %s)\n", server_name);
+        log_error(logger, "Error al conectar (a %s)", server_name);
         freeaddrinfo(servinfo);
         return 0;
     } else
-        log_info(logger, "Cliente conectado en %s:%s (a %s)\n", ip, puerto, server_name);
+        log_info(logger, "Cliente conectado en %s:%s (a %s)", ip, puerto, server_name);
 
     freeaddrinfo(servinfo); //free
 

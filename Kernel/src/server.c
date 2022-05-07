@@ -49,8 +49,6 @@ void atender_procesos_nuevos(void* conexion) {
             t_pcb* pcb_nuevo = crear_proceso(conexion_consola, atoi(tamanio_proceso), instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
 
-            enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_nuevo->id, logger); //TODO borrar llegado el momento
-
             list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);
 
@@ -61,7 +59,7 @@ void atender_procesos_nuevos(void* conexion) {
             break;
     }
 
-    close(conexion_consola);
-
-    log_info(logger, "El cliente se ha desconectado");
+    //close(conexion_consola); La conexión se debe cerrar cuando se elimina el proceso,
+    //                         dado que se almacena en el PCB.
+    //log_info(logger, "El cliente se ha desconectado");
 }

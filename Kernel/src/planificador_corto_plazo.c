@@ -50,7 +50,7 @@ void planificar_procesos() {
             enviar_paquete(paquete, conexion_dispatch, logger);
             eliminar_paquete(paquete);
 
-            //recibir_pcb_luego_de_ejecutar(conexion_dispatch);
+            recibir_pcb_luego_de_ejecutar(conexion_dispatch);
 
             close(conexion_dispatch);
         } 
@@ -69,7 +69,11 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
     switch(op_code)
     {
         case EXIT:
-            log_info(logger, "Petición recibida: EXIT"); 
+            log_info(logger, "Petición recibida: EXIT");
+            t_pcb* pcb = desencolar_proceso_en_ejecucion();
+            encolar_proceso_en_terminados(pcb);
+            sem_post(&sem_multiprogramacion);
+            enviar_mensaje("El proceso ha finalizado su ejecucion", pcb->id, logger);
             break;
 
         case IO:
