@@ -20,7 +20,7 @@ void controlar_grado_de_multiprogramacion() {
         sem_wait(&sem_multiprogramacion);
 
         if (hay_proceso_suspendido_listo()) {
-            sem_post(&sem_proceso_suspendido_ready);
+            sem_post(&sem_proceso_suspendido_listo);
         }
         else {
             t_pcb* pcb = desencolar_proceso_nuevo();

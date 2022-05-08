@@ -41,6 +41,6 @@ int cantidad_procesos_en_sistema();
 sem_t sem_multiprogramacion;
 sem_t sem_proceso_nuevo;
 sem_t sem_proceso_listo;
-sem_t sem_proceso_suspendido_ready;
+sem_t sem_proceso_suspendido_listo;
 
 #endif /* HEADERS_PROCESOS_H_ */

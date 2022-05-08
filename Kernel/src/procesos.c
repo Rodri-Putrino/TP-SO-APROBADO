@@ -38,7 +38,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     sem_init(&sem_multiprogramacion, 0, grado_multiprogramacion);
     sem_init(&sem_proceso_nuevo, 0, 0);
     sem_init(&sem_proceso_listo, 0, 0);
-    sem_init(&sem_proceso_suspendido_ready, 0, 0);
+    sem_init(&sem_proceso_suspendido_listo, 0, 0);
 }
 
 t_pcb* crear_proceso(int id, ssize_t tam, t_list* lista_instrucciones) {

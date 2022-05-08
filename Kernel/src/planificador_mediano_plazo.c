@@ -12,7 +12,9 @@ void suspender_procesos() {
 
     /*while (1) {
 
-        sem_post(&sem_proceso_suspendido_ready);
+        sem_wait(&sem_proceso_suspendido_listo);
+        
+        
         sem_wait(&sem_suspender_proceso);
 
         mover_proceso_bloqueado_a_suspendido(); // enviar id a mem
