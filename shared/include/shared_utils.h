@@ -2,9 +2,21 @@
 #define SHARED_UTILS_H
 
 #include <stdio.h>
-#include <commons/log.h>
 #include <stdbool.h>
+#include "./shared_log.h"
+#include "./shared_config.h"
+#include <commons/collections/list.h>
 
-char* mi_funcion_compartida();
+typedef struct
+{
+	int id;
+	ssize_t tam_proceso; //(En bytes)
+	t_list* instrucciones;
+	int program_counter; //Indice de la lista
+	int tabla_paginas; //indice a lista general de tablas nivel 1
+	int estimacion_rafaga;
+} t_pcb;
+
+void finalizar_programa(t_log*, t_config*);
 
 #endif

@@ -1,11 +1,3 @@
-/*
- * servidor.c
- *
- *  Created on: 9 abr. 2022
- *      Author: utnso
- */
-
-
 #include "shared_servidor.h"
 
 // INICIA SERVER ESCUCHANDO EN IP:PUERTO
@@ -48,7 +40,7 @@ int iniciar_servidor(t_log* logger, const char* name, char* ip, char* puerto) {
     listen(socket_servidor, SOMAXCONN); // Escuchando (hasta SOMAXCONN conexiones simultaneas)
 
     // Aviso al logger
-    log_trace(logger, "Escuchando en %s:%s (%s)\n", ip, puerto, name);
+    log_info(logger, "Escuchando en %s:%s (%s)", ip, puerto, name);
 
     freeaddrinfo(servinfo); //free
 
@@ -56,21 +48,17 @@ int iniciar_servidor(t_log* logger, const char* name, char* ip, char* puerto) {
 }
 
 // ESPERAR CONEXION DE CLIENTE EN UN SERVER ABIERTO
-int esperar_cliente(t_log* logger, const char* name, int socket_servidor) {
+int esperar_cliente(int socket_servidor) {
     struct sockaddr_in dir_cliente;
     socklen_t tam_direccion = sizeof(struct sockaddr_in);
 
     int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
 
-
-    ///////////////////////////////////////
-    ///// LO SACO PARA PROBAR LA GUI //////
-    ///////////////////////////////////////
-
-    // log_info(logger, "Cliente conectado (a %s)\n", name);
+    //log_info(logger, "Cliente conectado (%s)\n", name);
 
     return socket_cliente;
 }
+
 
 // CLIENTE SE INTENTA CONECTAR A SERVER ESCUCHANDO EN IP:PUERTO
 int crear_conexion(t_log* logger, const char* server_name, char* ip, char* puerto) {
@@ -96,11 +84,11 @@ int crear_conexion(t_log* logger, const char* server_name, char* ip, char* puert
 
     // Error conectando
     if(connect(socket_cliente, servinfo->ai_addr, servinfo->ai_addrlen) == -1) {
-        log_error(logger, "Error al conectar (a %s)\n", server_name);
+        log_error(logger, "Error al conectar (a %s)", server_name);
         freeaddrinfo(servinfo);
         return 0;
     } else
-        log_info(logger, "Cliente conectado en %s:%s (a %s)\n", ip, puerto, server_name);
+        log_info(logger, "Cliente conectado en %s:%s (a %s)", ip, puerto, server_name);
 
     freeaddrinfo(servinfo); //free
 
@@ -108,7 +96,7 @@ int crear_conexion(t_log* logger, const char* server_name, char* ip, char* puert
 }
 
 // CERRAR CONEXION
-void liberar_conexion(int* socket_cliente) {
-    close(*socket_cliente);
-    *socket_cliente = -1;
+void liberar_conexion(int socket_cliente) {
+    close(socket_cliente);
+    socket_cliente = -1;
 }

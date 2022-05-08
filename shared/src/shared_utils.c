@@ -1,5 +1,6 @@
 #include "shared_utils.h"
 
-char* mi_funcion_compartida(){
-    return "Hice uso de la shared!";
+void finalizar_programa(t_log* logger, t_config* config) {
+    destruir_logger(logger);
+    destruir_config(config);
 }

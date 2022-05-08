@@ -1,40 +1,42 @@
-/*
- ============================================================================
- Name        : MóduloA.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
-
 #include "../include/main.h"
 
+#define CONFIG_FILE_PATH "./cfg/Kernel.config"
+#define LOG_FILE_PATH "./cfg/Kernel.log"
+#define NOMBRE_MODULO "KERNEL"
+
 int main(void) {
-	t_log* logger = log_create("./cfg/proceso1.log", "PROCESO1", true, LOG_LEVEL_INFO);
-    log_info(logger, "Soy el proceso 1! %s", mi_funcion_compartida());
 
-    int socket_servidor = iniciar_servidor(logger, "KERNEL", "127.0.0.1", "8000");
-    int conexion_consola = esperar_cliente(logger, "CONSOLA", socket_servidor);
+    t_config* config_kernel;
+	logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
-    int conexion_cpu = crear_conexion(logger, "CPU", "127.0.0.1", "8003");
+	config_kernel = iniciar_config(CONFIG_FILE_PATH);
+	procesar_archivo_config_kernel(config_kernel);
 
-    recibir_num(conexion_consola, logger);
-    t_list *instrucciones = recibir_paquete(conexion_consola, logger);
+    iniciar_estructuras_de_estados_de_procesos();
+    iniciar_planificador_largo_plazo();
+    iniciar_planificador_mediano_plazo();
+    iniciar_planificador_corto_plazo();
 
-    t_list_iterator *iterador = list_iterator_create(instrucciones);
-    while(list_iterator_has_next(iterador))
-    {
-        char *i = list_iterator_next(iterador);
-        printf("Instruccion %s\n", i);
-    }
+    pthread_t hilo_escucha;
+    pthread_create(&hilo_escucha, NULL, (void*) escuchar_procesos_nuevos, NULL);
 
-    list_iterator_destroy(iterador);
-    list_destroy(instrucciones);
+    /* ----- Caso de prueba de conexiones ----
+    
+    Conexiones con módulo CPU
 
-    log_destroy(logger);
+    int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
+    int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
 
-    close(conexion_consola);
-	close(conexion_cpu);
-	close(socket_servidor);
+    Conexion con módulo Memoria
+
+    int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+    
+    liberar_conexion(conexion_dispatch);
+    liberar_conexion(conexion_interrupt);
+    liberar_conexion(conexion_memoria);
+    */
+
+    pthread_join(hilo_escucha, NULL);
+
+    finalizar_programa(logger, config_kernel);
 }

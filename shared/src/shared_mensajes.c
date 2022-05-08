@@ -5,7 +5,7 @@
 
 int enviar_num(int coneccion, int num, t_log *logger)
 {
-    //send() ENVIA POR coneccion EL num Y RETORNA LA CANTIDAD DE BYTES ENVIADOS
+    //send() ENVIA POR conexión EL num Y RETORNA LA CANTIDAD DE BYTES ENVIADOS
 	int ret = send(coneccion, &num, sizeof(uint32_t), 0);
 	if(ret < sizeof(uint32_t))
 		log_error(logger, "Error al enviar numero");
@@ -115,13 +115,14 @@ void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger)
 
 	//De paquete a *void
 	void* a_enviar = serializar_paquete(paquete, bytes);
-	printf("Msg %s \n", (char*)(a_enviar + 2*sizeof(int)));
+	send(socket_cliente, a_enviar, bytes, 0);
+	/*printf("Msg %s \n", (char*)(a_enviar + 2*sizeof(int)));
 
 	int check;
 	if( (check = send(socket_cliente, a_enviar, bytes, 0)) <= 0)
 		log_error(logger, "Mensaje no se envio correctamente");
 
-	log_info(logger, "Se enviaron %d bytes", check);
+	log_info(logger, "Se enviaron %d bytes", check);*/
 	free(a_enviar);
 	eliminar_paquete(paquete);
 }
@@ -134,19 +135,31 @@ void crear_buffer(t_paquete* paquete)
 	paquete->buffer->stream = NULL;
 }
 
-t_paquete* crear_paquete(void)
+t_paquete* crear_paquete(op_code cod_op)
 {
 	t_paquete* paquete = malloc(sizeof(t_paquete));
-	paquete->codigo_operacion = PAQUETE;
+	paquete->codigo_operacion = cod_op;
 	crear_buffer(paquete);
 	return paquete;
 }
 
 /*-----------------------------------*/
 
+int recibir_operacion(int socket_cliente)
+{
+	int cod_op;
+	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) != 0)
+		return cod_op;
+	else
+	{
+		close(socket_cliente);
+		return -1;
+	}
+}
+
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger)
 {
-	void * buffer;
+	/*void* buffer;
 
 	//Recibir tamanio de buffer
 	if(recv(socket_cliente, size, sizeof(int), MSG_WAITALL) <= 0)
@@ -159,14 +172,23 @@ void* recibir_buffer(int* size, int socket_cliente, t_log *logger)
 	if(recv(socket_cliente, buffer, *size, MSG_WAITALL) <= 0)
 		log_error(logger, "Error al recibir buffer");
 
+	return buffer;*/
+
+	void * buffer;
+
+	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(*size);
+	recv(socket_cliente, buffer, *size, MSG_WAITALL);
+
 	return buffer;
 }
 
-char* recibir_mensaje(int socket_cliente, t_log *logger)
+void recibir_mensaje(int socket_cliente, t_log *logger)
 {
 	int size;
 	char* buffer = recibir_buffer(&size, socket_cliente, logger);
-	return buffer;
+	log_info(logger, "Mensaje recibido: \"%s\"", buffer);
+	free(buffer);
 }
 
 t_list* recibir_paquete(int socket_cliente, t_log *logger)
@@ -190,7 +212,7 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 		desplazamiento+=sizeof(int);
 		
 		//Asigna espacio segun tamanio recibido
-		char* valor = malloc(tamanio); //NOTA: CAMBIAR DE char* A void*
+		void* valor = malloc(tamanio); //NOTA: CAMBIAR DE char* A void*
 		
 		//Copia valor recibido
 		memcpy(valor, buffer+desplazamiento, tamanio);
@@ -200,7 +222,10 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 
 		//Enlistar dato
 		list_add(valores, valor);
+		//free(valor);
 	}
+
 	free(buffer);
 	return valores;
+	return NULL;
 }

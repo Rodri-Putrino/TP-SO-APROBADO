@@ -1,43 +1,41 @@
-/*
- ============================================================================
- Name        : MóduloA.c
- Author      : 
- Version     :
- Copyright   : Your copyright notice
- Description : Hello World in C, Ansi-style
- ============================================================================
- */
-
 #include "../include/main.h"
 
+#define CONFIG_FILE_PATH "./cfg/Consola.config"
+#define LOG_FILE_PATH "./cfg/Consola.log"
+#define NOMBRE_MODULO "Consola"
+
 int main(int argc, char** argv) {
+
+    t_config* config_consola;
+    t_log* logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
     if(argc < 3) {
         printf("Cantidad de argumentos insuficientes \n");
         return EXIT_FAILURE;
     }
+    
+    // Path del archivo: argv[1] && Tamaño del proceso: argv[2]
+    log_info(logger, "Módulo Consola iniciado");
 
-	printf("Path del archivo: %s \n", argv[1]);
-    printf("Tamaño del proceso: %s \n", argv[2]); 
+    config_consola = iniciar_config(CONFIG_FILE_PATH);
+    procesar_archivo_config_consola(config_consola);
 
-    iniciar_config();
-    iniciar_logger();
+    int conexion_kernel = crear_conexion(logger, "KERNEL", ip_kernel, puerto_kernel);
 
-    int conexion_kernel = crear_conexion(logger_consola, "KERNEL", ip_kernel, puerto_kernel);
+    t_paquete* codigo = leer_archivo(argv[1]);
+    agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int) + 1);
 
-    t_paquete *codigo = crear_paquete();
-    codigo->codigo_operacion = MENSAJE;
-
-    codigo = leer_archivo(argv[1]);
-    agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int));
-
-    enviar_paquete(codigo, conexion_kernel, logger_consola);
+    enviar_paquete(codigo, conexion_kernel, logger);
 
     eliminar_paquete(codigo);
+
+    int op_code = recibir_operacion(conexion_kernel);
+    recibir_mensaje(conexion_kernel, logger);
+    //recv(conexion_kernel, &cod_op, sizeof(int), MSG_WAITALL);
 
     close(conexion_kernel);
 
     /*--------------------------------------*/
 
-    log_destroy(logger_consola);
+    finalizar_programa(logger, config_consola);
 }
