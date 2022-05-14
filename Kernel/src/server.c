@@ -49,8 +49,8 @@ void atender_procesos_nuevos(void* conexion) {
             t_pcb* pcb_nuevo = crear_proceso(conexion_consola, atoi(tamanio_proceso), instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
 
-            list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);
+            list_iterator_destroy(iterador);
 
             break;
 

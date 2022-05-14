@@ -74,6 +74,7 @@ void atender_pcb_para_ejecutar(void* conexion) {
             enviar_paquete(paquete, una_conexion, logger_CPU);
             eliminar_paquete(paquete);
 
+            list_destroy_and_destroy_elements(pcb, free);
             
             break;
 
