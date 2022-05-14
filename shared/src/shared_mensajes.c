@@ -229,3 +229,77 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 	return valores;
 	return NULL;
 }
+
+void enviar_pcb(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logger) {
+
+	size_t bytes;
+	void* a_enviar = serializar_pcb(cod_op, pcb, &bytes);
+	if(send(socket_cliente, a_enviar, bytes, 0) <= 0)
+		log_error(logger, "Datos no se enviaron correctamente");
+
+	free(a_enviar);
+}
+
+void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
+
+    *bytes = sizeof(cod_op) +  // cop
+ 			 sizeof(int) +     // tamanio id
+		 	 sizeof(t_list) + // tamanio instrucciones
+			 sizeof(int) +     // tamanio program counter
+			 sizeof(int) +     // tamanio tabla de páginas
+			 sizeof(int)       // tamanio estimacion de ráfaga
+    ;
+
+    void* stream = malloc(*bytes);
+	int desplazamiento = 0;
+
+    memcpy(stream + desplazamiento, &cod_op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+	memcpy(stream + desplazamiento, &(pcb->id), sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(stream + desplazamiento, &(pcb->instrucciones), sizeof(t_list));
+	desplazamiento += sizeof(t_list);
+	memcpy(stream + desplazamiento, &(pcb->program_counter), sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(stream + desplazamiento, &(pcb->tabla_paginas), sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(stream + desplazamiento, &(pcb->estimacion_rafaga), sizeof(int));
+	desplazamiento += sizeof(int);
+
+    return stream;
+}
+
+t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
+
+	t_pcb* pcb = malloc(sizeof(t_pcb));
+	int size;
+	int desplazamiento = 0;
+	void * buffer;
+	int tamanio;
+
+	buffer = recibir_buffer(&size, socket_cliente, logger);
+	
+	memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(&(pcb->id), buffer + desplazamiento, tamanio);
+	desplazamiento += tamanio;
+	memcpy(&tamanio, buffer + desplazamiento, sizeof(t_list));
+	desplazamiento += sizeof(t_list);
+	memcpy(&(pcb->instrucciones), buffer + desplazamiento, tamanio);
+	desplazamiento += tamanio;
+	memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(&(pcb->program_counter), buffer + desplazamiento, tamanio);
+	desplazamiento += tamanio;
+	memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(&(pcb->tabla_paginas), buffer + desplazamiento, tamanio);
+	desplazamiento += tamanio;
+	memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(&(pcb->estimacion_rafaga), buffer + desplazamiento, tamanio);
+	desplazamiento += tamanio;
+
+	free(buffer);
+	return pcb; 
+}
