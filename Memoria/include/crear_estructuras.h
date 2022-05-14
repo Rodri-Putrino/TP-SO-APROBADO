@@ -10,7 +10,7 @@
 typedef struct
 {
 	int num_pag;
-	int dir;
+	int dir; //MARCO
 	int bit_presencia;
 	int bit_uso;
 	int bit_modificacion;
@@ -29,6 +29,9 @@ t_list *tablasN1, *tablasN2;
 
 //MEMORIA PRINCIPAL (espacio usuario)
 void *memoria;
+
+//BITMAP (cuales marcos estan vacios)
+t_bitarray *marcos_memoria;
 
 /* 
     Crea una entrada de tablaN1
@@ -84,9 +87,35 @@ t_bitarray* crear_bitmap(int tamanio_memoria);
 */
 void eliminar_bitmap(t_bitarray *bitmap);
 
+/*
+    Si la tabla contiene una pagina con bit presencia == 1 y dir == marco
+        retorna entrada de esa pagina
+    Si no
+        retorna NULL
+*/
+entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco);
+
+
+/*
+    Busca la pagina que ocupa un numero de marco
+    NOTA: no se considera el caso en que la funcion sea llamada para un
+    marco vacio
+*/
+entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco);
+
+/*
+    Devuelve info de pagina dada una tabla nivel 1 y numero de pagina
+*/
+entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag);
+
+/*
+    Devuelve lista de paginas que estan en memoria de un proceso
+*/
+t_list* conseguir_marcos_proceso(int dir_tablaN1);
+
 //funcion auxiliar
 void eliminar_lista(void *l);
 void crear_listas_tablas();
 void eliminar_listas_tablas();
-
+int conseguir_marco_de_dir_fisica(int dir);
 #endif
