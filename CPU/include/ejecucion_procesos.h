@@ -9,6 +9,8 @@
 #include "../../shared/include/shared_servidor.h"
 #include "../../shared/include/shared_mensajes.h"
 
-void realizar_ciclo_de_instruccion(t_pcb*);
+void realizar_ciclo_de_instruccion(t_list*, int); //TODO Modificar a t_pcb*
+int buscar_proxima_instruccion(t_list*); //TODO Modificar a t_pcb*
+void interpretar_instruccion_a_ejecutar(int);
 
 #endif

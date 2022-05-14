@@ -1,9 +1,9 @@
 #include "../include/ejecucion_procesos.h"
 
-void realizar_ciclo_de_instruccion(t_pcb* pcb) {
+void realizar_ciclo_de_instruccion(t_list* pcb, int conexion_kernel) { //TODO Modificar a t_pcb*
 
-    // instruccion = buscar_proxima_instruccion();
-    // interpretar_instruccion_a_ejecutar(instruccion);
+    //int instruccion = buscar_proxima_instruccion(pcb);
+    //interpretar_instruccion_a_ejecutar(instruccion);
 
     // while(instruccion != EXIT)
     // {
@@ -15,4 +15,74 @@ void realizar_ciclo_de_instruccion(t_pcb* pcb) {
     //      instruccion = buscar_proxima_instruccion();
     //      interpretar_instruccion_a_ejecutar(instruccion);
     // }
+
+    sleep(3);
+
+    t_paquete* paquete = crear_paquete(EXIT);
+    agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
+    enviar_paquete(paquete, conexion_kernel, logger_CPU);
+    eliminar_paquete(paquete);
+
+    list_destroy_and_destroy_elements(pcb, free);
+    liberar_conexion(conexion_kernel);
+}
+
+int buscar_proxima_instruccion(t_list* pcb) { //TODO Modificar a t_pcb*
+    log_info(logger_CPU, "Etapa FETCH iniciada");
+
+    return 5;
+}
+
+void interpretar_instruccion_a_ejecutar(int instruccion) {
+    log_info(logger_CPU, "Etapa DECODE iniciada");
+
+    switch(instruccion) 
+    {
+        case NO_OP:
+
+            log_info(logger_CPU, "Instruccion NO_OP");
+            log_info(logger_CPU, "Etapa EXECUTE iniciada");
+
+            break;
+
+        case I_O:
+
+            log_info(logger_CPU, "Instruccion I_O");
+            log_info(logger_CPU, "Etapa EXECUTE iniciada");
+         
+            break;
+
+        case READ:
+         
+            log_info(logger_CPU, "Instruccion READ");
+            log_info(logger_CPU, "Etapa EXECUTE iniciada");
+
+            break;
+
+        case WRITE:
+         
+            log_info(logger_CPU, "Instruccion WRITE");
+            log_info(logger_CPU, "Etapa EXECUTE iniciada");
+
+            break;
+
+        case COPY:
+         
+            log_info(logger_CPU, "Instruccion COPY");
+            log_info(logger_CPU, "Etapa FETCH OPERANDS iniciada");
+            //buscar_valor_en_memoria();
+            log_info(logger_CPU, "Etapa EXECUTE iniciada");
+
+            break;
+
+        case EXIT:
+         
+            log_info(logger_CPU, "Instruccion EXIT");
+            log_info(logger_CPU, "Etapa EXECUTE iniciada");
+
+            break;
+        
+        default:
+            log_error(logger_CPU, "Instruccion inválida");
+    }
 }
