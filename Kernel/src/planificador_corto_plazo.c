@@ -46,11 +46,13 @@ void planificar_procesos() {
             t_pcb* pcb = desencolar_proceso_listo();
             encolar_proceso_en_ejecucion(pcb);
             
-            //enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
+            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
+            /*
             t_paquete* paquete = crear_paquete(RECIBIR_PCB);
             agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
             enviar_paquete(paquete, conexion_dispatch, logger);
             eliminar_paquete(paquete);
+            */
 
             recibir_pcb_luego_de_ejecutar(conexion_dispatch);
 

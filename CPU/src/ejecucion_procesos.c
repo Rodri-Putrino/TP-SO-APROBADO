@@ -122,6 +122,6 @@ void interpretar_instruccion_y_ejecutar_pcb(int instruccion, t_list* pcb, int co
     }
 }
 
-bool hay_interrupcion_para_atender() {
-    return false; //TODO
+int hay_interrupcion_para_atender() {
+    return 0;
 }
