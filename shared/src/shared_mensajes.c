@@ -244,7 +244,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
 
     *bytes = sizeof(cod_op) +  // cop
  			 sizeof(int) +     // tamanio id
-		 	 sizeof(t_list) + // tamanio instrucciones
+		 	 sizeof(t_list) +  // tamanio instrucciones
 			 sizeof(int) +     // tamanio program counter
 			 sizeof(int) +     // tamanio tabla de páginas
 			 sizeof(int)       // tamanio estimacion de ráfaga
@@ -281,9 +281,9 @@ t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
 	
 	memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 	desplazamiento += sizeof(int);
-	memcpy(&(pcb->id), buffer + desplazamiento, tamanio);
+	memcpy(&pcb->id, buffer + desplazamiento, tamanio);
 	desplazamiento += tamanio;
-	memcpy(&tamanio, buffer + desplazamiento, sizeof(t_list));
+	/*memcpy(&tamanio, buffer + desplazamiento, sizeof(t_list));
 	desplazamiento += sizeof(t_list);
 	memcpy(&(pcb->instrucciones), buffer + desplazamiento, tamanio);
 	desplazamiento += tamanio;
@@ -298,7 +298,7 @@ t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
 	memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 	desplazamiento += sizeof(int);
 	memcpy(&(pcb->estimacion_rafaga), buffer + desplazamiento, tamanio);
-	desplazamiento += tamanio;
+	desplazamiento += tamanio;*/
 
 	free(buffer);
 	return pcb; 

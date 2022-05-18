@@ -67,6 +67,8 @@ void atender_pcb_para_ejecutar(void* conexion) {
             log_info(logger_CPU, "Petición recibida: RECIBIR_PCB");
             t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
             realizar_ciclo_de_instruccion(pcb, una_conexion);
+            //recibir_pcb(una_conexion, logger_CPU);
+            log_info(logger_CPU, "PCB recibido");
             
             break;
 
