@@ -41,7 +41,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     sem_init(&sem_proceso_suspendido_listo, 0, 0);
 }
 
-t_pcb* crear_proceso(int id, ssize_t tam, t_list* lista_instrucciones) {
+t_pcb* crear_proceso(int id, int tam, t_list* lista_instrucciones) {
     
     pthread_mutex_lock(&proceso_mutex);
 
@@ -63,6 +63,9 @@ t_pcb* crear_proceso(int id, ssize_t tam, t_list* lista_instrucciones) {
     list_iterator_destroy(iterador_proceso);
 
     pthread_mutex_unlock(&proceso_mutex);
+
+    log_info(logger, "TAM PROCESO: %d", tam);
+    log_info(logger, "TAM PROCESO: %d", pcb_nuevo->tam_proceso);
 
     return pcb_nuevo;
 }

@@ -243,8 +243,8 @@ void enviar_pcb(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logger) {
 void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
 
     *bytes = sizeof(op_code) + // cop
-			 sizeof(ssize_t) + // tamanio proceso
- 			 sizeof(int)      // tamanio id
+			 sizeof(int) + // tamanio proceso
+ 			 sizeof(int)       // tamanio id
 			  /*
 		 	 sizeof(t_list) +  // tamanio instrucciones
 			 sizeof(int) +     // tamanio program counter
@@ -253,17 +253,18 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
 			 */
     ;
 
-	size_t sz_proceso = *bytes - sizeof(op_code) - sizeof(ssize_t);
+	//size_t sz_proceso = *bytes - sizeof(op_code) - sizeof(ssize_t);
 
     void* stream = malloc(*bytes);
 	int desplazamiento = 0;
 
     memcpy(stream + desplazamiento, &cod_op, sizeof(op_code));
 	desplazamiento += sizeof(op_code);
-	memcpy(stream + desplazamiento, &sz_proceso, sizeof(ssize_t));
-	desplazamiento += sizeof(ssize_t);
-	memcpy(stream + desplazamiento, &(pcb->id), sizeof(int));
+	//memcpy(stream + desplazamiento, &sz_proceso, sizeof(ssize_t));
+	memcpy(stream + desplazamiento, &(pcb->tam_proceso), sizeof(int));
 	desplazamiento += sizeof(int);
+	memcpy(stream + desplazamiento, &(pcb->id), sizeof(int));
+	//desplazamiento += sizeof(int);
 	/*
 	memcpy(stream + desplazamiento, &(pcb->instrucciones), sizeof(t_list));
 	desplazamiento += sizeof(t_list);
@@ -287,24 +288,26 @@ t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
 	int size;
 	int desplazamiento = 0;
 	void* buffer;
-	int tamanio;
+	//int tamanio;
+
+	log_info(logger, "Antes de recibir_buffer");
 
 	buffer = recibir_buffer(&size, socket_cliente, logger);
-	
-	memcpy(&tamanio, buffer + desplazamiento, sizeof(op_code));
-	desplazamiento += sizeof(op_code);
 
-	memcpy(&tamanio, buffer + desplazamiento, sizeof(ssize_t));
-	desplazamiento += sizeof(ssize_t);
+	//memcpy(&tamanio, buffer + desplazamiento, sizeof(ssize_t));
+	//desplazamiento += sizeof(ssize_t);
 
-	memcpy(&pcb->tam_proceso, buffer + desplazamiento, tamanio);
-	desplazamiento += tamanio;
+	log_info(logger, "Despues de recibir_buffer");
 
-	memcpy(&tamanio, buffer + desplazamiento,sizeof(int));
+	memcpy(pcb->tam_proceso, buffer + desplazamiento, sizeof(int));
 	desplazamiento += sizeof(int);
 
-	memcpy(&pcb->id, buffer + desplazamiento, tamanio);
-	desplazamiento += tamanio;
+	//memcpy(&tamanio, buffer + desplazamiento,sizeof(int));
+	//desplazamiento += sizeof(int);
+	log_info(logger, "Despues de recibir tam");
+
+	memcpy(pcb->id, buffer + desplazamiento, sizeof(int));
+	//desplazamiento += tamanio;
 
 	/*memcpy(&tamanio, buffer + desplazamiento, sizeof(t_list));
 	desplazamiento += sizeof(t_list);

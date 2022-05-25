@@ -67,6 +67,8 @@ void atender_pcb_para_ejecutar(void* conexion) {
             log_info(logger_CPU, "Petición recibida: RECIBIR_PCB");
             //t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
             t_pcb* pcb = recibir_pcb(una_conexion, logger_CPU);
+            log_info(logger_CPU, "El ID del PCB recibido es: %d", pcb->id);
+            log_info(logger_CPU, "El tamaño del PCB recibido es: %d", pcb->tam_proceso);
             realizar_ciclo_de_instruccion(pcb, una_conexion);
             log_info(logger_CPU, "PCB recibido");
             

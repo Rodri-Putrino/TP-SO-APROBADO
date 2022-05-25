@@ -24,6 +24,8 @@ void controlar_grado_de_multiprogramacion() {
         }
         else {
             t_pcb* pcb = desencolar_proceso_nuevo();
+            log_info(logger, "ID: %d", pcb->id);
+            log_info(logger, "Tamaño: %d", pcb->tam_proceso);
             encolar_proceso_en_listos(pcb);
             log_info(logger, "Proceso encolado en listos");
             //Enviar mensaje a Memoria para obtener valor de tabla de páginas.

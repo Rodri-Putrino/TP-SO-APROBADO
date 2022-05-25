@@ -2,6 +2,7 @@
 #define SHARED_UTILS_H
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include "./shared_log.h"
 #include "./shared_config.h"
@@ -10,7 +11,7 @@
 typedef struct
 {
 	int id;
-	ssize_t tam_proceso; //(En bytes)
+	int tam_proceso; //(En bytes)
 	t_list* instrucciones;
 	int program_counter; //Indice de la lista
 	int tabla_paginas; //indice a lista general de tablas nivel 1
