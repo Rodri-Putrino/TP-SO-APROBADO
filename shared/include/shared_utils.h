@@ -17,6 +17,27 @@ typedef struct
 	int estimacion_rafaga;
 } t_pcb;
 
+typedef struct
+{
+	int num_pag;
+	int dir; //MARCO
+	int bit_presencia;
+	int bit_uso;
+	int bit_modificacion;
+}entrada_tabla_N2;
+
+typedef struct
+{
+	int num_tabla; //id tabla2
+	int dir; //index en lista general de tablasN2
+} entrada_tabla_N1;
+
+typedef t_list t_tablaN2; //elementos tipo entrada_tabla_N2
+typedef t_list t_tablaN1; //elementos tipo entrada_tabla_N1
+
+int tam_pagina;
+int paginas_por_tabla;
+
 void finalizar_programa(t_log*, t_config*);
 
 #endif
