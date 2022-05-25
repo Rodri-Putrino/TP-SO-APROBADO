@@ -63,17 +63,12 @@ void atender_pcb_para_ejecutar(void* conexion) {
     switch(op_code)
     {
         case RECIBIR_PCB:
+
             log_info(logger_CPU, "Petición recibida: RECIBIR_PCB");
-            t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
-
-            //realizar_ciclo_de_instruccion(pcb);
-            sleep(3);
-
-            t_paquete* paquete = crear_paquete(EXIT);
-            agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
-            enviar_paquete(paquete, una_conexion, logger_CPU);
-            eliminar_paquete(paquete);
-
+            //t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
+            t_pcb* pcb = recibir_pcb(una_conexion, logger_CPU);
+            realizar_ciclo_de_instruccion(pcb, una_conexion);
+            log_info(logger_CPU, "PCB recibido");
             
             break;
 
@@ -81,7 +76,7 @@ void atender_pcb_para_ejecutar(void* conexion) {
             log_error(logger_CPU, "El OP_CODE recibido es inválido");
     }
 
-    liberar_conexion(una_conexion);
+    //liberar_conexion(una_conexion);
 
     log_info(logger_CPU, "El cliente se ha desconectado");
 }

@@ -13,8 +13,6 @@ t_paquete* leer_archivo(char *path)
 {
     FILE *codigo = fopen(path, "r");
     char *linea = (char*)malloc(LARGO_LINEA_MAX);
-    //t_instruccion *inst;
-
 
     t_paquete *paquete = crear_paquete(NUEVO_PROCESO);
     while(!feof(codigo))
@@ -23,15 +21,11 @@ t_paquete* leer_archivo(char *path)
         if(strcmp(linea, "") != 0)
         {
             agregar_instruccion_a_paquete(linea, paquete);
-            //inst = string_a_instruccion(linea);
-            //agregar_a_paquete(paquete, inst, sizeof(t_instruccion));
-            //free(inst);
         }
     }
 
     free(linea);
     fclose(codigo);
-
     return paquete;
 }
 
@@ -43,19 +37,12 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
     int op;
     for(op = 0; strcmp(palabras_linea[0], codigos_instrucciones[op]) != 0 && op < 6; op++);
 
-    //if(op == 6)
-    //{
-        //ERROR: OPERACION NO VALIDA
-        //return NULL;
-    //}
-
     instruccion->op = op;
     switch(instruccion->op)
     {
         case NO_OP:
             instruccion->arg[0] = -1;
             instruccion->arg[1] = -1;
-            //NOTA: en vez de enviar NO_OP 5 enviar 5 veces el codigo NO_OP? Yes
             for(int i = 0; i< atoi(palabras_linea[1]); i++) {
                 agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
             }
@@ -103,8 +90,6 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             instruccion->arg[1] = -1;
             free(palabras_linea[0]);
             agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-
-            //SIN ARGUMENTOS
             break;
 
         default:
@@ -112,8 +97,8 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             break;
     }
 
-    
     free(palabras_linea);
+    free(instruccion);
 }
 
 /* VERSION ANTERIOR

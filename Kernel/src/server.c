@@ -1,5 +1,14 @@
 #include "../include/server.h"
 
+static char* codigos_instrucciones[6] = {
+    "NO_OP",
+    "I/O",
+    "READ",
+    "WRITE",
+    "COPY",
+    "EXIT"
+};
+
 void escuchar_procesos_nuevos() {
     int socket_servidor = iniciar_servidor(logger, "KERNEL", ip_escucha, puerto_escucha);
     log_info(logger, "Servidor Kernel iniciado");
@@ -43,14 +52,14 @@ void atender_procesos_nuevos(void* conexion) {
                 //printf("Instruccion %s\n", i);
 
                 t_instruccion *i = list_iterator_next(iterador);
-                printf("Instruccion %d\nargumento 1: %d\nargumento 2: %d\n", i->op, i->arg[0], i->arg[1]);
+                printf("Instruccion %s \n\t Argumento 1: %d\n\t Argumento 2: %d\n", codigos_instrucciones[i->op], i->arg[0], i->arg[1]);
             }
 
             t_pcb* pcb_nuevo = crear_proceso(conexion_consola, atoi(tamanio_proceso), instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
 
-            list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);
+            list_iterator_destroy(iterador);
 
             break;
 

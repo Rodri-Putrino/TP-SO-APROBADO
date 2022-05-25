@@ -4,10 +4,11 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <commons/log.h>
-#include <commons/collections/list.h>
 #include <string.h>
 #include <stdlib.h>
+#include "./shared_utils.h"
+#include <commons/log.h>
+#include <commons/collections/list.h>
 
 typedef struct
 {
@@ -72,12 +73,15 @@ void agregar_a_paquete(t_paquete* paquete, void* valor, int tamanio);
 void enviar_paquete(t_paquete* paquete, int socket_cliente, t_log *logger);
 void eliminar_paquete(t_paquete* paquete);
 void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger);
+void enviar_pcb(op_code, t_pcb*, int, t_log *);
+void* serializar_pcb(op_code, t_pcb*, size_t*);
 
 //RECIBIR
 int recibir_operacion(int);
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger);
 void recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);
-
+t_pcb* recibir_pcb(int, t_log*);
+void* deserializar_pcb(t_pcb**, int);
 
 #endif
