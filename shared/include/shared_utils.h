@@ -4,9 +4,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <sys/time.h>
 #include "./shared_log.h"
 #include "./shared_config.h"
 #include <commons/collections/list.h>
+
+typedef struct rango_tiempo_t {
+  struct timeval inicio;
+  struct timeval fin;
+} rango_tiempo_t;
 
 typedef struct
 {
@@ -15,7 +21,9 @@ typedef struct
 	t_list* instrucciones;
 	int program_counter; //Indice de la lista
 	int tabla_paginas; //indice a lista general de tablas nivel 1
-	int estimacion_rafaga;
+	int estimacion_anterior;
+	int ultima_rafaga;
+	rango_tiempo_t* rafaga;
 } t_pcb;
 
 typedef struct

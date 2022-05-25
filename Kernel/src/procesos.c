@@ -52,7 +52,9 @@ t_pcb* crear_proceso(int id, int tam, t_list* lista_instrucciones) {
     pcb_nuevo->instrucciones = list_create();
     pcb_nuevo->program_counter = 0;
     //pcb_nuevo->tabla_paginas = ...
-    pcb_nuevo->estimacion_rafaga = estimacion_inicial;
+    pcb_nuevo->estimacion_anterior = estimacion_inicial;
+    pcb_nuevo->ultima_rafaga = 0;
+    pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
 
     t_list_iterator *iterador_proceso = list_iterator_create(lista_instrucciones);
     while(list_iterator_has_next(iterador_proceso))
@@ -116,6 +118,19 @@ t_pcb* desencolar_proceso_listo() {
     pthread_mutex_unlock(&procesos_listos_mutex);
 
   return proceso;
+}
+
+void ordenar_cola_listos() {
+
+	//list_iterate(cola_listos, (void*) iterator);
+
+    pthread_mutex_lock(&procesos_listos_mutex);
+
+    list_sort(cola_listos, (void*)mayor_prioridad);
+
+    list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
+
+    pthread_mutex_unlock(&procesos_listos_mutex);
 }
 
 /* --------------- Funciones Procesos en Ejecución --------------- */
@@ -278,4 +293,30 @@ int cantidad_procesos_en_sistema() {
     log_info(logger, "Cantidad de procesos en sistema: %d", cantidad_total);
 
     return cantidad_total;
+}
+
+void proceso_iniciar_rafaga(t_pcb *pcb) {
+  gettimeofday(&pcb->rafaga->inicio, NULL);
+}
+
+void proceso_finalizar_rafaga(t_pcb* pcb) {
+  gettimeofday(&pcb->rafaga->fin, NULL);
+  pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
+  //printf("\n\nTiempo de ráfaga: %d\n\n", pcb->ultima_rafaga);
+}
+
+void actualizar_estimacion_anterior(t_pcb* pcb)
+{
+	pcb->estimacion_anterior = proxima_rafaga_estimada(pcb);
+}
+
+int proxima_rafaga_estimada(t_pcb* pcb) {
+
+  // Fórmula SJF	pr = ur * alpha + (1 - alpha) * t estimado ur
+
+  return pcb->ultima_rafaga * alfa + (1 - alfa) * pcb->estimacion_anterior;
+}
+
+int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {
+    return proxima_rafaga_estimada(pcb1) <= proxima_rafaga_estimada(pcb2);
 }
