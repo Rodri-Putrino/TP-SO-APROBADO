@@ -6,24 +6,8 @@
 #include <commons/collections/list.h>
 #include <commons/bitarray.h>
 #include "./config.h"
-
-typedef struct
-{
-	int num_pag;
-	int dir; //MARCO
-	int bit_presencia;
-	int bit_uso;
-	int bit_modificacion;
-}entrada_tabla_N2;
-
-typedef struct
-{
-	int num_tabla; //id tabla2
-	int dir; //index en lista general de tablasN2
-} entrada_tabla_N1;
-
-typedef t_list t_tablaN2; //elementos tipo entrada_tabla_N2
-typedef t_list t_tablaN1; //elementos tipo entrada_tabla_N1
+#include "../../shared/include/shared_utils.h"
+#include "./uso_memoria.h"
 
 t_list *tablasN1, *tablasN2;
 
@@ -67,7 +51,7 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso);
 /*
     Libera las paginas
 */
-void eliminar_paginas_proceso(t_tablaN1 *t);
+void eliminar_paginas_proceso(int dir_tablaN1);
 
 /*
     Asigna memoria al puntero (inicializa memoria principal)

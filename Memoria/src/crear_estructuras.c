@@ -36,7 +36,8 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
 {
     t_tablaN1 *t = list_create();
     int paginas_necesarias = cantidad_paginas_necesarias(tamanio_proceso);
-    
+    int marcos_reservados = 0;
+
     for(int paginas_reservadas = 0; paginas_reservadas < paginas_necesarias; paginas_reservadas++)
     {
         if(paginas_reservadas % paginas_por_tabla == 0)
@@ -54,13 +55,24 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
         //buscar tabla en la dir que dice la entrada de tabla 1
         t_tablaN2 *aux2 = list_get(tablasN2, aux->dir);
         entrada_tabla_N2 *aux3 = agregar_entrada_tablaN2(aux2);
+        if(marcos_reservados < marcos_por_proceso)
+        {
+            aux3->dir = asignar_marco();
+            aux3->bit_presencia = 1;
+        }
+        else
+        {
+            //DIR ESTA DEFINIDA POR DISCO
+            aux3->bit_presencia = 0;
+        }
         aux3->num_pag = paginas_reservadas;
     }
     return t;
 }
 
-void eliminar_paginas_proceso(t_tablaN1 *t)
+void eliminar_paginas_proceso(int dir_tablaN1)
 {
+    t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
     t_list_iterator *iteradorN1 = list_iterator_create(t);
     while(list_iterator_has_next(iteradorN1))
     {
@@ -69,11 +81,15 @@ void eliminar_paginas_proceso(t_tablaN1 *t)
         while(list_iterator_has_next(iteradorN2))
         {
             entrada_tabla_N2 *e2 = list_iterator_next(iteradorN2);
+            if(e2->bit_presencia == 1)
+                liberar_marco_proceso(e2->dir);
             //NOTA: LIBERAR PAGINA
         }
         list_iterator_destroy(iteradorN2);
+        list_replace_and_destroy_element(tablasN2, e1->dir, NULL, eliminar_lista);
     }
     list_iterator_destroy(iteradorN1);
+    list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
 }
 
 /*---------------------MEMORIA GENERAL---------------------------------*/
@@ -82,7 +98,7 @@ void iniciar_memoria(void *mem, int tamanio_total)
 {
     mem = malloc(tamanio_total);
 }
-/*
+
 t_bitarray* crear_bitmap(int tamanio_memoria)
 {
     int cantidad_bits = ceil(tamanio_memoria / tam_pagina);
@@ -103,7 +119,13 @@ void eliminar_bitmap(t_bitarray *bitmap)
 {
     bitarray_destroy(bitmap);
 }
-*/
+
+void eliminador(void *info)
+{
+    if(info != NULL)
+        eliminar_lista(info);
+}
+
 void eliminar_lista(void *l)
 {
     list_destroy_and_destroy_elements(l, free);
@@ -117,8 +139,8 @@ void crear_listas_tablas()
 
 void eliminar_listas_tablas()
 {
-    list_destroy_and_destroy_elements(tablasN1, eliminar_lista);
-    list_destroy_and_destroy_elements(tablasN2, eliminar_lista);
+    list_destroy_and_destroy_elements(tablasN1, eliminador);
+    list_destroy_and_destroy_elements(tablasN2, eliminador);
 }
 
 int conseguir_marco_de_dir_fisica(int dir)
