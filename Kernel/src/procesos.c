@@ -39,6 +39,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     sem_init(&sem_proceso_nuevo, 0, 0);
     sem_init(&sem_proceso_listo, 0, 0);
     sem_init(&sem_proceso_suspendido_listo, 0, 0);
+    sem_init(&sem_proceso_a_suspender,0,0);
 }
 
 t_pcb* crear_proceso(int id, int tam, t_list* lista_instrucciones) {
@@ -156,15 +157,15 @@ t_pcb* desencolar_proceso_en_ejecucion() {
   return proceso;
 }
 
-bool hay_proceso_en_ejecucion() {
+int hay_proceso_en_ejecucion() {
 
     pthread_mutex_lock(&procesos_ejecutando_mutex);
 
-    bool resultado = list_is_empty(cola_ejecucion);
+    int resultado = (int) list_is_empty(cola_ejecucion);
  
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
 
-    return !resultado;
+    return resultado;
 }
 
 /* --------------- Funciones Procesos Bloqueados --------------- */
@@ -236,15 +237,15 @@ t_pcb* desencolar_proceso_suspendido_listo() {
     return proceso;
 }
 
-bool hay_proceso_suspendido_listo() {
+int hay_proceso_suspendido_listo() {
 
     pthread_mutex_lock(&procesos_suspendidos_listos_mutex);
 
-    bool resultado = list_is_empty(cola_suspendidos_listos);
+    int resultado = (int) list_is_empty(cola_suspendidos_listos);
  
     pthread_mutex_unlock(&procesos_suspendidos_listos_mutex);
 
-    return !resultado;
+    return resultado;
 }
 
 /* --------------- Funciones Procesos Terminados --------------- */

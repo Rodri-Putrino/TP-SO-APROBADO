@@ -10,14 +10,12 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 
-typedef struct
-{
+typedef struct {
     int op;
     int arg[2];
 }t_instruccion;
 
-typedef enum
-{
+typedef enum {
 	MENSAJE,
 	PAQUETE,
 	//FINALIZAR_PROCESO,
@@ -39,7 +37,7 @@ typedef enum
 	SOLICITUD_DIRECCION_FISICA
 }op_code;
 
-typedef enum{
+typedef enum {
     NO_OP,
     I_O,
     READ,
@@ -48,15 +46,13 @@ typedef enum{
     EXIT_INST
 }cod_instruccion;
 
-typedef struct
-{
+typedef struct {
 	int size;
 	void* stream;
 } t_buffer;
 
 
-typedef struct
-{
+typedef struct {
 	op_code codigo_operacion;
 	t_buffer* buffer;
 } t_paquete;

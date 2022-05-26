@@ -10,16 +10,21 @@ void iniciar_planificador_mediano_plazo() {
 
 void suspender_procesos() {
 
-    /*while (1) {
+    while (1) {
 
-        sem_wait(&sem_proceso_suspendido_listo);
+        sem_wait(&sem_proceso_a_suspender);
         
-        
-        sem_wait(&sem_suspender_proceso);
+        int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
 
-        mover_proceso_bloqueado_a_suspendido(); // enviar id a mem
+        t_pcb* pcb = desencolar_proceso_bloqueado();
+        if(puede_suspenderse(pcb)) {
+            enviar_pcb(pcb,SUSPENDER_PROCESO,pcb,socket_cliente,logger);
+            encolar_proceso_en_suspendidos_bloqueados(pcb);
+        }
+    }
+}
 
-        sem_post(&sem_proceso_suspendido);
+int puede_suspenderse(t_pcb* pcb) {
 
-    }*/
+    return (pcb->tiempo_bloqueado->fin - pcb->tiempo_bloqueado->inicio) > tiempo_max_bloqueado;
 }

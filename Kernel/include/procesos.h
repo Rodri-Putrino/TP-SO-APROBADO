@@ -21,7 +21,7 @@ t_pcb* desencolar_proceso_listo();
 
 void encolar_proceso_en_ejecucion(t_pcb*);
 t_pcb* desencolar_proceso_en_ejecucion();
-bool hay_proceso_en_ejecucion();
+int hay_proceso_en_ejecucion();
 
 void encolar_proceso_en_bloqueados(t_pcb*);
 t_pcb* desencolar_proceso_bloqueado();
@@ -31,7 +31,7 @@ t_pcb* desencolar_proceso_suspendido_bloqueado();
 
 void encolar_proceso_en_suspendidos_listos(t_pcb*);
 t_pcb* desencolar_proceso_suspendido_listo();
-bool hay_proceso_suspendido_listo();
+int hay_proceso_suspendido_listo();
 
 void encolar_proceso_en_terminados(t_pcb*);
 t_pcb* desencolar_proceso_terminado();
@@ -47,5 +47,6 @@ sem_t sem_multiprogramacion;
 sem_t sem_proceso_nuevo;
 sem_t sem_proceso_listo;
 sem_t sem_proceso_suspendido_listo;
+sem_t sem_proceso_a_suspender;
 
 #endif /* HEADERS_PROCESOS_H_ */

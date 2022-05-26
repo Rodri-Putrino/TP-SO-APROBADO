@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include <sys/time.h>
 #include "./shared_log.h"
 #include "./shared_config.h"
@@ -14,8 +13,7 @@ typedef struct rango_tiempo_t {
   struct timeval fin;
 } rango_tiempo_t;
 
-typedef struct
-{
+typedef struct {
 	int id;
 	int tam_proceso; //(En bytes)
 	t_list* instrucciones;
@@ -24,10 +22,10 @@ typedef struct
 	int estimacion_anterior;
 	int ultima_rafaga;
 	rango_tiempo_t* rafaga;
+	rango_tiempo_t* tiempo_bloqueado;
 } t_pcb;
 
-typedef struct
-{
+typedef struct {
 	int num_pag;
 	int dir; //MARCO
 	int bit_presencia;
@@ -35,8 +33,7 @@ typedef struct
 	int bit_modificacion;
 }entrada_tabla_N2;
 
-typedef struct
-{
+typedef struct {
 	int num_tabla; //id tabla2
 	int dir; //index en lista general de tablasN2
 } entrada_tabla_N1;
