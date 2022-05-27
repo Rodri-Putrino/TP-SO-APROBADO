@@ -81,6 +81,6 @@ void recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);
 t_pcb* recibir_pcb(int, t_log*);
 //void* deserializar_pcb(t_pcb**, int);
-t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo)
+t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo);
 
 #endif

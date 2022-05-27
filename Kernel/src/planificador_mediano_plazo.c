@@ -18,13 +18,8 @@ void suspender_procesos() {
 
         t_pcb* pcb = desencolar_proceso_bloqueado();
         if(puede_suspenderse(pcb)) {
-            enviar_pcb(pcb,SUSPENDER_PROCESO,pcb,socket_cliente,logger);
+            enviar_pcb(SUSPENDER_PROCESO, pcb, conexion_memoria, logger);
             encolar_proceso_en_suspendidos_bloqueados(pcb);
         }
     }
-}
-
-int puede_suspenderse(t_pcb* pcb) {
-
-    return (pcb->tiempo_bloqueado->fin - pcb->tiempo_bloqueado->inicio) > tiempo_max_bloqueado;
 }

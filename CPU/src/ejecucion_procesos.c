@@ -41,7 +41,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             usleep(retardo_noop);
 
             if(hay_interrupcion_para_atender()) {
-                enviar_pcb(ACTUALIZAR_PCB, pcb, socket_cliente, logger);
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
 
                 liberar_conexion(conexion_kernel);
             }
@@ -57,7 +57,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
             int segundos_bloqueado = instruccion->arg[0];
-           enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, socket_cliente, logger);
+           enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, conexion_kernel, logger_CPU);
 
             liberar_conexion(conexion_kernel);
          
@@ -116,7 +116,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
             enviar_paquete(paquete, conexion_kernel, logger_CPU);
             eliminar_paquete(paquete);
-            //enviar_pcb(ACTUALIZAR_PCB, pcb, socket_cliente, logger);
+            //enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger);
 
             list_destroy_and_destroy_elements(pcb, free);
             liberar_conexion(conexion_kernel);

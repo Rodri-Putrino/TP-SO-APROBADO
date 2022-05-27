@@ -56,6 +56,7 @@ t_pcb* crear_proceso(int id, int tam, t_list* lista_instrucciones) {
     pcb_nuevo->estimacion_anterior = estimacion_inicial;
     pcb_nuevo->ultima_rafaga = 0;
     pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
+    pcb_nuevo->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
 
     t_list_iterator *iterador_proceso = list_iterator_create(lista_instrucciones);
     while(list_iterator_has_next(iterador_proceso))
@@ -320,4 +321,11 @@ int proxima_rafaga_estimada(t_pcb* pcb) {
 
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {
     return proxima_rafaga_estimada(pcb1) <= proxima_rafaga_estimada(pcb2);
+}
+
+int puede_suspenderse(t_pcb* pcb) {
+
+    int tiempo_bloqueado;
+    tiempo_bloqueado = timedifference_msec(pcb->tiempo_bloqueado->inicio, pcb->tiempo_bloqueado->fin);
+    return tiempo_bloqueado > tiempo_max_bloqueado;
 }

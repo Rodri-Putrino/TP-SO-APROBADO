@@ -42,6 +42,7 @@ void proceso_iniciar_rafaga(t_pcb*);
 void proceso_finalizar_rafaga(t_pcb*);
 int proxima_rafaga_estimada(t_pcb* pcb);
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2);
+int puede_suspenderse(t_pcb*); 
 
 sem_t sem_multiprogramacion;
 sem_t sem_proceso_nuevo;
