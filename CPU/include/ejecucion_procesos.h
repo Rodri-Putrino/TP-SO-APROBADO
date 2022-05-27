@@ -10,8 +10,8 @@
 #include "../../shared/include/shared_mensajes.h"
 
 void realizar_ciclo_de_instruccion(t_pcb*, int); 
-int buscar_proxima_instruccion(t_pcb*); 
-void interpretar_instruccion_y_ejecutar_pcb(t_instruccion, t_pcb*, int); 
+t_instruccion* buscar_proxima_instruccion(t_pcb*); 
+void interpretar_instruccion_y_ejecutar_pcb(t_instruccion*, t_pcb*, int); 
 int hay_interrupcion_para_atender();
 
 #endif
