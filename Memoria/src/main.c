@@ -13,6 +13,7 @@ int main(void) {
 	procesar_archivo_config_memoria(config_memoria);
 
 	crear_listas_tablas();
+	
 
 /*	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);
