@@ -40,6 +40,7 @@ int cantidad_procesos_en_sistema();
 void ordenar_cola_listos();
 void proceso_iniciar_rafaga(t_pcb*);
 void proceso_finalizar_rafaga(t_pcb*);
+void actualizar_estimacion_anterior(t_pcb*);
 int proxima_rafaga_estimada(t_pcb* pcb);
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2);
 int puede_suspenderse(t_pcb*); 
