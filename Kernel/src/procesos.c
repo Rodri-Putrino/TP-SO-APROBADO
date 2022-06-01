@@ -130,7 +130,7 @@ void ordenar_cola_listos() {
 
     list_sort(cola_listos, (void*)mayor_prioridad);
 
-    list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
+    //list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 }
@@ -246,7 +246,7 @@ int hay_proceso_suspendido_listo() {
  
     pthread_mutex_unlock(&procesos_suspendidos_listos_mutex);
 
-    return resultado;
+    return !resultado;
 }
 
 /* --------------- Funciones Procesos Terminados --------------- */
@@ -303,7 +303,7 @@ void proceso_iniciar_rafaga(t_pcb *pcb) {
 
 void proceso_finalizar_rafaga(t_pcb* pcb) {
   gettimeofday(&pcb->rafaga->fin, NULL);
-  pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
+  //pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
   //printf("\n\nTiempo de ráfaga: %d\n\n", pcb->ultima_rafaga);
 }
 
@@ -326,6 +326,7 @@ int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {
 int puede_suspenderse(t_pcb* pcb) {
 
     int tiempo_bloqueado;
-    tiempo_bloqueado = timedifference_msec(pcb->tiempo_bloqueado->inicio, pcb->tiempo_bloqueado->fin);
-    return tiempo_bloqueado > tiempo_max_bloqueado;
+    //tiempo_bloqueado = timedifference_msec(pcb->tiempo_bloqueado->inicio, pcb->tiempo_bloqueado->fin);
+   //return tiempo_bloqueado > tiempo_max_bloqueado;
+   return 1;
 }

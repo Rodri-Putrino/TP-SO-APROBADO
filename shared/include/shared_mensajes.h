@@ -83,4 +83,9 @@ t_pcb* recibir_pcb(int, t_log*);
 t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo);
 t_pcb* deserializar_pcb(void* stream);
 
+void enviar_pcb_test(op_code, t_pcb*, int, t_log *);
+void* serializar_pcb_test(op_code, t_pcb*);
+void recibir_pcb_test(int, uint8_t*, uint8_t*, t_log*);
+void deserializar_pcb_test(void*, uint8_t*, uint8_t*);
+
 #endif

@@ -14,8 +14,8 @@ typedef struct rango_tiempo_t {
 } rango_tiempo_t;
 
 typedef struct {
-	int id;
-	int tam_proceso; //(En bytes)
+	uint8_t id;
+	uint8_t tam_proceso; //(En bytes)
 	t_list* instrucciones;
 	int program_counter; //Indice de la lista
 	int tabla_paginas; //indice a lista general de tablas nivel 1
