@@ -233,18 +233,19 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 void enviar_pcb(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logger) {
 
 	size_t bytes;
-	void* a_enviar = serializar_pcb(cod_op, pcb, &bytes);
-	if(send(socket_cliente, a_enviar, bytes, 0) <= 0)
+	void* stream = serializar_pcb(cod_op, pcb, &bytes);
+	if(send(socket_cliente, stream, bytes, 0) != bytes)
 		log_error(logger, "Los datos no se enviaron correctamente");
 
-	free(a_enviar);
+	free(stream);
 }
 
 void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
 
     *bytes = sizeof(op_code) + // cop
-			 sizeof(ssize_t) + // tamanio proceso
- 			 sizeof(int)      // tamanio id
+			 sizeof(size_t) +
+			 sizeof(int) + // tamanio proceso
+ 			 sizeof(int)       // tamanio id
 			  /*
 		 	 sizeof(t_list) +  // tamanio instrucciones
 			 sizeof(int) +     // tamanio program counter
@@ -253,17 +254,22 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
 			 */
     ;
 
-	size_t sz_proceso = *bytes - sizeof(op_code) - sizeof(ssize_t);
+	size_t size_payload = *bytes - sizeof(op_code) - sizeof(size_t);
+
+	//size_t sz_proceso = *bytes - sizeof(op_code) - sizeof(ssize_t);
 
     void* stream = malloc(*bytes);
 	int desplazamiento = 0;
 
     memcpy(stream + desplazamiento, &cod_op, sizeof(op_code));
 	desplazamiento += sizeof(op_code);
-	memcpy(stream + desplazamiento, &sz_proceso, sizeof(ssize_t));
-	desplazamiento += sizeof(ssize_t);
-	memcpy(stream + desplazamiento, &(pcb->id), sizeof(int));
+	memcpy(stream + desplazamiento, &size_payload, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+	memcpy(stream + desplazamiento, &(pcb->tam_proceso), sizeof(int));
 	desplazamiento += sizeof(int);
+	memcpy(stream + desplazamiento, &(pcb->id), sizeof(int));
+
+	//desplazamiento += sizeof(int);
 	/*
 	memcpy(stream + desplazamiento, &(pcb->instrucciones), sizeof(t_list));
 	desplazamiento += sizeof(t_list);
@@ -283,28 +289,182 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* bytes) {
 
 t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
 
+	t_pcb* pcb;
+	size_t size_payload;
+	
+	if (recv(socket_cliente, &size_payload, sizeof(size_t), 0) != sizeof(size_t))
+        return false;
+
+    void* stream = malloc(size_payload);
+    if (recv(socket_cliente, stream, size_payload, 0) != size_payload) {
+		log_error(logger, "Los datos no se recibieron correctamente");
+    }
+
+    pcb = deserializar_pcb(stream);
+
+    free(stream);
+
+	return pcb; 
+}
+
+t_pcb* deserializar_pcb(void* stream) {
+	
+	t_pcb* pcb = malloc(sizeof(t_pcb));
+	uint8_t tam_proceso = 0;
+	uint8_t id = 0;
+	int desplazamiento = 0;
+
+	printf("Despues de primer memcopy");
+	memcpy((void*) tam_proceso, stream, sizeof(uint8_t));
+	printf("Tam proceso %d", (int) tam_proceso);
+
+	desplazamiento += sizeof(uint8_t);
+	
+	memcpy((void*) id, stream + desplazamiento, sizeof(uint8_t));
+	printf("ID %d", id);
+
+	desplazamiento += sizeof(uint8_t);
+	
+	return pcb;
+}
+
+void enviar_pcb_test(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logger) {
+
+	size_t size = sizeof(op_code) + sizeof(uint8_t) * 2;
+	log_info(logger, "TAM antes de serializar: %u", pcb->tam_proceso);
+	log_info(logger, "ID antes de serializar: %u", pcb->id);
+	void* stream = serializar_pcb_test(cod_op, pcb);
+	if(send(socket_cliente, stream, size, 0) != size)
+		log_error(logger, "Los datos no se enviaron correctamente");
+
+	free(stream);
+}
+
+void* serializar_pcb_test(op_code cod_op, t_pcb* pcb) {
+
+    /**bytes = sizeof(op_code) + // cop
+			 sizeof(size_t) +
+			 sizeof(int) + // tamanio proceso
+ 			 sizeof(int)       // tamanio id
+    ;
+
+	size_t size_payload = *bytes - sizeof(op_code) - sizeof(size_t);
+	
+    void* stream = malloc(*bytes);*/
+	void* stream = malloc(sizeof(op_code) + sizeof(uint8_t) * 2);
+	//int desplazamiento = 0;
+
+    memcpy(stream, &cod_op, sizeof(op_code));
+	memcpy(stream + sizeof(op_code), &pcb->tam_proceso, sizeof(uint8_t));
+	memcpy(stream + sizeof(op_code) + sizeof(uint8_t), &pcb->id, sizeof(uint8_t));
+
+    return stream;
+}
+
+void recibir_pcb_test(int socket_cliente, uint8_t* tam_proceso, uint8_t* id, t_log* logger) {
+
+	t_pcb* pcb;
+	//size_t size_payload;
+	size_t size_payload = sizeof(uint8_t) * 2;
+    void* stream = malloc(size_payload);
+
+	/*if (recv(socket_cliente, &size_payload, sizeof(size_t), 0) != sizeof(size_t))
+        return false;*/
+
+    if (recv(socket_cliente, stream, size_payload, 0) != size_payload) {
+		log_error(logger, "Los datos no se recibieron correctamente");
+    }
+
+    deserializar_pcb_test(stream, tam_proceso, id);
+    free(stream); 
+}
+
+void deserializar_pcb_test(void* stream, uint8_t* tam_proceso, uint8_t* id) {
+	
+	//t_pcb* pcb = malloc(sizeof(t_pcb));
+
+	memcpy(tam_proceso, stream, sizeof(uint8_t));
+	memcpy(id, stream+sizeof(uint8_t), sizeof(uint8_t));
+}
+
+void enviar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, int socket_cliente, t_log* logger) {
+
+	size_t bytes;
+	void* a_enviar = serializar_pcb(cod_op, pcb, &bytes);
+	if(send(socket_cliente, a_enviar, bytes, 0) <= 0)
+		log_error(logger, "Los datos no se enviaron correctamente");
+
+	free(a_enviar);
+}
+
+void* serializar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, size_t* bytes) {
+
+    *bytes = sizeof(op_code) + // cop
+			 sizeof(int) + // tamanio proceso
+ 			 sizeof(int)       // tamanio id
+			  /*
+		 	 sizeof(t_list) +  // tamanio instrucciones
+			 sizeof(int) +     // tamanio program counter
+			 sizeof(int) +     // tamanio tabla de páginas
+			 sizeof(int)       // tamanio estimacion de ráfaga
+			 */
+    ;
+
+	//size_t sz_proceso = *bytes - sizeof(op_code) - sizeof(ssize_t);
+
+    void* stream = malloc(*bytes);
+	int desplazamiento = 0;
+
+    memcpy(stream + desplazamiento, &cod_op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+	//memcpy(stream + desplazamiento, &sz_proceso, sizeof(ssize_t));
+	memcpy(stream + desplazamiento, &(pcb->tam_proceso), sizeof(int));
+	desplazamiento += sizeof(int);
+	memcpy(stream + desplazamiento, &(pcb->id), sizeof(int));
+	//desplazamiento += sizeof(int);
+	/*
+	memcpy(stream + desplazamiento, &(pcb->instrucciones), sizeof(t_list));
+	desplazamiento += sizeof(t_list);
+
+	memcpy(stream + desplazamiento, &(pcb->program_counter), sizeof(int));
+	desplazamiento += sizeof(int);
+
+	memcpy(stream + desplazamiento, &(pcb->tabla_paginas), sizeof(int));
+	desplazamiento += sizeof(int);
+
+	memcpy(stream + desplazamiento, &(pcb->estimacion_rafaga), sizeof(int));
+	desplazamiento += sizeof(int);
+
+	*/
+    return stream;
+}
+
+t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo) {
+
 	t_pcb* pcb = malloc(sizeof(t_pcb));
 	int size;
 	int desplazamiento = 0;
 	void* buffer;
-	int tamanio;
+	//int tamanio;
+
+	log_info(logger, "Antes de recibir_buffer");
 
 	buffer = recibir_buffer(&size, socket_cliente, logger);
-	
-	memcpy(&tamanio, buffer + desplazamiento, sizeof(op_code));
-	desplazamiento += sizeof(op_code);
 
-	memcpy(&tamanio, buffer + desplazamiento, sizeof(ssize_t));
-	desplazamiento += sizeof(ssize_t);
+	//memcpy(&tamanio, buffer + desplazamiento, sizeof(ssize_t));
+	//desplazamiento += sizeof(ssize_t);
 
-	memcpy(&pcb->tam_proceso, buffer + desplazamiento, tamanio);
-	desplazamiento += tamanio;
+	log_info(logger, "Despues de recibir_buffer");
 
-	memcpy(&tamanio, buffer + desplazamiento,sizeof(int));
+	memcpy(pcb->tam_proceso, buffer + desplazamiento, sizeof(int));
 	desplazamiento += sizeof(int);
 
-	memcpy(&pcb->id, buffer + desplazamiento, tamanio);
-	desplazamiento += tamanio;
+	//memcpy(&tamanio, buffer + desplazamiento,sizeof(int));
+	//desplazamiento += sizeof(int);
+	log_info(logger, "Despues de recibir tam");
+
+	memcpy(pcb->id, buffer + desplazamiento, sizeof(int));
+	//desplazamiento += tamanio;
 
 	/*memcpy(&tamanio, buffer + desplazamiento, sizeof(t_list));
 	desplazamiento += sizeof(t_list);
@@ -333,3 +493,4 @@ t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
 	free(buffer);
 	return pcb; 
 }
+

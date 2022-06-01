@@ -10,14 +10,12 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 
-typedef struct
-{
+typedef struct {
     int op;
     int arg[2];
 }t_instruccion;
 
-typedef enum
-{
+typedef enum {
 	MENSAJE,
 	PAQUETE,
 	//FINALIZAR_PROCESO,
@@ -39,7 +37,7 @@ typedef enum
 	SOLICITUD_DIRECCION_FISICA
 }op_code;
 
-typedef enum{
+typedef enum {
     NO_OP,
     I_O,
     READ,
@@ -48,15 +46,13 @@ typedef enum{
     EXIT_INST
 }cod_instruccion;
 
-typedef struct
-{
+typedef struct {
 	int size;
 	void* stream;
 } t_buffer;
 
 
-typedef struct
-{
+typedef struct {
 	op_code codigo_operacion;
 	t_buffer* buffer;
 } t_paquete;
@@ -75,6 +71,8 @@ void eliminar_paquete(t_paquete* paquete);
 void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger);
 void enviar_pcb(op_code, t_pcb*, int, t_log *);
 void* serializar_pcb(op_code, t_pcb*, size_t*);
+void enviar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, int socket_cliente, t_log* logger);
+void* serializar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, size_t* bytes);
 
 //RECIBIR
 int recibir_operacion(int);
@@ -82,6 +80,12 @@ void* recibir_buffer(int* size, int socket_cliente, t_log *logger);
 void recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);
 t_pcb* recibir_pcb(int, t_log*);
-void* deserializar_pcb(t_pcb**, int);
+t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo);
+t_pcb* deserializar_pcb(void* stream);
+
+void enviar_pcb_test(op_code, t_pcb*, int, t_log *);
+void* serializar_pcb_test(op_code, t_pcb*);
+void recibir_pcb_test(int, uint8_t*, uint8_t*, t_log*);
+void deserializar_pcb_test(void*, uint8_t*, uint8_t*);
 
 #endif

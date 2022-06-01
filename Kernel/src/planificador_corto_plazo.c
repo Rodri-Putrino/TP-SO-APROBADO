@@ -46,7 +46,13 @@ void planificar_procesos() {
             t_pcb* pcb = desencolar_proceso_listo();
             encolar_proceso_en_ejecucion(pcb);
             
-            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
+            log_info(logger, "Antes de enviar PCB a CPU");
+            t_pcb* un_pcb = malloc(sizeof(t_pcb));
+
+            un_pcb->tam_proceso = 8;
+            un_pcb->id = 5;
+
+            enviar_pcb_test(RECIBIR_PCB, un_pcb, conexion_dispatch, logger);
             /*
             t_paquete* paquete = crear_paquete(RECIBIR_PCB);
             agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
