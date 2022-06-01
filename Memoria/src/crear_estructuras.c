@@ -36,7 +36,6 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
 {
     t_tablaN1 *t = list_create();
     int paginas_necesarias = cantidad_paginas_necesarias(tamanio_proceso);
-    int marcos_reservados = 0;
 
     for(int paginas_reservadas = 0; paginas_reservadas < paginas_necesarias; paginas_reservadas++)
     {
@@ -55,16 +54,10 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
         //buscar tabla en la dir que dice la entrada de tabla 1
         t_tablaN2 *aux2 = list_get(tablasN2, aux->dir);
         entrada_tabla_N2 *aux3 = agregar_entrada_tablaN2(aux2);
-        if(marcos_reservados < marcos_por_proceso)
-        {
-            aux3->dir = asignar_marco();
-            aux3->bit_presencia = 1;
-        }
-        else
-        {
-            //DIR ESTA DEFINIDA POR DISCO
-            aux3->bit_presencia = 0;
-        }
+        
+        //DIR ESTA DEFINIDA POR DISCO
+        aux3->bit_presencia = 0;
+        
         aux3->num_pag = paginas_reservadas;
     }
     return t;
@@ -92,7 +85,54 @@ void eliminar_paginas_proceso(int dir_tablaN1)
     list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
 }
 
+void reservar_marcos_proceso(int id)
+{
+    t_reserva_marcos *aux = malloc(sizeof(t_reserva_marcos));
+
+    int cantidad_marcos_reservados = 0;
+    for(int i = 0; cantidad_marcos_reservados < marcos_por_proceso; i++)
+    {
+        if(bitarray_test_bit(marcos_memoria, i))
+        {
+            int *marco = malloc(sizeof(int));
+            *marco = i;
+            list_add(aux->marcos_reservados, marco);
+
+            bitarray_clean_bit(marcos_memoria, i);
+            cantidad_marcos_reservados++;
+        }
+    }
+    aux->id_proceso = id;
+    list_add(marcos_reservados_por_procesos, aux);
+}
+
+void liberar_marcos_proceso(int id)
+{
+    int i = 0;
+    t_reserva_marcos *aux = list_get(marcos_reservados_por_procesos, i);
+    for(i = 1; aux->id_proceso != id; i++)
+    {
+        aux = list_get(marcos_reservados_por_procesos, i);
+    }
+    aux = list_remove(marcos_reservados_por_procesos, i);
+
+    desmarcar_bitmap(aux->marcos_reservados);
+
+    list_destroy_and_destroy_elements(aux->marcos_reservados, free);
+    free(aux);
+}
+
 /*---------------------MEMORIA GENERAL---------------------------------*/
+
+void desmarcar_bitmap(t_list *marcos)
+{
+    t_list_iterator *iterador = list_iterator_create(marcos);
+    while(list_iterator_has_next(iterador))
+    {
+        int *marco = list_iterator_next(iterador);
+        bitarray_set_bit(marcos_memoria, *marco);
+    }
+}
 
 void iniciar_memoria(void *mem, int tamanio_total)
 {
@@ -117,7 +157,8 @@ t_bitarray* crear_bitmap(int tamanio_memoria)
 
 void eliminar_bitmap(t_bitarray *bitmap)
 {
-    bitarray_destroy(bitmap);
+    free(bitmap->bitarray);
+    free(bitmap);
 }
 
 void eliminador(void *info)
@@ -190,6 +231,16 @@ entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag)
     int num_entrada_n2 = pag % paginas_por_tabla;
     entrada_tabla_N2 *e2 = list_get(t2, num_entrada_n2);
     return e2;
+}
+
+t_list* conseguir_numeros_marcos_proceso(int id)
+{
+    t_reserva_marcos *ret = list_get(marcos_reservados_por_procesos, 0);
+    for(int i = 1; ret->id_proceso != id; i++)
+    {
+        ret = list_get(marcos_reservados_por_procesos, i);
+    }
+    return ret->marcos_reservados;
 }
 
 t_list* conseguir_marcos_proceso(int dir_tablaN1)

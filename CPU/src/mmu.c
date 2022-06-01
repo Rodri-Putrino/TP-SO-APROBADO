@@ -6,6 +6,13 @@ int traducir_dir_logica(int dir, t_pcb *proceso, t_log *logger)
 	int socket_memoria;
 
 	int numero_pagina = floor(dir / tam_pagina);
+
+	//BUSCAR EN TLB
+	int result_tlb = buscar_tlb(numero_pagina);
+	//SI NO ES PAGE FAULT, RETORNAR RESULTADO
+	if(result_tlb != -1)
+		return result_tlb;
+
 	int dir_entradaN1 = floor(numero_pagina / paginas_por_tabla);
 
 	//ENVIAR DIR TABLA N1 Y NUM ENTRADA TABLA NIVEL 1

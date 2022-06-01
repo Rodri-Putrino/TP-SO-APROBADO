@@ -86,16 +86,3 @@ void traer_pagina_a_memoria(int dir_tablaN1, int pag)
     e->dir = 0;//aplicar algoritmo
     e->bit_presencia = 1;
 }
-
-int asignar_marco()
-{
-    int num_marco;
-    for(num_marco = 0; !bitarray_test_bit(marcos_memoria, num_marco); num_marco++);
-    bitarray_set_bit(marcos_memoria, num_marco);
-    return num_marco;
-}
-
-void liberar_marco_proceso(int dir)
-{
-    bitarray_clean_bit(marcos_memoria, dir);
-}

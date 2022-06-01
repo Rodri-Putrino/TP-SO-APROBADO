@@ -9,6 +9,12 @@
 #include "../../shared/include/shared_utils.h"
 #include "./uso_memoria.h"
 
+typedef struct
+{
+    int id_proceso;
+    t_list *marcos_reservados;
+}t_reserva_marcos;
+
 t_list *tablasN1, *tablasN2;
 
 //MEMORIA PRINCIPAL (espacio usuario)
@@ -16,6 +22,9 @@ void *memoria;
 
 //BITMAP (cuales marcos estan vacios)
 t_bitarray *marcos_memoria;
+
+//LISTA DE PROCESOS EN MEMORIA CON SUS MARCOS RESERVADOS (TIPO t_resrva_marcos)
+t_list *marcos_reservados_por_procesos;
 
 /* 
     Crea una entrada de tablaN1
@@ -96,6 +105,13 @@ entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag);
     Devuelve lista de paginas que estan en memoria de un proceso
 */
 t_list* conseguir_marcos_proceso(int dir_tablaN1);
+
+t_list* conseguir_numeros_marcos_proceso(int id);
+
+
+void reservar_marcos_proceso(int id);
+void liberar_marcos_proceso(int id);
+void desmarcar_bitmap(t_list *marcos);
 
 //funcion auxiliar
 void eliminar_lista(void *l);
