@@ -8,7 +8,7 @@ int traducir_dir_logica(int dir, t_pcb *proceso, t_log *logger)
 	int numero_pagina = floor(dir / tam_pagina);
 
 	//BUSCAR EN TLB
-	int result_tlb = buscar_tlb(numero_pagina);
+	int result_tlb = buscar_pagina_tlb(numero_pagina);
 	//SI NO ES PAGE FAULT, RETORNAR RESULTADO
 	if(result_tlb != -1)
 		return result_tlb;
@@ -41,7 +41,7 @@ int traducir_dir_logica(int dir, t_pcb *proceso, t_log *logger)
 
 	int *dir_marco = list_get(datos2, 0);
 	int desplazamiento = *dir_marco - numero_pagina * tam_pagina;
-	return dir_marco + desplazamiento;
+	return (*dir_marco) + desplazamiento;
 }
 
 int exceso_de_dato_en_pagina(int dir_logica)
@@ -51,7 +51,7 @@ int exceso_de_dato_en_pagina(int dir_logica)
 	return max(desplazamiento + sizeof(int) - tam_pagina, 0);
 }
 
-int resto_pagina(dir_logica)
+int resto_pagina(int dir_logica)
 {
 	return tam_pagina - (dir_logica % tam_pagina);
 }
@@ -72,7 +72,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, t_log *logger)
 		{
 			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
 			bytes_por_procesar -= resto_pag;
-			resto_pag = resto_pagina(dir_logica + resto_pagina);
+			resto_pag = resto_pagina(dir_logica + resto_pag);
 		}
 	}
 }
