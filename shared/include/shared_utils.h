@@ -14,13 +14,13 @@ typedef struct rango_tiempo_t {
 } rango_tiempo_t;
 
 typedef struct {
-	uint8_t id;
-	uint8_t tam_proceso; //(En bytes)
+	uint32_t id;
+	uint32_t tam_proceso; //(En bytes)
 	t_list* instrucciones;
-	int program_counter; //Indice de la lista
-	int tabla_paginas; //indice a lista general de tablas nivel 1
-	int estimacion_anterior;
-	int ultima_rafaga;
+	uint32_t program_counter; //Indice de la lista
+	uint32_t tabla_paginas; //indice a lista general de tablas nivel 1
+	uint32_t estimacion_anterior;
+	uint32_t ultima_rafaga;
 	rango_tiempo_t* rafaga;
 	rango_tiempo_t* tiempo_bloqueado;
 } t_pcb;

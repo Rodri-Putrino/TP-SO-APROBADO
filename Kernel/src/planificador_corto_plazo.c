@@ -51,6 +51,9 @@ void planificar_procesos() {
 
             un_pcb->tam_proceso = 27;
             un_pcb->id = 46;
+            un_pcb->program_counter = 0;
+            un_pcb->estimacion_anterior = estimacion_inicial;
+            un_pcb->ultima_rafaga = 0;
 
             enviar_pcb_test(RECIBIR_PCB, un_pcb, conexion_dispatch, logger);
             /*

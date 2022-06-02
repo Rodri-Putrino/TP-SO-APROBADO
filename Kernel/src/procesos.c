@@ -42,7 +42,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     sem_init(&sem_proceso_a_suspender,0,0);
 }
 
-t_pcb* crear_proceso(int id, int tam, t_list* lista_instrucciones) {
+t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     
     pthread_mutex_lock(&proceso_mutex);
 

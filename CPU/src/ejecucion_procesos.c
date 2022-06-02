@@ -41,7 +41,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             usleep(retardo_noop);
 
             if(hay_interrupcion_para_atender()) {
-                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
+                enviar_pcb_test(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
 
                 liberar_conexion(conexion_kernel);
             }

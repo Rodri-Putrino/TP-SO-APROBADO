@@ -69,8 +69,6 @@ void agregar_a_paquete(t_paquete* paquete, void* valor, int tamanio);
 void enviar_paquete(t_paquete* paquete, int socket_cliente, t_log *logger);
 void eliminar_paquete(t_paquete* paquete);
 void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger);
-void enviar_pcb(op_code, t_pcb*, int, t_log *);
-void* serializar_pcb(op_code, t_pcb*, size_t*);
 void enviar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, int socket_cliente, t_log* logger);
 void* serializar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, size_t* bytes);
 
@@ -79,9 +77,8 @@ int recibir_operacion(int);
 void* recibir_buffer(int* size, int socket_cliente, t_log *logger);
 void recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);
-t_pcb* recibir_pcb(int, t_log*);
 t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo);
-t_pcb* deserializar_pcb(void* stream);
+
 
 void enviar_pcb_test(op_code, t_pcb*, int, t_log *);
 void* serializar_pcb_test(op_code, t_pcb*);

@@ -74,6 +74,9 @@ void atender_pcb_para_ejecutar(void* conexion) {
             t_pcb* pcb = recibir_pcb_test(una_conexion, logger_CPU);
             log_info(logger_CPU, "El ID del PCB recibido es: %d", pcb->id);
             log_info(logger_CPU, "El tamaño del PCB recibido es: %d", pcb->tam_proceso);
+            log_info(logger_CPU, "Program_counter antes de serializar: %u", pcb->program_counter);
+	        log_info(logger_CPU, "Estimacion_anterior antes de serializar: %u", pcb->estimacion_anterior);
+	        log_info(logger_CPU, "Ultima_rafaga antes de serializar: %u", pcb->ultima_rafaga);
             //realizar_ciclo_de_instruccion(pcb, una_conexion);
             log_info(logger_CPU, "PCB recibido");
             
