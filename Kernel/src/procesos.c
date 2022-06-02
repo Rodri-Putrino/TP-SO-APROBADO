@@ -48,7 +48,7 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
 
     t_pcb* pcb_nuevo = malloc(sizeof(t_pcb));
 
-    pcb_nuevo->id = id;
+    pcb_nuevo->id = 5; //TODO igualar al id recibido por parámetro
     pcb_nuevo->tam_proceso = tam;
     pcb_nuevo->instrucciones = list_create();
     pcb_nuevo->program_counter = 0;
@@ -67,9 +67,6 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     list_iterator_destroy(iterador_proceso);
 
     pthread_mutex_unlock(&proceso_mutex);
-
-    log_info(logger, "TAM PROCESO: %d", tam);
-    log_info(logger, "TAM PROCESO: %d", pcb_nuevo->tam_proceso);
 
     return pcb_nuevo;
 }
@@ -298,13 +295,13 @@ int cantidad_procesos_en_sistema() {
 }
 
 void proceso_iniciar_rafaga(t_pcb *pcb) {
-  gettimeofday(&pcb->rafaga->inicio, NULL);
+    gettimeofday(&pcb->rafaga->inicio, NULL);
 }
 
 void proceso_finalizar_rafaga(t_pcb* pcb) {
-  gettimeofday(&pcb->rafaga->fin, NULL);
-  //pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
-  //printf("\n\nTiempo de ráfaga: %d\n\n", pcb->ultima_rafaga);
+    gettimeofday(&pcb->rafaga->fin, NULL);
+    pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
+    //printf("\n\nTiempo de ráfaga: %d\n\n", pcb->ultima_rafaga);
 }
 
 void actualizar_estimacion_anterior(t_pcb* pcb)
@@ -329,4 +326,8 @@ int puede_suspenderse(t_pcb* pcb) {
     //tiempo_bloqueado = timedifference_msec(pcb->tiempo_bloqueado->inicio, pcb->tiempo_bloqueado->fin);
    //return tiempo_bloqueado > tiempo_max_bloqueado;
    return 1;
+}
+
+float timedifference_msec(struct timeval t0, struct timeval t1) {
+    return (t1.tv_sec - t0.tv_sec) * 1000.0f + (t1.tv_usec - t0.tv_usec) / 1000.0f;
 }

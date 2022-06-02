@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include "./config.h"
@@ -44,6 +47,7 @@ void actualizar_estimacion_anterior(t_pcb*);
 int proxima_rafaga_estimada(t_pcb* pcb);
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2);
 int puede_suspenderse(t_pcb*); 
+float timedifference_msec(struct timeval, struct timeval);
 
 sem_t sem_multiprogramacion;
 sem_t sem_proceso_nuevo;
