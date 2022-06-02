@@ -361,9 +361,9 @@ void* serializar_pcb_test(op_code cod_op, t_pcb* pcb) {
     return stream;
 }
 
-void recibir_pcb_test(int socket_cliente, uint8_t* tam_proceso, uint8_t* id, t_log* logger) {
+t_pcb* recibir_pcb_test(int socket_cliente, t_log* logger) {
 
-	t_pcb* pcb;
+	//t_pcb* pcb;
 	//size_t size_payload;
 	size_t size_payload = sizeof(uint8_t) * 2;
     void* stream = malloc(size_payload);
@@ -375,16 +375,19 @@ void recibir_pcb_test(int socket_cliente, uint8_t* tam_proceso, uint8_t* id, t_l
 		log_error(logger, "Los datos no se recibieron correctamente");
     }
 
-    deserializar_pcb_test(stream, tam_proceso, id);
+    t_pcb* pcb = deserializar_pcb_test(stream);
     free(stream); 
+	return pcb;
 }
 
-void deserializar_pcb_test(void* stream, uint8_t* tam_proceso, uint8_t* id) {
+t_pcb* deserializar_pcb_test(void* stream) {
 	
-	//t_pcb* pcb = malloc(sizeof(t_pcb));
+	t_pcb* pcb = malloc(sizeof(t_pcb));
 
-	memcpy(tam_proceso, stream, sizeof(uint8_t));
-	memcpy(id, stream+sizeof(uint8_t), sizeof(uint8_t));
+	memcpy(&pcb->tam_proceso, stream, sizeof(uint8_t));
+	memcpy(&pcb->id, stream+sizeof(uint8_t), sizeof(uint8_t));
+
+	return pcb;
 }
 
 void enviar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, int socket_cliente, t_log* logger) {

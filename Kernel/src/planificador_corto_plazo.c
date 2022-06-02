@@ -49,8 +49,8 @@ void planificar_procesos() {
             log_info(logger, "Antes de enviar PCB a CPU");
             t_pcb* un_pcb = malloc(sizeof(t_pcb));
 
-            un_pcb->tam_proceso = 8;
-            un_pcb->id = 5;
+            un_pcb->tam_proceso = 27;
+            un_pcb->id = 46;
 
             enviar_pcb_test(RECIBIR_PCB, un_pcb, conexion_dispatch, logger);
             /*
