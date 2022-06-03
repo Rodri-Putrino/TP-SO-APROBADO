@@ -48,7 +48,7 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
 
     t_pcb* pcb_nuevo = malloc(sizeof(t_pcb));
 
-    pcb_nuevo->id = 5; //TODO igualar al id recibido por parámetro
+    pcb_nuevo->id = id;
     pcb_nuevo->tam_proceso = tam;
     pcb_nuevo->instrucciones = list_create();
     pcb_nuevo->program_counter = 0;

@@ -65,13 +65,8 @@ void atender_pcb_para_ejecutar(void* conexion) {
         case RECIBIR_PCB:
 
             log_info(logger_CPU, "Petición recibida: RECIBIR_PCB");
-            //t_list* pcb = recibir_paquete(una_conexion,logger_CPU);
-            //t_pcb* pcb = recibir_pcb(una_conexion, logger_CPU);
-            
-            uint8_t tam_proceso, id;
-            //t_pcb* pcb = malloc(sizeof(t_pcb));
 
-            t_pcb* pcb = recibir_pcb_test(una_conexion, logger_CPU);
+            t_pcb* pcb = recibir_pcb(una_conexion, logger_CPU);
             log_info(logger_CPU, "El ID del PCB recibido es: %d", pcb->id);
             log_info(logger_CPU, "El tamaño del PCB recibido es: %d", pcb->tam_proceso);
             log_info(logger_CPU, "Program_counter antes de serializar: %u", pcb->program_counter);

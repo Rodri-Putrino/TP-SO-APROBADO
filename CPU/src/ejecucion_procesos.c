@@ -19,10 +19,12 @@ void realizar_ciclo_de_instruccion(t_pcb* pcb, int conexion_kernel) {
 
 t_instruccion* buscar_proxima_instruccion(t_pcb* pcb) { 
     log_info(logger_CPU, "Etapa FETCH iniciada");
-    t_instruccion* instruccion = malloc(sizeof(t_instruccion));
+    
+    /*t_instruccion* instruccion = malloc(sizeof(t_instruccion));
     instruccion->op = EXIT;
     instruccion->arg[0] = -1;
-    instruccion->arg[1] = -1;
+    instruccion->arg[1] = -1;*/
+    t_instruccion* instruccion = list_get(pcb->instrucciones, pcb->program_counter);
 
     pcb->program_counter += 1;
 
@@ -41,7 +43,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             usleep(retardo_noop);
 
             if(hay_interrupcion_para_atender()) {
-                enviar_pcb_test(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
 
                 liberar_conexion(conexion_kernel);
             }
@@ -116,7 +118,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
             enviar_paquete(paquete, conexion_kernel, logger_CPU);
             eliminar_paquete(paquete);*/
-            enviar_pcb_test(EXIT, pcb, conexion_kernel, logger_CPU);
+            enviar_pcb(EXIT, pcb, conexion_kernel, logger_CPU);
 
             //list_destroy_and_destroy_elements(pcb, free);
             liberar_conexion(conexion_kernel);
