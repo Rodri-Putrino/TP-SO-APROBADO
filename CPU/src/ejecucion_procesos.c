@@ -19,7 +19,7 @@ void realizar_ciclo_de_instruccion(t_pcb* pcb, int conexion_kernel) {
 
 t_instruccion* buscar_proxima_instruccion(t_pcb* pcb) { 
     log_info(logger_CPU, "Etapa FETCH iniciada");
-    t_instruccion* instruccion;
+    t_instruccion* instruccion = malloc(sizeof(t_instruccion));
     instruccion->op = EXIT;
     instruccion->arg[0] = -1;
     instruccion->arg[1] = -1;
@@ -112,13 +112,13 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion EXIT");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
-            t_paquete* paquete = crear_paquete(EXIT);
+            /*t_paquete* paquete = crear_paquete(EXIT);
             agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
             enviar_paquete(paquete, conexion_kernel, logger_CPU);
-            eliminar_paquete(paquete);
-            //enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger);
+            eliminar_paquete(paquete);*/
+            enviar_pcb_test(EXIT, pcb, conexion_kernel, logger_CPU);
 
-            list_destroy_and_destroy_elements(pcb, free);
+            //list_destroy_and_destroy_elements(pcb, free);
             liberar_conexion(conexion_kernel);
 
             break;

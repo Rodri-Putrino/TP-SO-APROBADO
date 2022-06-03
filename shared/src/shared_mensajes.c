@@ -247,8 +247,14 @@ void enviar_pcb_test(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logg
 
 void* serializar_pcb_test(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 
+	int length_lista = list_size(pcb->instrucciones);
+	size_t size_instrucciones = sizeof(t_instruccion) * length_lista;
+	log_info(logger, "Size instrucciones: %zu", size_instrucciones);
+
  	*size = sizeof(op_code) +
 	 		sizeof(size_t) +
+			size_instrucciones + //tamanio lista de instrucciones
+			sizeof(t_instruccion) * length_lista + //tamanio de cada instruccion
 	 		sizeof(uint32_t) * 5;
 			//sizeof(rango_tiempo_t);
 
@@ -257,11 +263,13 @@ void* serializar_pcb_test(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logge
 
 	void* stream = malloc(*size);
 	int desplazamiento = 0;
+	int desplazamiento_lista = 0;
+	int indice = 0;
 
     memcpy(stream, &cod_op, sizeof(op_code));
 	desplazamiento += sizeof(op_code);
 	memcpy(stream + desplazamiento, &size_payload, sizeof(size_t));
-	desplazamiento += sizeof(size_t); 
+	desplazamiento += sizeof(size_t);
 	memcpy(stream + desplazamiento, &pcb->tam_proceso, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	memcpy(stream + desplazamiento, &pcb->id, sizeof(uint32_t));
@@ -272,6 +280,18 @@ void* serializar_pcb_test(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logge
 	desplazamiento += sizeof(uint32_t);
 	memcpy(stream + desplazamiento, &pcb->ultima_rafaga, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
+	
+	memcpy(stream + desplazamiento, &size_instrucciones, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+	
+	while(desplazamiento_lista < size_instrucciones)
+	{
+		t_instruccion* instruccion = (t_instruccion*) list_get(pcb->instrucciones, indice);
+		log_info(logger, "Instruccion a serializar: %d", instruccion->op);
+		memcpy(stream + desplazamiento + desplazamiento_lista, instruccion, sizeof(t_instruccion));
+		desplazamiento_lista += sizeof(t_instruccion);
+		indice ++;
+	}
 
     return stream;
 }
@@ -301,7 +321,9 @@ t_pcb* recibir_pcb_test(int socket_cliente, t_log* logger) {
 t_pcb* deserializar_pcb_test(void* stream) {
 	
 	t_pcb* pcb = malloc(sizeof(t_pcb));
+	size_t size_instrucciones;
 	int desplazamiento = 0;
+	int desplazamiento_lista = 0;
 
 	memcpy(&pcb->tam_proceso, stream, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
@@ -312,6 +334,24 @@ t_pcb* deserializar_pcb_test(void* stream) {
 	memcpy(&pcb->estimacion_anterior, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	memcpy(&pcb->ultima_rafaga, stream + desplazamiento, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+
+	memcpy(&size_instrucciones, stream + desplazamiento, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+	printf("Size instrucciones: %zu", size_instrucciones);
+	
+	pcb->instrucciones = list_create();
+
+	while(desplazamiento_lista < size_instrucciones)
+	{
+		t_instruccion* instruccion = malloc(sizeof(t_instruccion));
+		memcpy(instruccion, stream + desplazamiento + desplazamiento_lista, sizeof(t_instruccion));
+		printf("Instruccion deserializada: %d", instruccion);
+		list_add(pcb->instrucciones, instruccion);
+		desplazamiento_lista += sizeof(t_instruccion);
+	}
+
+	//free(instruccion);
 
 	return pcb;
 }

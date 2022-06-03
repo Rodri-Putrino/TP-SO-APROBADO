@@ -74,7 +74,8 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
     {
         case EXIT:
             log_info(logger, "Petición recibida: EXIT");
-            t_pcb* pcb = desencolar_proceso_en_ejecucion();
+            t_pcb* pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
+            t_pcb* pcb = recibir_pcb_test(conexion, logger);
             encolar_proceso_en_terminados(pcb);
             sem_post(&sem_multiprogramacion);
             enviar_mensaje("El proceso ha finalizado su ejecucion", pcb->id, logger);

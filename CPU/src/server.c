@@ -77,7 +77,7 @@ void atender_pcb_para_ejecutar(void* conexion) {
             log_info(logger_CPU, "Program_counter antes de serializar: %u", pcb->program_counter);
 	        log_info(logger_CPU, "Estimacion_anterior antes de serializar: %u", pcb->estimacion_anterior);
 	        log_info(logger_CPU, "Ultima_rafaga antes de serializar: %u", pcb->ultima_rafaga);
-            //realizar_ciclo_de_instruccion(pcb, una_conexion);
+            realizar_ciclo_de_instruccion(pcb, una_conexion);
             log_info(logger_CPU, "PCB recibido");
             
             break;
