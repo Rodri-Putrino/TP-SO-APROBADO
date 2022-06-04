@@ -15,10 +15,10 @@ int main(void) {
 	crear_listas_tablas();
 	
 
-/*	pthread_t hilo_servidor;
+	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);
 
-	pthread_join(hilo_servidor, NULL);*/
+	pthread_join(hilo_servidor, NULL);
 
 //	USADOR PARA PROBAR CREAR Y DESTRUIR TABLAS
 /*

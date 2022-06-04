@@ -9,11 +9,9 @@ void gestionar_mensaje (t_paquete* paquete_recibido, int socket_cliente, t_log* 
 				break;
 
 			case INICIALIZAR_ESTRUCTURAS:
-				/*
+				
 				log_info(logger, "Se recibio el mensaje INICIALIZAR_ESTRUCTURAS");
-				t_list *parametros = recibir_paquete(socket_cliente, logger);
-				int id = list_get(parametros, 0);
-				*/
+				
 				
 				break;
 
@@ -49,4 +47,4 @@ void gestionar_mensaje (t_paquete* paquete_recibido, int socket_cliente, t_log* 
 				printf("default de gestionarMensajes");
 				break;
 		}
-	}
+}
