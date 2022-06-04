@@ -12,16 +12,21 @@ int main(void) {
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
 
+	crear_listas_tablas();
+	
+
 	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);
 
 	pthread_join(hilo_servidor, NULL);
 
-	crear_listas_tablas();
-
 //	USADOR PARA PROBAR CREAR Y DESTRUIR TABLAS
 /*
+	t_tablaN1 *t_aux = crear_tablaN1(tam_pagina * 5);
+	list_add(tablasN1, t_aux);
 	t_tablaN1 *t = crear_tablaN1(tam_pagina * 10);
+	list_add(tablasN1, t);
+	eliminar_paginas_proceso(0);
 
 	t_list_iterator *i1 = list_iterator_create(t);
 	while(list_iterator_has_next(i1))
@@ -40,7 +45,6 @@ int main(void) {
 		list_iterator_destroy(i2);
 	}
 	list_iterator_destroy(i1);
-	list_add(tablasN1, t);
 */
 	eliminar_listas_tablas();
 

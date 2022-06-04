@@ -21,3 +21,5 @@
 - [Sistema de Inscripciones](https://inscripciones.utnso.com.ar/)
 - [Foro de Consultas](https://github.com/sisoputnfrba/foro)
 - [Commons](https://github.com/sisoputnfrba/so-commons-library/tree/master/src/commons)
+- [Documento de Pruebas](https://docs.google.com/document/d/1SBBTCweMCiBg6TPTt7zxdinRh4ealRasbu0bVlkty5o/edit?usp=sharing)
+- [Repo de Pruebas](https://github.com/sisoputnfrba/kiss-pruebas)

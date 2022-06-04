@@ -43,12 +43,16 @@ void planificar_procesos() {
         else {
             log_info(logger, "Algoritmo Plani: FIFO");
 
-            t_pcb* pcb_listo = desencolar_proceso_listo();
-            encolar_proceso_en_ejecucion(pcb_listo);
+            t_pcb* pcb = desencolar_proceso_listo();
+            encolar_proceso_en_ejecucion(pcb);
+            log_info(logger, "Antes de enviar PCB a CPU");
+            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
+            /*
             t_paquete* paquete = crear_paquete(RECIBIR_PCB);
-            agregar_a_paquete(paquete, pcb_listo, sizeof(t_pcb));
+            agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
             enviar_paquete(paquete, conexion_dispatch, logger);
             eliminar_paquete(paquete);
+            */
 
             recibir_pcb_luego_de_ejecutar(conexion_dispatch);
 
@@ -70,7 +74,9 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
     {
         case EXIT:
             log_info(logger, "Petición recibida: EXIT");
-            t_pcb* pcb = desencolar_proceso_en_ejecucion();
+            t_pcb* pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
+            //TODO liberar memoria, *tirar a la basura*
+            t_pcb* pcb = recibir_pcb(conexion, logger);
             encolar_proceso_en_terminados(pcb);
             sem_post(&sem_multiprogramacion);
             enviar_mensaje("El proceso ha finalizado su ejecucion", pcb->id, logger);

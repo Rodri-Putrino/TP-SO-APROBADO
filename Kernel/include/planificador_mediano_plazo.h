@@ -10,6 +10,7 @@
 #include "../../shared/include/shared_log.h"
 #include "../../shared/include/shared_utils.h"
 #include <commons/collections/list.h>
+#include "../include/shared_mensajes.h"
 
 void iniciar_planificador_mediano_plazo();
 void suspender_procesos();

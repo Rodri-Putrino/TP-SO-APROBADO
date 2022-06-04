@@ -1,5 +1,14 @@
 #include "../include/server.h"
 
+static char* codigos_instrucciones[6] = {
+    "NO_OP",
+    "I/O",
+    "READ",
+    "WRITE",
+    "COPY",
+    "EXIT"
+};
+
 void escuchar_procesos_nuevos() {
     int socket_servidor = iniciar_servidor(logger, "KERNEL", ip_escucha, puerto_escucha);
     log_info(logger, "Servidor Kernel iniciado");
@@ -31,10 +40,9 @@ void atender_procesos_nuevos(void* conexion) {
             t_list *instrucciones = recibir_paquete(conexion_consola, logger);
 
             //TOMAR TAMANIO PROCESO (ultimo elemento de lista)
-            char *tamanio_proceso = (char*) list_get(instrucciones, list_size(instrucciones) -1);
-            printf("Tamanio proceso: %d\n", atoi(tamanio_proceso));
+            char* tamanio_proceso = (char*) list_get(instrucciones, list_size(instrucciones) -1);
+            int tam_proceso = atoi(tamanio_proceso);
             list_remove_and_destroy_element(instrucciones, list_size(instrucciones) -1, free);
-
             t_list_iterator *iterador = list_iterator_create(instrucciones);
             while(list_iterator_has_next(iterador))
             {
@@ -43,14 +51,14 @@ void atender_procesos_nuevos(void* conexion) {
                 //printf("Instruccion %s\n", i);
 
                 t_instruccion *i = list_iterator_next(iterador);
-                printf("Instruccion %d\nargumento 1: %d\nargumento 2: %d\n", i->op, i->arg[0], i->arg[1]);
+                printf("Instruccion %s \n\t Argumento 1: %d\n\t Argumento 2: %d\n", codigos_instrucciones[i->op], i->arg[0], i->arg[1]);
             }
 
-            t_pcb* pcb_nuevo = crear_proceso(conexion_consola, atoi(tamanio_proceso), instrucciones);
+            t_pcb* pcb_nuevo = crear_proceso(conexion_consola, tam_proceso, instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
 
-            list_iterator_destroy(iterador);
             list_destroy_and_destroy_elements(instrucciones, free);
+            list_iterator_destroy(iterador);
 
             break;
 

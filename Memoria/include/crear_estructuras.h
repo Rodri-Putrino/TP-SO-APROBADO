@@ -6,29 +6,25 @@
 #include <commons/collections/list.h>
 #include <commons/bitarray.h>
 #include "./config.h"
+#include "../../shared/include/shared_utils.h"
+#include "./uso_memoria.h"
 
 typedef struct
 {
-	int num_pag;
-	int dir;
-	int bit_presencia;
-	int bit_uso;
-	int bit_modificacion;
-}entrada_tabla_N2;
-
-typedef struct
-{
-	int num_tabla; //id tabla2
-	int dir; //index en lista general de tablasN2
-} entrada_tabla_N1;
-
-typedef t_list t_tablaN2; //elementos tipo entrada_tabla_N2
-typedef t_list t_tablaN1; //elementos tipo entrada_tabla_N1
+    int id_proceso;
+    t_list *marcos_reservados;
+}t_reserva_marcos;
 
 t_list *tablasN1, *tablasN2;
 
 //MEMORIA PRINCIPAL (espacio usuario)
 void *memoria;
+
+//BITMAP (cuales marcos estan vacios)
+t_bitarray *marcos_memoria;
+
+//LISTA DE PROCESOS EN MEMORIA CON SUS MARCOS RESERVADOS (TIPO t_resrva_marcos)
+t_list *marcos_reservados_por_procesos;
 
 /* 
     Crea una entrada de tablaN1
@@ -64,7 +60,7 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso);
 /*
     Libera las paginas
 */
-void eliminar_paginas_proceso(t_tablaN1 *t);
+void eliminar_paginas_proceso(int id, int dir_tablaN1);
 
 /*
     Asigna memoria al puntero (inicializa memoria principal)
@@ -84,9 +80,42 @@ t_bitarray* crear_bitmap(int tamanio_memoria);
 */
 void eliminar_bitmap(t_bitarray *bitmap);
 
+/*
+    Si la tabla contiene una pagina con bit presencia == 1 y dir == marco
+        retorna entrada de esa pagina
+    Si no
+        retorna NULL
+*/
+entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco);
+
+
+/*
+    Busca la pagina que ocupa un numero de marco
+    NOTA: no se considera el caso en que la funcion sea llamada para un
+    marco vacio
+*/
+entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco);
+
+/*
+    Devuelve info de pagina dada una tabla nivel 1 y numero de pagina
+*/
+entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag);
+
+/*
+    Devuelve lista de paginas que estan en memoria de un proceso
+*/
+t_list* conseguir_marcos_proceso(int dir_tablaN1);
+
+t_list* conseguir_numeros_marcos_proceso(int id);
+
+
+void reservar_marcos_proceso(int id);
+void liberar_marcos_proceso(int id);
+void desmarcar_bitmap(t_list *marcos);
+
 //funcion auxiliar
 void eliminar_lista(void *l);
 void crear_listas_tablas();
 void eliminar_listas_tablas();
-
+int conseguir_marco_de_dir_fisica(int dir);
 #endif
