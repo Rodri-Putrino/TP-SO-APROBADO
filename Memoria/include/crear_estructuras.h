@@ -60,7 +60,7 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso);
 /*
     Libera las paginas
 */
-void eliminar_paginas_proceso(int dir_tablaN1);
+void eliminar_paginas_proceso(int id, int dir_tablaN1);
 
 /*
     Asigna memoria al puntero (inicializa memoria principal)

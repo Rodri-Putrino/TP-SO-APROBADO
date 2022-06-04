@@ -79,10 +79,8 @@ void* leer_memoria(int tamanio_dato, int dir)
 
 /*------------------------MANEJO PAGINAS--------------------------------*/
 
-void traer_pagina_a_memoria(int dir_tablaN1, int pag)
+void traer_pagina_a_memoria(entrada_tabla_N2 *e)
 {
-    entrada_tabla_N2 *e = conseguir_entrada_pagina(dir_tablaN1, pag);
-
     e->dir = 0;//aplicar algoritmo
     e->bit_presencia = 1;
 }

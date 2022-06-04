@@ -32,7 +32,8 @@ int traducir_dir_logica(int dir, t_pcb *proceso, t_log *logger)
 	
 	//ENVIAR DIR PAGINA
 	t_paquete *segundo_acceso = crear_paquete(SOLICITUD_MARCO);
-	agregar_a_paquete(segundo_acceso, &(e2->dir), sizeof(int));
+	agregar_a_paquete(segundo_acceso, &(proceso->id), sizeof(int));
+	agregar_a_paquete(segundo_acceso, e2, sizeof(entrada_tabla_N2));
 	enviar_paquete(primer_acceso, socket_memoria, logger);
 	//SI BIT PRESENCIA == 0 → TRAER PAGINA
 	//RECIBIR DIR MARCO

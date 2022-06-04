@@ -55,14 +55,15 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
         t_tablaN2 *aux2 = list_get(tablasN2, aux->dir);
         entrada_tabla_N2 *aux3 = agregar_entrada_tablaN2(aux2);
         
-        //DIR ESTA DEFINIDA POR DISCO
+        //DIR = NUMERO PAGINA * TAMANIO PAGINA
+        aux3->dir = aux3->num_pag * tam_pagina;
         aux3->bit_presencia = 0;
         
         aux3->num_pag = paginas_reservadas;
     }
     return t;
 }
-
+/* VERSION ANTERIOR
 void eliminar_paginas_proceso(int dir_tablaN1)
 {
     t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
@@ -83,6 +84,25 @@ void eliminar_paginas_proceso(int dir_tablaN1)
     }
     list_iterator_destroy(iteradorN1);
     list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
+}*/
+
+void eliminar_paginas_proceso(int id, int dir_tablaN1)
+{
+    t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
+    t_list_iterator *iteradorN1 = list_iterator_create(t);
+    while(list_iterator_has_next(iteradorN1))
+    {
+        entrada_tabla_N1 *e1 = list_iterator_next(iteradorN1);
+        t_tablaN2 *t2 = list_get(tablasN2, e1->dir);
+
+        list_clean_and_destroy_elements(t2, free);
+
+        list_replace_and_destroy_element(tablasN2, e1->dir, NULL, eliminar_lista);
+    }
+    list_iterator_destroy(iteradorN1);
+    list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
+
+    liberar_marcos_proceso(id);
 }
 
 void reservar_marcos_proceso(int id)
