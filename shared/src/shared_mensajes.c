@@ -344,6 +344,7 @@ t_pcb* deserializar_pcb(void* stream) {
 		memcpy(instruccion, stream + desplazamiento + desplazamiento_lista, sizeof(t_instruccion));
 		list_add(pcb->instrucciones, instruccion);
 		desplazamiento_lista += sizeof(t_instruccion);
+		free(instruccion);
 	}
 
 	//free(instruccion);

@@ -16,6 +16,7 @@ pthread_mutex_t procesos_bloqueados_mutex;
 pthread_mutex_t procesos_suspendidos_bloqueados_mutex;
 pthread_mutex_t procesos_suspendidos_listos_mutex;
 pthread_mutex_t procesos_terminados_mutex;
+pthread_mutex_t procesos_rafaga_mutex;
 
 void iniciar_estructuras_de_estados_de_procesos() {
     cola_nuevos = list_create();
@@ -34,6 +35,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     pthread_mutex_init(&procesos_suspendidos_bloqueados_mutex, NULL);
     pthread_mutex_init(&procesos_suspendidos_listos_mutex, NULL);
     pthread_mutex_init(&procesos_terminados_mutex, NULL);
+    pthread_mutex_init(&procesos_rafaga_mutex, NULL);
 
     sem_init(&sem_multiprogramacion, 0, grado_multiprogramacion);
     sem_init(&sem_proceso_nuevo, 0, 0);
@@ -52,7 +54,7 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pcb_nuevo->tam_proceso = tam;
     pcb_nuevo->instrucciones = list_create();
     pcb_nuevo->program_counter = 0;
-    //pcb_nuevo->tabla_paginas = ...
+    //pcb_nuevo->tabla_paginas = ... //TODO
     pcb_nuevo->estimacion_anterior = estimacion_inicial;
     pcb_nuevo->ultima_rafaga = 0;
     pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
@@ -69,6 +71,13 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pthread_mutex_unlock(&proceso_mutex);
 
     return pcb_nuevo;
+}
+
+void destruir_proceso(t_pcb* pcb) {
+    free(pcb->rafaga);
+    free(pcb->tiempo_bloqueado);
+    list_destroy_and_destroy_elements(pcb->instrucciones, free);
+    free(pcb);
 }
 
 /* --------------- Funciones Procesos Nuevos --------------- */
@@ -125,9 +134,8 @@ void ordenar_cola_listos() {
 
     pthread_mutex_lock(&procesos_listos_mutex);
 
+    list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
     list_sort(cola_listos, (void*)mayor_prioridad);
-
-    //list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 }
@@ -139,6 +147,7 @@ void encolar_proceso_en_ejecucion(t_pcb* proceso) {
     pthread_mutex_lock(&procesos_ejecutando_mutex);
 
     list_add(cola_ejecucion, proceso);
+    proceso_iniciar_rafaga(proceso);
 
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
 
@@ -149,6 +158,7 @@ t_pcb* desencolar_proceso_en_ejecucion() {
     pthread_mutex_lock(&procesos_ejecutando_mutex);
 
     t_pcb* proceso = list_remove(cola_ejecucion, 0);
+    proceso_finalizar_rafaga(proceso);
 
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
 
@@ -163,7 +173,7 @@ int hay_proceso_en_ejecucion() {
  
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
 
-    return resultado;
+    return !resultado;
 }
 
 /* --------------- Funciones Procesos Bloqueados --------------- */
@@ -299,9 +309,11 @@ void proceso_iniciar_rafaga(t_pcb *pcb) {
 }
 
 void proceso_finalizar_rafaga(t_pcb* pcb) {
+    pthread_mutex_lock(&procesos_rafaga_mutex);
     gettimeofday(&pcb->rafaga->fin, NULL);
     pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
     //printf("\n\nTiempo de ráfaga: %d\n\n", pcb->ultima_rafaga);
+    pthread_mutex_unlock(&procesos_rafaga_mutex);
 }
 
 void actualizar_estimacion_anterior(t_pcb* pcb)

@@ -71,7 +71,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             if(hay_interrupcion_para_atender())
             {
-                //devolver PCB
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -90,7 +90,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             if(hay_interrupcion_para_atender())
             {
-                //devolver PCB
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -106,7 +106,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             if(hay_interrupcion_para_atender())
             {
-                //devolver PCB
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -119,8 +119,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
             enviar_pcb(EXIT, pcb, conexion_kernel, logger_CPU);
-
-            //list_destroy_and_destroy_elements(pcb, free);
+            destruir_proceso(pcb);
             liberar_conexion(conexion_kernel);
 
             break;
@@ -131,5 +130,22 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 }
 
 int hay_interrupcion_para_atender() {
+    /*
+    if(valor_sem > 0)
+    {
+        sem_wait();
+        return 1;
+    }
+    else
+        return 0
+    */
+
     return 0; //TODO
+}
+
+void destruir_proceso(t_pcb* pcb) {
+    free(pcb->rafaga);
+    free(pcb->tiempo_bloqueado);
+    list_destroy_and_destroy_elements(pcb->instrucciones, free);
+    free(pcb);
 }

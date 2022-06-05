@@ -15,6 +15,7 @@
 
 void iniciar_estructuras_de_estados_de_procesos();
 t_pcb* crear_proceso(uint32_t, uint32_t, t_list*);
+void destruir_proceso(t_pcb* pcb);
 
 void encolar_proceso_en_nuevos(t_pcb*);
 t_pcb* desencolar_proceso_nuevo();
