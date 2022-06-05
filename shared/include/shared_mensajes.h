@@ -85,4 +85,9 @@ void* serializar_pcb(op_code, t_pcb*, size_t*, t_log* logger);
 t_pcb* recibir_pcb(int, t_log*);
 t_pcb* deserializar_pcb(void*);
 
+void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size);
+void enviar_tabla_N2(int socket_cliente, t_tablaN2 *t, t_log *logger);
+t_list* deserializar_tabla_N2(void *stream);
+t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger);
+
 #endif

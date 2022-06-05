@@ -79,8 +79,43 @@ void* leer_memoria(int tamanio_dato, int dir)
 
 /*------------------------MANEJO PAGINAS--------------------------------*/
 
-void traer_pagina_a_memoria(entrada_tabla_N2 *e)
+int dir_marco_vacio_proceso(int id)
 {
-    e->dir = 0;//aplicar algoritmo
+    t_list *marcos = conseguir_numeros_marcos_proceso(id);
+    for(int i = 0; i < list_size(marcos); i++)
+    {
+        int *num_marco = list_get(marcos, i);
+        //SI ENCUENTRA VACIO LO RETORNA
+        if(bitarray_test_bit(marcos_memoria, i));
+            return *num_marco;
+    }
+    //SINO RETORNA -1
+    return -1;
+}
+
+void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
+{
+    //DIR MARCO VACIO O -1 SI NO ENCUENTRA
+    int dir_marco = dir_marco_vacio_proceso(id);
+    //BUSCAR PAGINA PARA REEMPLAZAR
+    if(dir_marco == -1)
+    {
+        entrada_tabla_N2 *aux;
+        if(strcmp(algoritmo_reemplazo, "CLOCK"))
+        {
+            aux = aplicar_busqueda_clock(dir_tablaN1);
+        }
+        else if(strcmp(algoritmo_reemplazo, "CLOCK-M"))
+        {
+            aux = aplicar_busqueda_clock_mejorado(dir_tablaN1);
+        }
+        //GUARDAR DIR MARCO ELEGIDO
+        dir_marco = aux->dir;
+        //SI FUE MODIFICADO, ESCRIBIR PAGINA EN MEMORIA
+        if(aux->bit_modificacion == 1)
+            escribir_en_archivo(id, aux->dir, aux->num_pag);
+        aux->bit_presencia = 0;
+    }
+    enviar_pagina_a_memoria(id, dir_marco, e->num_pag);
     e->bit_presencia = 1;
 }

@@ -439,3 +439,75 @@ t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* ti
 	return pcb; 
 }
 
+//---------------------------------------------------------------//
+
+void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size)
+{
+	//TAMANIO = OP_CODE + DATO_TAMANIO + (LARGO LISTA * TAMANIO ENTRADA)
+	int tamanio_lista = list_size(t) * sizeof(entrada_tabla_N2);
+	*size = sizeof(op_code) + sizeof(int) + tamanio_lista;
+	void *buffer = malloc(*size);
+
+	int desplazamiento = 0;
+	memcpy(buffer + desplazamiento, &op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+	memcpy(buffer + desplazamiento, size, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+	for(int i = 0; i < list_size(t); i++)
+	{
+		entrada_tabla_N2 *e = list_get(t, i);
+		memcpy(buffer + desplazamiento, e, sizeof(entrada_tabla_N2));
+		desplazamiento += sizeof(entrada_tabla_N2);
+	}
+	return buffer;
+}
+
+void enviar_tabla_N2(int socket_cliente, t_tablaN2 *t, t_log *logger)
+{
+	size_t size;
+	log_info(logger, "Respondiendo solicitud de tabla nivel 2");
+	void *buffer = serializar_tabla_N2(SOLICITUD_TABLA_PAGINAS, t, &size);
+
+	if(send(socket_cliente, buffer, size, 0) != size)
+		log_error(logger, "Los datos no se enviaron correctamente");
+
+	free(buffer);
+}
+
+t_list* deserializar_tabla_N2(void *stream)
+{
+	int desplazamiento = 0;
+
+	int tamanio_lista;
+	memcpy(&tamanio_lista, stream, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	t_list *ret = list_create();
+	while(desplazamiento < tamanio_lista)
+	{
+		entrada_tabla_N2 *e = malloc(sizeof(entrada_tabla_N2));
+		memcpy(e, stream + desplazamiento, sizeof(entrada_tabla_N2));
+		desplazamiento += sizeof(entrada_tabla_N2);
+		list_add(ret, e);
+	}
+	return ret;
+}
+
+t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger)
+{
+	size_t size;
+    if (recv(socket_cliente, &size, sizeof(size_t), 0) != sizeof(size_t)) {
+        log_error(logger, "Error al recibir tamanio tabla nivel 2"); 
+    }
+
+    void* stream = malloc(size);
+	log_info(logger, "Tamanio tabla: %zu", size);
+
+    if (recv(socket_cliente, stream, size, 0) != size) {
+		log_error(logger, "Error al recibir tabla nivel 2");
+    }
+
+    t_tablaN2 *ret = deserializar_tabla_N2(stream);
+    free(stream); 
+	return ret;
+}

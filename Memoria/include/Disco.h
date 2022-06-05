@@ -17,5 +17,6 @@ void eliminar_archivo(int);
 char* devolver_path_archivo(int);
 void escribir_en_archivo(int PID, int direccion_pagina, int pagina);
 void enviar_pagina_a_memoria(int PID, int direccion_pagina, int pagina);
+void suspender_paginas(int PID, int dir_tablaN1);
 
 #endif /* HEADERS_MAIN_H_ */

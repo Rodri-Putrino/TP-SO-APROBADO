@@ -39,6 +39,20 @@ char* devolver_path_archivo(int PID){
     return aux;  //TODO ver como liberar aux y poder devolverlo
 }
 
+void suspender_paginas(int PID, int dir_tablaN1)
+{
+    t_list *marcos = conseguir_marcos_proceso(dir_tablaN1);
+    for(int i = 0; i < list_size(marcos); i++)
+    {
+        entrada_tabla_N2 *e = list_get(marcos, i);
+        if(e->bit_modificacion == 1)
+            escribir_en_archivo(PID, e->dir, e->num_pag);
+        
+        e->bit_modificacion = 0;
+        e->bit_presencia = 0;
+    }
+    list_destroy(marcos);
+}
 
 void escribir_en_archivo(int PID, int direccion_pagina, int pagina){
 
