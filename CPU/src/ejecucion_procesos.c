@@ -20,10 +20,6 @@ void realizar_ciclo_de_instruccion(t_pcb* pcb, int conexion_kernel) {
 t_instruccion* buscar_proxima_instruccion(t_pcb* pcb) { 
     log_info(logger_CPU, "Etapa FETCH iniciada");
     
-    /*t_instruccion* instruccion = malloc(sizeof(t_instruccion));
-    instruccion->op = EXIT;
-    instruccion->arg[0] = -1;
-    instruccion->arg[1] = -1;*/
     t_instruccion* instruccion = list_get(pcb->instrucciones, pcb->program_counter);
 
     pcb->program_counter += 1;
@@ -40,7 +36,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion NO_OP");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
-            usleep(retardo_noop);
+            usleep(retardo_noop * 1000);
 
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
@@ -59,7 +55,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
             int segundos_bloqueado = instruccion->arg[0];
-           enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, conexion_kernel, logger_CPU);
+            enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, conexion_kernel, logger_CPU);
 
             liberar_conexion(conexion_kernel);
          
@@ -70,9 +66,12 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion READ");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
+            //Pasar a mmu:
+            //pedido_lectura()
+
             if(hay_interrupcion_para_atender())
             {
-                //devolver PCB
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -84,9 +83,14 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion WRITE");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
+            int dir_logica = instruccion->arg[0];
+            int valor = instruccion->arg[1];
+            //Pasar a mmu:
+            //pedido_escritura(valor, dir_logica, pcb, logger_CPU) //Sacar logger pq es global
+
             if(hay_interrupcion_para_atender())
             {
-                //devolver PCB
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -102,7 +106,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             if(hay_interrupcion_para_atender())
             {
-                //devolver PCB
+                enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -114,13 +118,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion EXIT");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
-            /*t_paquete* paquete = crear_paquete(EXIT);
-            agregar_a_paquete(paquete, pcb, sizeof(t_pcb));
-            enviar_paquete(paquete, conexion_kernel, logger_CPU);
-            eliminar_paquete(paquete);*/
             enviar_pcb(EXIT, pcb, conexion_kernel, logger_CPU);
-
-            //list_destroy_and_destroy_elements(pcb, free);
+            destruir_proceso(pcb);
             liberar_conexion(conexion_kernel);
 
             break;
@@ -131,5 +130,22 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 }
 
 int hay_interrupcion_para_atender() {
-    return 0;
+    /*
+    if(valor_sem > 0)
+    {
+        sem_wait();
+        return 1;
+    }
+    else
+        return 0
+    */
+
+    return 0; //TODO
+}
+
+void destruir_proceso(t_pcb* pcb) {
+    free(pcb->rafaga);
+    free(pcb->tiempo_bloqueado);
+    list_destroy_and_destroy_elements(pcb->instrucciones, free);
+    free(pcb);
 }
