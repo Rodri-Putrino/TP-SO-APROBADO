@@ -144,8 +144,8 @@ int hay_interrupcion_para_atender() {
 }
 
 void destruir_proceso(t_pcb* pcb) {
-    free(pcb->rafaga);
-    free(pcb->tiempo_bloqueado);
+    //free(pcb->rafaga);
+    //free(pcb->tiempo_bloqueado);
     list_destroy_and_destroy_elements(pcb->instrucciones, free);
     free(pcb);
 }

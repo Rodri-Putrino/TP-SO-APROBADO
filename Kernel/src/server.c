@@ -68,6 +68,7 @@ void atender_procesos_nuevos(void* conexion) {
             encolar_proceso_en_nuevos(pcb_nuevo);
 
             //list_destroy_and_destroy_elements(instrucciones, free);
+            list_destroy(instrucciones);
             list_iterator_destroy(iterador);
 
             break;
