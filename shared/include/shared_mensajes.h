@@ -78,10 +78,15 @@ void* recibir_buffer(int* size, int socket_cliente, t_log *logger);
 void recibir_mensaje(int socket_cliente, t_log *logger);
 t_list* recibir_paquete(int socket_cliente, t_log *logger);
 t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, int* tiempo_bloqueo);
+t_list* recibir_lista_instrucciones_y_tam_proceso(int socket_cliente, uint32_t *tam_proceso, t_log* logger);
+t_list* deserializar_lista_instrucciones_y_tam_proceso(void* stream, uint32_t *tam_proceso);
+
 
 
 void enviar_pcb(op_code, t_pcb*, int, t_log *);
+void enviar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instrucciones, u_int32_t tam_proceso, int socket_cliente, t_log* logger);
 void* serializar_pcb(op_code, t_pcb*, size_t*, t_log* logger);
+void* serializar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instrucciones, u_int32_t tam_proceso, size_t* size, t_log* logger);
 t_pcb* recibir_pcb(int, t_log*);
 t_pcb* deserializar_pcb(void*);
 

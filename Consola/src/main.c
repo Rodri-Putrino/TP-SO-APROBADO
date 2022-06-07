@@ -22,12 +22,19 @@ int main(int argc, char** argv) {
 
     int conexion_kernel = crear_conexion(logger, "KERNEL", ip_kernel, puerto_kernel);
 
-    t_paquete* codigo = leer_archivo(argv[1]);
+    t_list* lista_instrucciones = leer_archivo(argv[1]);
+    /*
     agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int) + 1);
 
     enviar_paquete(codigo, conexion_kernel, logger);
 
     eliminar_paquete(codigo);
+    */
+
+    t_instruccion* instruccion = (t_instruccion*) list_get(lista_instrucciones, 0);
+	log_info(logger, "Instruccion a serializar: %d", instruccion->op);
+
+    enviar_lista_instrucciones_y_tam_proceso(NUEVO_PROCESO,lista_instrucciones,argv[2],conexion_kernel,logger);
 
     int op_code = recibir_operacion(conexion_kernel);
     recibir_mensaje(conexion_kernel, logger);
