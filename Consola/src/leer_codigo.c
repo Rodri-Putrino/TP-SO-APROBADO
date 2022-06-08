@@ -16,13 +16,11 @@ t_list* leer_archivo(char *path)
 
     t_list* lista_instrucciones = list_create();
 
-    //t_paquete *paquete = crear_paquete(NUEVO_PROCESO);
     while(!feof(codigo))
     {
         fgets(linea, LARGO_LINEA_MAX, codigo);
         if(strcmp(linea, "") != 0)
         {
-            //agregar_instruccion_a_paquete(linea, paquete);
             agregar_instruccion_a_lista(linea,lista_instrucciones);
         }
     }
@@ -30,78 +28,6 @@ t_list* leer_archivo(char *path)
     free(linea);
     fclose(codigo);
     return lista_instrucciones;
-}
-
-void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
-    t_instruccion *instruccion = malloc(sizeof(t_instruccion));
-
-    char **palabras_linea = string_split(linea, " ");
-
-    int op;
-    for(op = 0; strcmp(palabras_linea[0], codigos_instrucciones[op]) != 0 && op < 6; op++);
-
-    instruccion->op = op;
-    switch(instruccion->op)
-    {
-        case NO_OP:
-            instruccion->arg[0] = -1;
-            instruccion->arg[1] = -1;
-            for(int i = 0; i< atoi(palabras_linea[1]); i++) {
-                agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-            }
-            free(palabras_linea[0]);
-            free(palabras_linea[1]);
-            break;
-
-        case I_O:
-            instruccion->arg[0] = atoi(palabras_linea[1]);
-            instruccion->arg[1] = -1;
-            free(palabras_linea[0]);
-            free(palabras_linea[1]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-            
-            break;
-
-        case READ:
-            instruccion->arg[0] = atoi(palabras_linea[1]);
-            instruccion->arg[1] = -1;
-            free(palabras_linea[0]);
-            free(palabras_linea[1]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-            break;
-
-        case WRITE:
-            instruccion->arg[0] = atoi(palabras_linea[1]);
-            instruccion->arg[1] = atoi(palabras_linea[2]);
-            free(palabras_linea[0]);
-            free(palabras_linea[1]);
-            free(palabras_linea[2]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-            break;
-
-        case COPY:
-            instruccion->arg[0] = atoi(palabras_linea[1]);
-            instruccion->arg[1] = atoi(palabras_linea[2]);
-            free(palabras_linea[0]);
-            free(palabras_linea[1]);
-            free(palabras_linea[2]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-            break;
-
-        case EXIT_INST:
-            instruccion->arg[0] = -1;
-            instruccion->arg[1] = -1;
-            free(palabras_linea[0]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
-            break;
-
-        default:
-            //ERROR: OPERACION NO VALIDA
-            break;
-    }
-
-    free(palabras_linea);
-    free(instruccion);
 }
 
 void agregar_instruccion_a_lista(char* linea, t_list* lista_instrucciones) {

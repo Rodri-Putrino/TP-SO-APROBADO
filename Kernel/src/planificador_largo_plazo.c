@@ -19,17 +19,20 @@ void controlar_grado_de_multiprogramacion() {
         mostrar_grado_multiprogramacion_actual();
         sem_wait(&sem_multiprogramacion);
 
+        log_info(logger, "Proceso admitido en sistema");
+
         if (hay_proceso_suspendido_listo()) {
             t_pcb* pcb = desencolar_proceso_suspendido_listo();
             encolar_proceso_en_listos(pcb);
         }
         else {
             t_pcb* pcb = desencolar_proceso_nuevo();
-            log_info(logger, "ID: %d", pcb->id);
-            log_info(logger, "Tamaño: %d", pcb->tam_proceso);
             encolar_proceso_en_listos(pcb);
-            log_info(logger, "Proceso encolado en listos");
-            //Enviar mensaje a Memoria para obtener valor de tabla de páginas.
+            
+            //int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+            //pcb_nuevo->tabla_paginas = recibir identificador de tabla de paginas
+            //liberar_conexion(conexion_memoria);
+
         } 
     }
 }
@@ -44,5 +47,4 @@ void mostrar_grado_multiprogramacion_actual() {
     else {
         log_info(logger, "Grado de multiprogramación actual: %d", cantidad_procesos_actual);
     }
-
 }

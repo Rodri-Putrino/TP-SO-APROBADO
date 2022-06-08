@@ -9,6 +9,7 @@
 #include "./procesos.h"
 #include "../../shared/include/shared_log.h"
 #include "../../shared/include/shared_utils.h"
+#include "../../shared/include/shared_servidor.h"
 #include <commons/collections/list.h>
 
 void iniciar_planificador_largo_plazo();

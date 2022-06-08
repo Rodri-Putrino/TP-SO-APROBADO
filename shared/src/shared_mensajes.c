@@ -233,11 +233,11 @@ t_list* recibir_paquete(int socket_cliente, t_log *logger)
 void enviar_pcb(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logger) {
 
 	size_t size;
-	log_info(logger, "ID antes de serializar: %u", pcb->id);
-	log_info(logger, "TAM antes de serializar: %u", pcb->tam_proceso);
-	log_info(logger, "Program_counter antes de serializar: %u", pcb->program_counter);
-	log_info(logger, "Estimacion_anterior antes de serializar: %u", pcb->estimacion_anterior);
-	log_info(logger, "Ultima_rafaga antes de serializar: %u", pcb->ultima_rafaga);
+	log_debug(logger, "ID antes de serializar: %u", pcb->id);
+	log_debug(logger, "TAM antes de serializar: %u", pcb->tam_proceso);
+	log_debug(logger, "Program_counter antes de serializar: %u", pcb->program_counter);
+	log_debug(logger, "Estimacion_anterior antes de serializar: %u", pcb->estimacion_anterior);
+	log_debug(logger, "Ultima_rafaga antes de serializar: %u", pcb->ultima_rafaga);
 	void* stream = serializar_pcb(cod_op, pcb, &size, logger);
 	if(send(socket_cliente, stream, size, 0) != size)
 		log_error(logger, "Los datos no se enviaron correctamente");
@@ -249,7 +249,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 
 	int length_lista = list_size(pcb->instrucciones);
 	size_t size_instrucciones = sizeof(t_instruccion) * length_lista;
-	log_info(logger, "Size instrucciones: %zu", size_instrucciones);
+	log_debug(logger, "Size instrucciones: %zu", size_instrucciones);
 
  	*size = sizeof(op_code) +
 	 		sizeof(size_t) +
@@ -259,7 +259,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 			//sizeof(rango_tiempo_t);
 
 	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
-	log_info(logger, "Size payload: %zu", size_payload);
+	log_debug(logger, "Size payload: %zu", size_payload);
 
 	void* stream = malloc(*size);
 	int desplazamiento = 0;
@@ -287,7 +287,6 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 	while(desplazamiento_lista < size_instrucciones)
 	{
 		t_instruccion* instruccion = (t_instruccion*) list_get(pcb->instrucciones, indice);
-		log_info(logger, "Instruccion a serializar: %d", instruccion->op);
 		memcpy(stream + desplazamiento + desplazamiento_lista, instruccion, sizeof(t_instruccion));
 		desplazamiento_lista += sizeof(t_instruccion);
 		indice ++;
@@ -304,13 +303,20 @@ t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
     }
 
     void* stream = malloc(size);
-	log_info(logger, "Size payload: %zu", size);
+	log_debug(logger, "Size payload: %zu", size);
 
     if (recv(socket_cliente, stream, size, 0) != size) {
 		log_error(logger, "Los datos no se recibieron correctamente");
     }
 
     t_pcb* pcb = deserializar_pcb(stream);
+
+	log_debug(logger, "El ID del PCB recibido es: %d", pcb->id);
+	log_debug(logger, "El tamaño del PCB recibido es: %d", pcb->tam_proceso);
+	log_debug(logger, "Program_counter antes de serializar: %u", pcb->program_counter);
+	log_debug(logger, "Estimacion_anterior antes de serializar: %u", pcb->estimacion_anterior);
+	log_debug(logger, "Ultima_rafaga antes de serializar: %u", pcb->ultima_rafaga);
+
     free(stream); 
 	return pcb;
 }
@@ -344,10 +350,7 @@ t_pcb* deserializar_pcb(void* stream) {
 		memcpy(instruccion, stream + desplazamiento + desplazamiento_lista, sizeof(t_instruccion));
 		list_add(pcb->instrucciones, instruccion);
 		desplazamiento_lista += sizeof(t_instruccion);
-		//free(instruccion);
 	}
-
-	//free(instruccion);
 
 	return pcb;
 }
@@ -517,7 +520,7 @@ void enviar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instruccio
 
 	size_t size;
 	t_instruccion* instruccion = (t_instruccion*) list_get(instrucciones, 0);
-	log_info(logger, "Instruccion a serializar: %d", instruccion->op);
+	log_debug(logger, "Instruccion a serializar: %d", instruccion->op);
 	void* stream = serializar_lista_instrucciones_y_tam_proceso(cod_op, instrucciones, tam_proceso, &size, logger);
 	if(send(socket_cliente, stream, size, 0) != size)
 		log_error(logger, "Los datos no se enviaron correctamente");
@@ -529,7 +532,7 @@ void* serializar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instr
 
 	int length_lista = list_size(instrucciones);
 	size_t size_instrucciones = sizeof(t_instruccion) * length_lista;
-	log_info(logger, "Size instrucciones: %zu", size_instrucciones);
+	log_debug(logger, "Size instrucciones: %zu", size_instrucciones);
 
  	*size = sizeof(op_code) +
 	 		sizeof(size_t) +
@@ -539,7 +542,7 @@ void* serializar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instr
 	;		
 
 	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
-	log_info(logger, "Size payload: %zu", size_payload);
+	log_debug(logger, "Size payload: %zu", size_payload);
 
 	void* stream = malloc(*size);
 	int desplazamiento = 0;
@@ -555,12 +558,11 @@ void* serializar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instr
 	memcpy(stream + desplazamiento, &size_instrucciones, sizeof(size_t));
 	desplazamiento += sizeof(size_t);
 	
-	log_info(logger, "Tam lista instrucciones %zu", size_instrucciones);
+	log_debug(logger, "Tam lista instrucciones %zu", size_instrucciones);
 
 	while(desplazamiento_lista < size_instrucciones)
 	{
 		t_instruccion* instruccion = (t_instruccion*) list_get(instrucciones, indice);
-		log_info(logger, "Instruccion a serializar: %d", instruccion->op);
 		memcpy(stream + desplazamiento + desplazamiento_lista, instruccion, sizeof(t_instruccion));
 		desplazamiento_lista += sizeof(t_instruccion);
 		indice ++;
@@ -577,7 +579,7 @@ t_list* recibir_lista_instrucciones_y_tam_proceso(int socket_cliente, u_int32_t 
     }
 
     void* stream = malloc(size);
-	log_info(logger, "Size payload: %zu", size);
+	log_debug(logger, "Size payload: %zu", size);
 
     if (recv(socket_cliente, stream, size, 0) != size) {
 		log_error(logger, "Los datos no se recibieron correctamente");
@@ -600,19 +602,13 @@ t_list* deserializar_lista_instrucciones_y_tam_proceso(void* stream, uint32_t *t
 	memcpy(&size_instrucciones, stream + desplazamiento, sizeof(size_t));
 	desplazamiento += sizeof(size_t);
 
-	printf("\nTam lista instrucciones %zu\n", size_instrucciones);
-
 	while(desplazamiento_lista < size_instrucciones)
 	{
 		t_instruccion* instruccion = malloc(sizeof(t_instruccion));
 		memcpy(instruccion, stream + desplazamiento + desplazamiento_lista, sizeof(t_instruccion));
-		printf("\nInstruccion: %d \n", instruccion->op);
 		list_add(lista_instrucciones, instruccion);
 		desplazamiento_lista += sizeof(t_instruccion);
-		//free(instruccion);
 	}
-
-	//free(instruccion);
 
 	return lista_instrucciones;
 }

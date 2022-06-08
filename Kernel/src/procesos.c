@@ -54,7 +54,6 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pcb_nuevo->tam_proceso = tam;
     pcb_nuevo->instrucciones = list_create();
     pcb_nuevo->program_counter = 0;
-    //pcb_nuevo->tabla_paginas = ... //TODO
     pcb_nuevo->estimacion_anterior = estimacion_inicial;
     pcb_nuevo->ultima_rafaga = 0;
     pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
@@ -71,6 +70,15 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pthread_mutex_unlock(&proceso_mutex);
 
     return pcb_nuevo;
+}
+
+void modificar_identificador_tabla_de_paginas_del_proceso(t_pcb* pcb, uint32_t id_tabla) {
+    
+    pthread_mutex_lock(&proceso_mutex);
+
+    pcb->tabla_paginas = id_tabla;
+
+    pthread_mutex_unlock(&proceso_mutex);
 }
 
 void destruir_proceso(t_pcb* pcb) {
@@ -299,7 +307,7 @@ int cantidad_procesos_en_sistema() {
 
     cantidad_total = cantidad_listos + cantidad_ejecutando + cantidad_bloqueados;
 
-    log_info(logger, "Cantidad de procesos en sistema: %d", cantidad_total);
+    log_debug(logger, "Cantidad de procesos en sistema: %d", cantidad_total);
 
     return cantidad_total;
 }

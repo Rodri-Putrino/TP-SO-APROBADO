@@ -15,12 +15,12 @@ void planificar_procesos() {
     while (1) {
 
         sem_wait(&sem_proceso_listo);
-        log_debug(logger, "Plani CP notificado proceso listo");
+        log_info(logger, "Plani CP notificado proceso listo");
 
         int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
 
         if(algoritmo_es_srt()) {
-            log_info(logger, "Algoritmo Plani: SRT");
+            log_debug(logger, "Algoritmo Plani: SRT");
             
             if(hay_proceso_en_ejecucion()) {
                 int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
@@ -30,23 +30,28 @@ void planificar_procesos() {
             }
 
             ordenar_cola_listos();   
-            t_pcb* pcb = desencolar_proceso_listo();
+            /*t_pcb* pcb = desencolar_proceso_listo();
             encolar_proceso_en_ejecucion(pcb);
             enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
             recibir_pcb_luego_de_ejecutar(conexion_dispatch);
-            close(conexion_dispatch);
+            close(conexion_dispatch);*/
         }
-        else {
-            log_info(logger, "Algoritmo Plani: FIFO");
+        /*else {
+            log_debug(logger, "Algoritmo Plani: FIFO");
 
             t_pcb* pcb = desencolar_proceso_listo();
             encolar_proceso_en_ejecucion(pcb);
-            log_info(logger, "Antes de enviar PCB a CPU");
             enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
             recibir_pcb_luego_de_ejecutar(conexion_dispatch);
-
             close(conexion_dispatch);
-        } 
+        }*/
+
+            t_pcb* pcb = desencolar_proceso_listo();
+            encolar_proceso_en_ejecucion(pcb);
+            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
+            recibir_pcb_luego_de_ejecutar(conexion_dispatch);
+            close(conexion_dispatch);
+
     }
 }
 

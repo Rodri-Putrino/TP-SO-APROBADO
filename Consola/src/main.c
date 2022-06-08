@@ -7,7 +7,7 @@
 int main(int argc, char** argv) {
 
     t_config* config_consola;
-    t_log* logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
+    logger_consola = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
     if(argc < 3) {
         printf("Cantidad de argumentos insuficientes \n");
@@ -15,34 +15,24 @@ int main(int argc, char** argv) {
     }
     
     // Path del archivo: argv[1] && Tamaño del proceso: argv[2]
-    log_info(logger, "Módulo Consola iniciado");
+    log_info(logger_consola, "Módulo Consola iniciado");
 
     config_consola = iniciar_config(CONFIG_FILE_PATH);
     procesar_archivo_config_consola(config_consola);
 
-    int conexion_kernel = crear_conexion(logger, "KERNEL", ip_kernel, puerto_kernel);
+    int conexion_kernel = crear_conexion(logger_consola, "KERNEL", ip_kernel, puerto_kernel);
 
     t_list* lista_instrucciones = leer_archivo(argv[1]);
-    /*
-    agregar_a_paquete(codigo, (void*)(argv[2]), sizeof(int) + 1);
-
-    enviar_paquete(codigo, conexion_kernel, logger);
-
-    eliminar_paquete(codigo);
-    */
 
     t_instruccion* instruccion = (t_instruccion*) list_get(lista_instrucciones, 0);
-	log_info(logger, "Instruccion a serializar: %d", instruccion->op);
 
-    enviar_lista_instrucciones_y_tam_proceso(NUEVO_PROCESO,lista_instrucciones,argv[2],conexion_kernel,logger);
+    enviar_lista_instrucciones_y_tam_proceso(NUEVO_PROCESO, lista_instrucciones, argv[2], conexion_kernel, logger_consola);
 
     int op_code = recibir_operacion(conexion_kernel);
-    recibir_mensaje(conexion_kernel, logger);
-    //recv(conexion_kernel, &cod_op, sizeof(int), MSG_WAITALL);
+    recibir_mensaje(conexion_kernel, logger_consola);
 
     close(conexion_kernel);
-
-    /*--------------------------------------*/
-
-    finalizar_programa(logger, config_consola);
+    //TODO list_destroy_and_destroy_elements(lista_instrucciones, free);
+    list_destroy(lista_instrucciones);
+    finalizar_programa(logger_consola, config_consola);
 }

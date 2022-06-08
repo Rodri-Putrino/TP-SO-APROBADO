@@ -27,7 +27,7 @@ void escuchar_procesos_nuevos() {
 
 void atender_procesos_nuevos(void* conexion) {
     
-    log_info(logger, "Cliente conectado\n");
+    log_info(logger, "Cliente conectado");
     int conexion_consola = (int) conexion;
     int op_code = recibir_operacion(conexion_consola);
 
@@ -37,39 +37,14 @@ void atender_procesos_nuevos(void* conexion) {
 
             log_info(logger, "Petición recibida: NUEVO_PROCESO");
 
-            /*t_list *instrucciones = recibir_paquete(conexion_consola, logger);
-
-            //TOMAR TAMANIO PROCESO (ultimo elemento de lista)
-            char* tamanio_proceso = (char*) list_get(instrucciones, list_size(instrucciones) -1);
-            int tam_proceso = atoi(tamanio_proceso);
-            list_remove_and_destroy_element(instrucciones, list_size(instrucciones) -1, free);
-            */
             uint32_t tam_proceso = 0;
+
             t_list* instrucciones = recibir_lista_instrucciones_y_tam_proceso(conexion_consola, &tam_proceso, logger);
-            printf("\nTam proceso: %u\n", tam_proceso);
-            t_list_iterator *iterador = list_iterator_create(instrucciones);
 
-            for(int i = 0; i < 4; i++) {
-                t_instruccion* instruccion = (t_instruccion*) list_get(instrucciones, i);
-		        log_info(logger, "Instruccion a serializar: %d", instruccion->op);
-            }
-            /*
-            while(list_iterator_has_next(iterador))
-            {
-                //VERSION ANTERIOR
-                //char *i = list_iterator_next(iterador);
-                //printf("Instruccion %s\n", i);
-
-                t_instruccion *i = list_iterator_next(iterador);
-                printf("Instruccion %s \n\t Argumento 1: %d\n\t Argumento 2: %d\n", codigos_instrucciones[i->op], i->arg[0], i->arg[1]);
-            }
-            */
             t_pcb* pcb_nuevo = crear_proceso(conexion_consola, tam_proceso, instrucciones);
             encolar_proceso_en_nuevos(pcb_nuevo);
 
-            //list_destroy_and_destroy_elements(instrucciones, free);
             list_destroy(instrucciones);
-            list_iterator_destroy(iterador);
 
             break;
 
