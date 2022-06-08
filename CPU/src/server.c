@@ -26,7 +26,7 @@ void atender_interrupciones(void* conexion) {
     {
         case INTERRUPCION:
             log_info(logger_CPU, "Petición recibida: INTERRUPCION"); 
-            //semáforo que haga signal a la función hay_interrupción()
+            flag_interrupcion = 1;
 
             break;
 

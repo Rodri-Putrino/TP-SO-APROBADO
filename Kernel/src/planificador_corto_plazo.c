@@ -19,38 +19,25 @@ void planificar_procesos() {
 
         int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
 
-        if(algoritmo_es_srt()) {
+        /*if(algoritmo_es_srt()) {
             log_debug(logger, "Algoritmo Plani: SRT");
             
             if(hay_proceso_en_ejecucion()) {
                 int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
-                //Enviar interrupción a CPU a través de Interrupt
+                enviar_interrupcion(conexion_interrupt, logger);
                 recibir_pcb_luego_de_ejecutar(conexion_dispatch);
                 close(conexion_interrupt);
             }
 
             ordenar_cola_listos();   
-            /*t_pcb* pcb = desencolar_proceso_listo();
-            encolar_proceso_en_ejecucion(pcb);
-            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
-            recibir_pcb_luego_de_ejecutar(conexion_dispatch);
-            close(conexion_dispatch);*/
-        }
-        /*else {
-            log_debug(logger, "Algoritmo Plani: FIFO");
-
-            t_pcb* pcb = desencolar_proceso_listo();
-            encolar_proceso_en_ejecucion(pcb);
-            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
-            recibir_pcb_luego_de_ejecutar(conexion_dispatch);
-            close(conexion_dispatch);
         }*/
 
-            t_pcb* pcb = desencolar_proceso_listo();
-            encolar_proceso_en_ejecucion(pcb);
-            enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
-            recibir_pcb_luego_de_ejecutar(conexion_dispatch);
-            close(conexion_dispatch);
+        t_pcb* pcb = desencolar_proceso_listo();
+        encolar_proceso_en_ejecucion(pcb);
+        enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
+        log_debug(logger, "PCB enviado");
+        recibir_pcb_luego_de_ejecutar(conexion_dispatch);
+        close(conexion_dispatch);
 
     }
 }
@@ -69,9 +56,9 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
         case EXIT:
             log_info(logger, "Petición recibida: EXIT");
             pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
+            proceso_finalizar_rafaga(pcb_en_ejecucion);
             destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             pcb_actualizado = recibir_pcb(conexion, logger);
-            //proceso_finalizar_rafaga(pcb);
             encolar_proceso_en_terminados(pcb_actualizado);
             sem_post(&sem_multiprogramacion);
             enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_actualizado->id, logger);
@@ -84,8 +71,9 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
         case ACTUALIZAR_PCB:
             log_info(logger, "Petición recibida: ACTUALIZAR_PCB"); 
             pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
-            destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             pcb_actualizado = recibir_pcb(conexion, logger);
+            copiar_inicio_rafaga_del_proceso(pcb_actualizado, pcb_en_ejecucion);
+            destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             proceso_finalizar_rafaga(pcb_actualizado);
             encolar_proceso_en_listos(pcb_actualizado);
 

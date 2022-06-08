@@ -81,6 +81,15 @@ void modificar_identificador_tabla_de_paginas_del_proceso(t_pcb* pcb, uint32_t i
     pthread_mutex_unlock(&proceso_mutex);
 }
 
+void copiar_inicio_rafaga_del_proceso(t_pcb* pcb1, t_pcb* pcb2) {
+    
+    pthread_mutex_lock(&proceso_mutex);
+
+    pcb1->rafaga->inicio = pcb2->rafaga->inicio;
+
+    pthread_mutex_unlock(&proceso_mutex);
+}
+
 void destruir_proceso(t_pcb* pcb) {
     free(pcb->rafaga);
     free(pcb->tiempo_bloqueado);
@@ -122,6 +131,15 @@ void encolar_proceso_en_listos(t_pcb* proceso) {
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 
+
+    if(!strcmp(algoritmo_planificacion, "SRT")) {
+    
+        if(hay_proceso_en_ejecucion()) {
+            int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
+            enviar_interrupcion(conexion_interrupt, logger);
+            close(conexion_interrupt);
+        }
+    }
     sem_post(&sem_proceso_listo);
 }
 
@@ -166,7 +184,7 @@ t_pcb* desencolar_proceso_en_ejecucion() {
     pthread_mutex_lock(&procesos_ejecutando_mutex);
 
     t_pcb* proceso = list_remove(cola_ejecucion, 0);
-    proceso_finalizar_rafaga(proceso);
+    //proceso_finalizar_rafaga(proceso); Al ordenar la lista más tarde, este pcb no existe más
 
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
 
@@ -314,13 +332,17 @@ int cantidad_procesos_en_sistema() {
 
 void proceso_iniciar_rafaga(t_pcb *pcb) {
     gettimeofday(&pcb->rafaga->inicio, NULL);
+    log_debug(logger, "Inicio ráfaga: %d", pcb->rafaga->inicio);
 }
 
 void proceso_finalizar_rafaga(t_pcb* pcb) {
     pthread_mutex_lock(&procesos_rafaga_mutex);
+    
     gettimeofday(&pcb->rafaga->fin, NULL);
+    log_debug(logger, "Fin ráfaga: %d", pcb->rafaga->fin);
     pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
-    //printf("\n\nTiempo de ráfaga: %d\n\n", pcb->ultima_rafaga);
+    log_info(logger, "Tiempo ráfaga: %d", pcb->ultima_rafaga);
+
     pthread_mutex_unlock(&procesos_rafaga_mutex);
 }
 

@@ -324,6 +324,9 @@ t_pcb* recibir_pcb(int socket_cliente, t_log* logger) {
 t_pcb* deserializar_pcb(void* stream) {
 	
 	t_pcb* pcb = malloc(sizeof(t_pcb));
+    pcb->rafaga = malloc(sizeof(rango_tiempo_t));
+    pcb->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
+
 	size_t size_instrucciones;
 	int desplazamiento = 0;
 	int desplazamiento_lista = 0;
@@ -611,4 +614,18 @@ t_list* deserializar_lista_instrucciones_y_tam_proceso(void* stream, uint32_t *t
 	}
 
 	return lista_instrucciones;
+}
+
+void enviar_interrupcion(int socket_cliente, t_log* logger) {
+
+	op_code cod_op = INTERRUPCION;
+	size_t size = sizeof(op_code); 
+	void* stream = malloc(size);
+
+    memcpy(stream, &cod_op, sizeof(op_code));
+
+	if(send(socket_cliente, stream, size, 0) != size)
+		log_error(logger, "Los datos no se enviaron correctamente");
+
+	free(stream);
 }

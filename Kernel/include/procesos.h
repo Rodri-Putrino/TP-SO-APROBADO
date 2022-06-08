@@ -11,11 +11,14 @@
 #include "./config.h"
 #include "../../shared/include/shared_log.h"
 #include "../../shared/include/shared_utils.h"
+#include "../../shared/include/shared_servidor.h"
+#include "../../shared/include/shared_mensajes.h"
 #include <commons/collections/list.h>
 
 void iniciar_estructuras_de_estados_de_procesos();
 t_pcb* crear_proceso(uint32_t, uint32_t, t_list*);
 void modificar_identificador_tabla_de_paginas_del_proceso(t_pcb* pcb, uint32_t id_tabla);
+void copiar_inicio_rafaga_del_proceso(t_pcb* pcb_receptor, t_pcb* pcb_a_copiar);
 void destruir_proceso(t_pcb* pcb);
 
 void encolar_proceso_en_nuevos(t_pcb* pcb);

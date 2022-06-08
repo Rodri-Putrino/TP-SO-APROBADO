@@ -71,6 +71,7 @@ void eliminar_paquete(t_paquete* paquete);
 void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger);
 void enviar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, int socket_cliente, t_log* logger);
 void* serializar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb,int tiempo_bloqueo, size_t* size, t_log* logger);
+void enviar_interrupcion(int socket_cliente, t_log* logger);
 
 //RECIBIR
 int recibir_operacion(int);

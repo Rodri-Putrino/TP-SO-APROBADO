@@ -140,7 +140,13 @@ int hay_interrupcion_para_atender() {
         return 0
     */
 
-    return 0; //TODO
+   if(flag_interrupcion)
+   {
+       flag_interrupcion = 0;
+       return 1;
+   }
+   else
+       return 0;
 }
 
 void destruir_proceso(t_pcb* pcb) {
