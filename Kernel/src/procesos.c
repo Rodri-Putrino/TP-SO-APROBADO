@@ -131,16 +131,17 @@ void encolar_proceso_en_listos(t_pcb* proceso) {
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 
+    sem_post(&sem_proceso_listo);
 
     if(!strcmp(algoritmo_planificacion, "SRT")) {
     
         if(hay_proceso_en_ejecucion()) {
             int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
             enviar_interrupcion(conexion_interrupt, logger);
+            log_info(logger, "Se envio interrupcion");
             close(conexion_interrupt);
         }
     }
-    sem_post(&sem_proceso_listo);
 }
 
 t_pcb* desencolar_proceso_listo() {
@@ -160,6 +161,7 @@ void ordenar_cola_listos() {
 
     pthread_mutex_lock(&procesos_listos_mutex);
 
+    log_info(logger, "Ordenando cola de listos");
     list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
     list_sort(cola_listos, (void*)mayor_prioridad);
 
@@ -196,6 +198,10 @@ int hay_proceso_en_ejecucion() {
     pthread_mutex_lock(&procesos_ejecutando_mutex);
 
     int resultado = (int) list_is_empty(cola_ejecucion);
+    if(!resultado)
+        log_info(logger, "Hay proceso en ejecucion");
+    else
+        log_info(logger, "NO hay proceso en ejecucion");
  
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
 
@@ -337,7 +343,7 @@ void proceso_iniciar_rafaga(t_pcb *pcb) {
 
 void proceso_finalizar_rafaga(t_pcb* pcb) {
     pthread_mutex_lock(&procesos_rafaga_mutex);
-    
+
     gettimeofday(&pcb->rafaga->fin, NULL);
     log_debug(logger, "Fin ráfaga: %d", pcb->rafaga->fin);
     pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);

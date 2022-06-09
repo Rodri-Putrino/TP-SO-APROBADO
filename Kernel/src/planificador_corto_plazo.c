@@ -19,18 +19,11 @@ void planificar_procesos() {
 
         int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
 
-        /*if(algoritmo_es_srt()) {
+        if(algoritmo_es_srt()) {
             log_debug(logger, "Algoritmo Plani: SRT");
-            
-            if(hay_proceso_en_ejecucion()) {
-                int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
-                enviar_interrupcion(conexion_interrupt, logger);
-                recibir_pcb_luego_de_ejecutar(conexion_dispatch);
-                close(conexion_interrupt);
-            }
 
             ordenar_cola_listos();   
-        }*/
+        }
 
         t_pcb* pcb = desencolar_proceso_listo();
         encolar_proceso_en_ejecucion(pcb);
