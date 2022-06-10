@@ -4,17 +4,6 @@ void realizar_ciclo_de_instruccion(t_pcb* pcb, int conexion_kernel) {
 
     t_instruccion* instruccion = buscar_proxima_instruccion(pcb);
     interpretar_instruccion_y_ejecutar_pcb(instruccion, pcb, conexion_kernel);
-
-    // while(instruccion != EXIT)
-    // {
-    //      if(instruccion == COPY)
-    //      buscar_valor_en_memoria();
-    //      ejecutar()
-    //      incrementar_program_counter();
-    //      hay_interrupcion_para_atender()
-    //      instruccion = buscar_proxima_instruccion();
-    //      interpretar_instruccion_a_ejecutar(instruccion);
-    // }
 }
 
 t_instruccion* buscar_proxima_instruccion(t_pcb* pcb) { 
@@ -55,6 +44,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
             int segundos_bloqueado = instruccion->arg[0];
+            log_info(logger_CPU, "Segundos a bloquear: %u", segundos_bloqueado);
             enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, conexion_kernel, logger_CPU);
 
             liberar_conexion(conexion_kernel);

@@ -42,6 +42,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     sem_init(&sem_proceso_listo, 0, 0);
     sem_init(&sem_proceso_suspendido_listo, 0, 0);
     sem_init(&sem_proceso_a_suspender,0,0);
+    sem_init(&sem_proceso_bloqueado,0,0);   
 }
 
 t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {

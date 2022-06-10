@@ -16,6 +16,7 @@ int main(void) {
     iniciar_planificador_largo_plazo();
     iniciar_planificador_mediano_plazo();
     iniciar_planificador_corto_plazo();
+    iniciar_dispositivo_io();
 
     pthread_t hilo_escucha;
     pthread_create(&hilo_escucha, NULL, (void*) escuchar_procesos_nuevos, NULL);

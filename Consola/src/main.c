@@ -24,9 +24,11 @@ int main(int argc, char** argv) {
 
     t_list* lista_instrucciones = leer_archivo(argv[1]);
 
-    t_instruccion* instruccion = (t_instruccion*) list_get(lista_instrucciones, 0);
+    //t_instruccion* instruccion = (t_instruccion*) list_get(lista_instrucciones, 0);
 
-    enviar_lista_instrucciones_y_tam_proceso(NUEVO_PROCESO, lista_instrucciones, argv[2], conexion_kernel, logger_consola);
+    u_int32_t tam_proceso = atoi(argv[2]);
+    
+    enviar_lista_instrucciones_y_tam_proceso(NUEVO_PROCESO, lista_instrucciones, tam_proceso, conexion_kernel, logger_consola);
 
     int op_code = recibir_operacion(conexion_kernel);
     recibir_mensaje(conexion_kernel, logger_consola);

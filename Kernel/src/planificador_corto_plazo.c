@@ -43,6 +43,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
 
     int op_code = recibir_operacion(conexion);
     t_pcb *pcb_en_ejecucion, *pcb_actualizado;
+    uint32_t tiempo_bloqueo;
 
     switch(op_code)
     {
@@ -58,7 +59,13 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
             break;
 
         case IO:
-            log_info(logger, "Petición recibida: IO"); 
+            log_info(logger, "Petición recibida: IO");
+            pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
+            pcb_actualizado = recibir_pcb_con_tiempo_bloqueo(conexion, logger, &tiempo_bloqueo);
+            copiar_inicio_rafaga_del_proceso(pcb_actualizado, pcb_en_ejecucion);
+            destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
+            proceso_finalizar_rafaga(pcb_actualizado);
+            encolar_proceso_en_bloqueados(pcb_actualizado);
             break;
 
         case ACTUALIZAR_PCB:

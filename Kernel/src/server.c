@@ -37,7 +37,7 @@ void atender_procesos_nuevos(void* conexion) {
 
             log_info(logger, "Petición recibida: NUEVO_PROCESO");
 
-            uint32_t tam_proceso = 0;
+            uint32_t tam_proceso;
 
             t_list* instrucciones = recibir_lista_instrucciones_y_tam_proceso(conexion_consola, &tam_proceso, logger);
 

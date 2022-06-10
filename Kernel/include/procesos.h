@@ -59,5 +59,6 @@ sem_t sem_proceso_nuevo;
 sem_t sem_proceso_listo;
 sem_t sem_proceso_suspendido_listo;
 sem_t sem_proceso_a_suspender;
+sem_t sem_proceso_bloqueado;
 
 #endif /* HEADERS_PROCESOS_H_ */
