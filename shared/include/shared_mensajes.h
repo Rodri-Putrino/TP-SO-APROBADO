@@ -88,8 +88,8 @@ t_list* recibir_lista_instrucciones_y_tam_proceso(int socket_cliente, uint32_t *
 t_list* deserializar_lista_instrucciones_y_tam_proceso(void* stream, uint32_t *tam_proceso);
 t_pcb* recibir_pcb(int, t_log*);
 t_pcb* deserializar_pcb(void*);
-t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, uint32_t* tiempo_bloqueo);
-t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream, uint32_t* tiempo_bloqueo);
+t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger);
+t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream);
 
 
 void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size);

@@ -10,12 +10,20 @@ void iniciar_dispositivo_io() {
 
 void atender_procesos() {
 
-    while (1) 
+    while (1)
     {
         sem_wait(&sem_proceso_bloqueado);
 
         t_pcb* pcb = desencolar_proceso_bloqueado();
-        //log_info(logger, "Tiempo a bloquearse: %u", tiempo_bloqueo);
-        //usleep(tiempo_bloqueo * 1000);
+        log_info(logger, "Tiempo a bloquearse: %u", pcb->tiempo_a_bloquearse);
+
+        /*
+            if pcb->tiempo_a_bloquearse < tiempo_maximo
+
+
+        */
+
+        usleep(pcb->tiempo_a_bloquearse * 1000);
+        encolar_proceso_en_listos(pcb);
     }
 }

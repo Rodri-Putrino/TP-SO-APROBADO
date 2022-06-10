@@ -30,6 +30,8 @@ void controlar_grado_de_multiprogramacion() {
             encolar_proceso_en_listos(pcb);
             
             //int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+            //Enviar id y tam_proceso
+            //Luego:
             //pcb_nuevo->tabla_paginas = recibir identificador de tabla de paginas
             //liberar_conexion(conexion_memoria);
 

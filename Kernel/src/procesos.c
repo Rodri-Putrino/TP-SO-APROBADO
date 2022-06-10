@@ -58,6 +58,7 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pcb_nuevo->estimacion_anterior = estimacion_inicial;
     pcb_nuevo->ultima_rafaga = 0;
     pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
+    pcb_nuevo->tiempo_a_bloquearse = 0;
     pcb_nuevo->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
 
     t_list_iterator *iterador_proceso = list_iterator_create(lista_instrucciones);
@@ -216,8 +217,10 @@ void encolar_proceso_en_bloqueados(t_pcb* proceso) {
     pthread_mutex_lock(&procesos_bloqueados_mutex);
 
     list_add(cola_bloqueados, proceso);
-
+    //Proceso iniciar tiempo bloqueado
     pthread_mutex_unlock(&procesos_bloqueados_mutex);
+
+    sem_post(&sem_proceso_bloqueado);
 
 }
 

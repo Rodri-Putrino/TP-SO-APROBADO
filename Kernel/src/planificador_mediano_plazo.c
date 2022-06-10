@@ -19,6 +19,7 @@ void suspender_procesos() {
         t_pcb* pcb = desencolar_proceso_bloqueado();
         if(puede_suspenderse(pcb)) {
             enviar_pcb(SUSPENDER_PROCESO, pcb, conexion_memoria, logger);
+            //Enviar id y dir_tabla
             encolar_proceso_en_suspendidos_bloqueados(pcb);
         }
     }

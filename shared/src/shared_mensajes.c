@@ -425,7 +425,7 @@ void* serializar_pcb_con_tiempo_bloqueo(op_code cod_op, t_pcb* pcb, uint32_t tie
     return stream;
 }
 
-t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, uint32_t* tiempo_bloqueo) {
+t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger) {
 
  	size_t size;
     if (recv(socket_cliente, &size, sizeof(size_t), 0) != sizeof(size_t)) {
@@ -439,20 +439,20 @@ t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger, uint32_
 		log_error(logger, "Los datos no se recibieron correctamente");
     }
 
-    t_pcb* pcb = deserializar_pcb_con_tiempo_bloqueo(stream, tiempo_bloqueo);
+    t_pcb* pcb = deserializar_pcb_con_tiempo_bloqueo(stream);
 
 	log_debug(logger, "El ID del PCB recibido es: %d", pcb->id);
 	log_debug(logger, "El tamaño del PCB recibido es: %d", pcb->tam_proceso);
 	log_debug(logger, "Program_counter antes de serializar: %u", pcb->program_counter);
 	log_debug(logger, "Estimacion_anterior antes de serializar: %u", pcb->estimacion_anterior);
 	log_debug(logger, "Ultima_rafaga antes de serializar: %u", pcb->ultima_rafaga);
-	log_debug(logger, "Tiempo bloqueo: %u", *tiempo_bloqueo);
+	log_debug(logger, "Tiempo bloqueo: %u", pcb->tiempo_a_bloquearse);
 
     free(stream); 
 	return pcb; 
 }
 
-t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream, uint32_t* tiempo_bloqueo) {
+t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream) {
 	t_pcb* pcb = malloc(sizeof(t_pcb));
     pcb->rafaga = malloc(sizeof(rango_tiempo_t));
     pcb->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
@@ -471,7 +471,7 @@ t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream, uint32_t* tiempo_bloque
 	desplazamiento += sizeof(uint32_t);
 	memcpy(&pcb->ultima_rafaga, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
-	memcpy(tiempo_bloqueo, stream + desplazamiento, sizeof(uint32_t));
+	memcpy(&pcb->tiempo_a_bloquearse, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 
 	memcpy(&size_instrucciones, stream + desplazamiento, sizeof(size_t));
