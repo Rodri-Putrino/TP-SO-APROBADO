@@ -28,7 +28,7 @@ void planificar_procesos() {
         t_pcb* pcb = desencolar_proceso_listo();
         encolar_proceso_en_ejecucion(pcb);
         enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
-        log_debug(logger, "PCB enviado");
+        log_info(logger, "Id del PCB enviado a CPU: %d", pcb->id);
         recibir_pcb_luego_de_ejecutar(conexion_dispatch);
         close(conexion_dispatch);
 
@@ -52,6 +52,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
             proceso_finalizar_rafaga(pcb_en_ejecucion);
             destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             pcb_actualizado = recibir_pcb(conexion, logger);
+            log_info(logger, "ID del pcb finalizado: %d", pcb_actualizado->id);
             encolar_proceso_en_terminados(pcb_actualizado);
             sem_post(&sem_multiprogramacion);
             enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_actualizado->id, logger);
@@ -62,6 +63,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
             pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
             pcb_actualizado = recibir_pcb_con_tiempo_bloqueo(conexion, logger);
             copiar_inicio_rafaga_del_proceso(pcb_actualizado, pcb_en_ejecucion);
+            inicializar_tiempo_bloqueado(pcb_actualizado);
             destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             proceso_finalizar_rafaga(pcb_actualizado);
             encolar_proceso_en_bloqueados(pcb_actualizado);

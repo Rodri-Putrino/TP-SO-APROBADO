@@ -19,6 +19,8 @@ void iniciar_estructuras_de_estados_de_procesos();
 t_pcb* crear_proceso(uint32_t, uint32_t, t_list*);
 void modificar_identificador_tabla_de_paginas_del_proceso(t_pcb* pcb, uint32_t id_tabla);
 void copiar_inicio_rafaga_del_proceso(t_pcb* pcb_receptor, t_pcb* pcb_a_copiar);
+void modificar_estado_proceso(t_pcb* pcb, int estado);
+void inicializar_tiempo_bloqueado(t_pcb* pcb);
 void destruir_proceso(t_pcb* pcb);
 
 void encolar_proceso_en_nuevos(t_pcb* pcb);
@@ -33,6 +35,10 @@ int hay_proceso_en_ejecucion();
 
 void encolar_proceso_en_bloqueados(t_pcb* pcb);
 t_pcb* desencolar_proceso_bloqueado();
+void evaluar_suspender_proceso(t_pcb* pcb);
+int proceso_esta_bloqueado(t_pcb* pcb);
+void iniciar_rafaga_bloqueado(t_pcb *pcb);
+void actualizar_rafaga_bloqueado(t_pcb* pcb);
 
 void encolar_proceso_en_suspendidos_bloqueados(t_pcb* pcb);
 t_pcb* desencolar_proceso_suspendido_bloqueado();

@@ -73,8 +73,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion WRITE");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
-            int dir_logica = instruccion->arg[0];
-            int valor = instruccion->arg[1];
+            //int dir_logica = instruccion->arg[0];
+            //int valor = instruccion->arg[1];
             //Pasar a mmu:
             //pedido_escritura(valor, dir_logica, pcb, logger_CPU) //Sacar logger pq es global
 

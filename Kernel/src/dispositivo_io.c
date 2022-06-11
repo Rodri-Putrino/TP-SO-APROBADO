@@ -17,13 +17,13 @@ void atender_procesos() {
         t_pcb* pcb = desencolar_proceso_bloqueado();
         log_info(logger, "Tiempo a bloquearse: %u", pcb->tiempo_a_bloquearse);
 
-        /*
-            if pcb->tiempo_a_bloquearse < tiempo_maximo
-
-
-        */
-
         usleep(pcb->tiempo_a_bloquearse * 1000);
-        encolar_proceso_en_listos(pcb);
+
+        log_info(logger, "PCB %d terminó de ejecutar I/O", pcb->id);
+
+        if (pcb->estado == BLOQUEADO)
+            encolar_proceso_en_listos(pcb);
+        else
+            encolar_proceso_en_suspendidos_listos(pcb);
     }
 }

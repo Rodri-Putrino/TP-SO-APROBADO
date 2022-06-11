@@ -17,6 +17,7 @@ pthread_mutex_t procesos_suspendidos_bloqueados_mutex;
 pthread_mutex_t procesos_suspendidos_listos_mutex;
 pthread_mutex_t procesos_terminados_mutex;
 pthread_mutex_t procesos_rafaga_mutex;
+pthread_mutex_t procesos_rafaga_bloqueado_mutex;
 
 void iniciar_estructuras_de_estados_de_procesos() {
     cola_nuevos = list_create();
@@ -36,6 +37,7 @@ void iniciar_estructuras_de_estados_de_procesos() {
     pthread_mutex_init(&procesos_suspendidos_listos_mutex, NULL);
     pthread_mutex_init(&procesos_terminados_mutex, NULL);
     pthread_mutex_init(&procesos_rafaga_mutex, NULL);
+    pthread_mutex_init(&procesos_rafaga_bloqueado_mutex, NULL);
 
     sem_init(&sem_multiprogramacion, 0, grado_multiprogramacion);
     sem_init(&sem_proceso_nuevo, 0, 0);
@@ -59,7 +61,7 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pcb_nuevo->ultima_rafaga = 0;
     pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
     pcb_nuevo->tiempo_a_bloquearse = 0;
-    pcb_nuevo->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
+    pcb_nuevo->rafaga_bloqueado = malloc(sizeof(rango_tiempo_t));
 
     t_list_iterator *iterador_proceso = list_iterator_create(lista_instrucciones);
     while(list_iterator_has_next(iterador_proceso))
@@ -92,9 +94,26 @@ void copiar_inicio_rafaga_del_proceso(t_pcb* pcb1, t_pcb* pcb2) {
     pthread_mutex_unlock(&proceso_mutex);
 }
 
+void modificar_estado_proceso(t_pcb* pcb, int estado) {
+
+    pthread_mutex_lock(&proceso_mutex);
+
+    pcb->estado = estado;
+
+    pthread_mutex_unlock(&proceso_mutex);
+}
+
+void inicializar_tiempo_bloqueado(t_pcb* pcb) {
+    pthread_mutex_lock(&proceso_mutex);
+
+    pcb->tiempo_bloqueado = 0;
+
+    pthread_mutex_unlock(&proceso_mutex);
+}
+
 void destruir_proceso(t_pcb* pcb) {
     free(pcb->rafaga);
-    free(pcb->tiempo_bloqueado);
+    free(pcb->rafaga_bloqueado);
     list_destroy_and_destroy_elements(pcb->instrucciones, free);
     free(pcb);
 }
@@ -130,6 +149,7 @@ void encolar_proceso_en_listos(t_pcb* proceso) {
     pthread_mutex_lock(&procesos_listos_mutex);
 
     list_add(cola_listos, proceso);
+    modificar_estado_proceso(proceso, LISTO);
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 
@@ -180,7 +200,6 @@ void encolar_proceso_en_ejecucion(t_pcb* proceso) {
     proceso_iniciar_rafaga(proceso);
 
     pthread_mutex_unlock(&procesos_ejecutando_mutex);
-
 }
 
 t_pcb* desencolar_proceso_en_ejecucion() {
@@ -217,11 +236,39 @@ void encolar_proceso_en_bloqueados(t_pcb* proceso) {
     pthread_mutex_lock(&procesos_bloqueados_mutex);
 
     list_add(cola_bloqueados, proceso);
-    //Proceso iniciar tiempo bloqueado
+    modificar_estado_proceso(proceso, BLOQUEADO);
+    iniciar_rafaga_bloqueado(proceso);
+
     pthread_mutex_unlock(&procesos_bloqueados_mutex);
 
-    sem_post(&sem_proceso_bloqueado);
+    pthread_t planificador_mediano_plazo;
+    pthread_create(&planificador_mediano_plazo, NULL, (void*) evaluar_suspender_proceso, proceso);
+    pthread_detach(planificador_mediano_plazo);
 
+    sem_post(&sem_proceso_bloqueado);
+}
+
+void evaluar_suspender_proceso(t_pcb* pcb) {
+    
+    //int conexion_memoria;
+    while(proceso_esta_bloqueado(pcb))
+    {
+        actualizar_rafaga_bloqueado(pcb);
+        //log_info(logger, "Inicio bloqueo: %d", pcb->rafaga_bloqueado->inicio);
+    }
+
+    if(pcb->tiempo_bloqueado > tiempo_max_bloqueado)
+    {
+        log_info(logger, "Se suspende proceso %d pq el tiempo bloqueado es: %d", pcb->id, pcb->tiempo_bloqueado);
+        modificar_estado_proceso(pcb, BLOQUEADO_SUSPENDIDO);
+        sem_post(&sem_multiprogramacion);
+        //conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+        //Avisar a memoria
+    }
+}
+
+int proceso_esta_bloqueado(t_pcb* pcb) {
+    return pcb->estado == BLOQUEADO && pcb->tiempo_bloqueado <= tiempo_max_bloqueado;
 }
 
 t_pcb* desencolar_proceso_bloqueado() {
@@ -233,6 +280,19 @@ t_pcb* desencolar_proceso_bloqueado() {
     pthread_mutex_unlock(&procesos_bloqueados_mutex);
 
   return proceso;
+}
+
+void iniciar_rafaga_bloqueado(t_pcb *pcb) {
+    gettimeofday(&pcb->rafaga_bloqueado->inicio, NULL);
+}
+
+void actualizar_rafaga_bloqueado(t_pcb* pcb) {
+    pthread_mutex_lock(&procesos_rafaga_bloqueado_mutex);
+
+    gettimeofday(&pcb->rafaga_bloqueado->fin, NULL);
+    pcb->tiempo_bloqueado = timedifference_msec(pcb->rafaga_bloqueado->inicio, pcb->rafaga_bloqueado->fin);
+
+    pthread_mutex_unlock(&procesos_rafaga_bloqueado_mutex);
 }
 
 /* --------------- Funciones Procesos Suspendidos Bloqueados --------------- */
@@ -267,7 +327,7 @@ void encolar_proceso_en_suspendidos_listos(t_pcb* proceso) {
     list_add(cola_suspendidos_listos, proceso);
 
     pthread_mutex_unlock(&procesos_suspendidos_listos_mutex);
-
+    sem_post(&sem_proceso_nuevo);
 }
 
 t_pcb* desencolar_proceso_suspendido_listo() {
@@ -342,14 +402,14 @@ int cantidad_procesos_en_sistema() {
 
 void proceso_iniciar_rafaga(t_pcb *pcb) {
     gettimeofday(&pcb->rafaga->inicio, NULL);
-    log_debug(logger, "Inicio ráfaga: %d", pcb->rafaga->inicio);
+    //log_debug(logger, "Inicio ráfaga: %d", pcb->rafaga->inicio);
 }
 
 void proceso_finalizar_rafaga(t_pcb* pcb) {
     pthread_mutex_lock(&procesos_rafaga_mutex);
 
     gettimeofday(&pcb->rafaga->fin, NULL);
-    log_debug(logger, "Fin ráfaga: %d", pcb->rafaga->fin);
+    //log_debug(logger, "Fin ráfaga: %d", pcb->rafaga->fin);
     pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
     log_info(logger, "Tiempo ráfaga: %d", pcb->ultima_rafaga);
 
@@ -374,10 +434,10 @@ int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {
 
 int puede_suspenderse(t_pcb* pcb) {
 
-    int tiempo_bloqueado;
+    //int tiempo_bloqueado;
     //tiempo_bloqueado = timedifference_msec(pcb->tiempo_bloqueado->inicio, pcb->tiempo_bloqueado->fin);
-   //return tiempo_bloqueado > tiempo_max_bloqueado;
-   return 1;
+    //return tiempo_bloqueado > tiempo_max_bloqueado;
+    return 1;
 }
 
 float timedifference_msec(struct timeval t0, struct timeval t1) {

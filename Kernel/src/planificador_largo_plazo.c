@@ -23,6 +23,7 @@ void controlar_grado_de_multiprogramacion() {
 
         if (hay_proceso_suspendido_listo()) {
             t_pcb* pcb = desencolar_proceso_suspendido_listo();
+            log_info(logger, "PCB id %d desuspendido", pcb->id);
             encolar_proceso_en_listos(pcb);
         }
         else {

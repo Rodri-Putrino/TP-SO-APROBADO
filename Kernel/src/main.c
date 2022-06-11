@@ -14,7 +14,7 @@ int main(void) {
 
     iniciar_estructuras_de_estados_de_procesos();
     iniciar_planificador_largo_plazo();
-    iniciar_planificador_mediano_plazo();
+    //iniciar_planificador_mediano_plazo();
     iniciar_planificador_corto_plazo();
     iniciar_dispositivo_io();
 

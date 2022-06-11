@@ -325,7 +325,7 @@ t_pcb* deserializar_pcb(void* stream) {
 	
 	t_pcb* pcb = malloc(sizeof(t_pcb));
     pcb->rafaga = malloc(sizeof(rango_tiempo_t));
-    pcb->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
+    pcb->rafaga_bloqueado = malloc(sizeof(rango_tiempo_t));
 
 	size_t size_instrucciones;
 	int desplazamiento = 0;
@@ -455,7 +455,7 @@ t_pcb* recibir_pcb_con_tiempo_bloqueo(int socket_cliente, t_log* logger) {
 t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream) {
 	t_pcb* pcb = malloc(sizeof(t_pcb));
     pcb->rafaga = malloc(sizeof(rango_tiempo_t));
-    pcb->tiempo_bloqueado = malloc(sizeof(rango_tiempo_t));
+    pcb->rafaga_bloqueado = malloc(sizeof(rango_tiempo_t));
 
 	size_t size_instrucciones;
 	int desplazamiento = 0;
