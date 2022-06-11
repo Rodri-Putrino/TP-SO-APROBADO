@@ -26,12 +26,12 @@ int criterio_clock_mejorado(entrada_tabla_N2 *e, int vuelta);
     Aplica criterio clock
     NOTA: siempre devuelve una entrada NO nula
 */
-entrada_tabla_N2* aplicar_busqueda_clock(int dir_tablaN1);
+entrada_tabla_N2* aplicar_busqueda_clock(int id, int dir_tablaN1);
 
 /*
     Aplica criterio clock mejorado
     NOTA: siempre devuelve una entrada NO nula
 */
-entrada_tabla_N2* aplicar_busqueda_clock_mejorado(int dir_tablaN1);
+entrada_tabla_N2* aplicar_busqueda_clock_mejorado(int id, int dir_tablaN1);
 
 #endif

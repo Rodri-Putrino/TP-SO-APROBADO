@@ -6,12 +6,13 @@ void inicializar_estructuras(int socket_cliente, t_log *logger)
 	int *id = list_get(parametros, 0);
     int *tamanio_proceso = list_get(parametros, 1);
 
-    //RESERVA MARCOS
-    reservar_marcos_proceso(*id);
-
     //CREA TABLA NIVEL 1 Y TABLAS NIVEL 2
-    t_tablaN1 *t = crear_tablaN1(*tamanio_proceso);
-    int dir_tabla = list_add(tablasN1, t);
+    proceso_en_memoria *proceso = asignar_proceso(*id, *tamanio_proceso);
+    int dir_tabla = list_add(tablasN1, proceso->tablaN1);
+    list_add(procesos_en_memoria, proceso);
+
+    //RESERVA MARCOS
+    reservar_marcos_proceso(proceso);
 
     //CREA ARCHIVO SWAP
     generar_nuevo_archivo(*id);
@@ -64,6 +65,7 @@ void pedido_escritura(int socket_cliente, t_log *logger)
     void *dato = list_get(parametros, 2);
 
     escribir_memoria(dato, *tamanio, *dir);
+    enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
 }
 
 void solicitud_tabla_paginas(int socket_cliente, t_log *logger)

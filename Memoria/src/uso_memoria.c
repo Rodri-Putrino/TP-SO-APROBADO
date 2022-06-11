@@ -103,11 +103,11 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
         entrada_tabla_N2 *aux;
         if(strcmp(algoritmo_reemplazo, "CLOCK"))
         {
-            aux = aplicar_busqueda_clock(dir_tablaN1);
+            aux = aplicar_busqueda_clock(id, dir_tablaN1);
         }
         else if(strcmp(algoritmo_reemplazo, "CLOCK-M"))
         {
-            aux = aplicar_busqueda_clock_mejorado(dir_tablaN1);
+            aux = aplicar_busqueda_clock_mejorado(id, dir_tablaN1);
         }
         //GUARDAR DIR MARCO ELEGIDO
         dir_marco = aux->dir;

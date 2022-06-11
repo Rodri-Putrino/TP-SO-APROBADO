@@ -50,43 +50,47 @@ int criterio_clock_mejorado(entrada_tabla_N2 *e, int vuelta)
     }
 }
 
-entrada_tabla_N2* aplicar_busqueda_clock(int dir_tablaN1)
+entrada_tabla_N2* aplicar_busqueda_clock(int id, int dir_tablaN1)
 {
+    proceso_en_memoria *p = buscar_proceso(id);
     t_list *marcos_proceso = conseguir_marcos_proceso(dir_tablaN1);
 
     //NOTA: revisar logica en primer vuelta de for()
-    //se toma valor en linea 55 para no empezar el for con valor nulo en ret
+    //se toma valor en siguiente linea para no empezar el for con valor nulo en ret
     entrada_tabla_N2 *ret = list_get(marcos_proceso, 0);
-    for(int i = 1; criterio_clock(ret); i++)
+    while(criterio_clock(ret))
     {
         //DIO UNA VUELTA
-        if(i == list_size(marcos_proceso))
-            i = 0;
+        if(p->posicion_puntero_clock == list_size(marcos_proceso))
+            p->posicion_puntero_clock = 0;
         
-        ret = list_get(marcos_proceso, i);
+        ret = list_get(marcos_proceso, p->posicion_puntero_clock);
+        p->posicion_puntero_clock++;
     }
 
-    list_destroy_and_destroy_elements(marcos_proceso, free);
+    list_destroy(marcos_proceso);
     //NOTA: podria eliminar los elementos en la lista principal (chequear despues)
     return ret;
 }
 
-entrada_tabla_N2* aplicar_busqueda_clock_mejorado(int dir_tablaN1)
+entrada_tabla_N2* aplicar_busqueda_clock_mejorado(int id, int dir_tablaN1)
 {
+    proceso_en_memoria *p = buscar_proceso(id);
     t_list *marcos_proceso = conseguir_marcos_proceso(dir_tablaN1);
 
     entrada_tabla_N2 *ret = list_get(marcos_proceso, 0);
     int vuelta = 0;
-    for(int i = 1; criterio_clock_mejorado(ret, vuelta); i++)
+    while(criterio_clock_mejorado(ret, vuelta))
     {
         //DIO UNA VUELTA
-        if(i == list_size(marcos_proceso))
+        if(p->posicion_puntero_clock == list_size(marcos_proceso))
         {
-            i = 0;
+            p->posicion_puntero_clock = 0;
             vuelta++;
         }
 
-        ret = list_get(marcos_proceso, i);
+        ret = list_get(marcos_proceso, p->posicion_puntero_clock);
+        p->posicion_puntero_clock++;
     }
 
     list_destroy_and_destroy_elements(marcos_proceso, free);
