@@ -12,10 +12,13 @@
 typedef struct
 {
     int id_proceso;
-    t_list *marcos_reservados;
-}t_reserva_marcos;
+	int posicion_puntero_clock;
+	t_tablaN1 *tablaN1;
+    t_list *marcos_reservados; //tipo int
+}proceso_en_memoria;
 
 t_list *tablasN1, *tablasN2;
+t_list *procesos_en_memoria;
 
 //MEMORIA PRINCIPAL (espacio usuario)
 void *memoria;
@@ -23,8 +26,9 @@ void *memoria;
 //BITMAP (cuales marcos estan vacios)
 t_bitarray *marcos_memoria;
 
-//LISTA DE PROCESOS EN MEMORIA CON SUS MARCOS RESERVADOS (TIPO t_resrva_marcos)
-t_list *marcos_reservados_por_procesos;
+proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso);
+
+proceso_en_memoria* buscar_proceso(int id);
 
 /* 
     Crea una entrada de tablaN1
@@ -109,7 +113,7 @@ t_list* conseguir_marcos_proceso(int dir_tablaN1);
 t_list* conseguir_numeros_marcos_proceso(int id);
 
 
-void reservar_marcos_proceso(int id);
+void reservar_marcos_proceso(proceso_en_memoria *p);
 void liberar_marcos_proceso(int id);
 void desmarcar_bitmap(t_list *marcos);
 

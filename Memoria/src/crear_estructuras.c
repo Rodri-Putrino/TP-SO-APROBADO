@@ -2,6 +2,29 @@
 
 /*----------------------MEMORIA PROCESO------------------------------------*/
 
+proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso)
+{
+    proceso_en_memoria *ret = malloc(sizeof(proceso_en_memoria));
+    ret->id_proceso = id;
+    ret->posicion_puntero_clock = 0;
+    ret->tablaN1 = crear_tablaN1(tamanio_proceso);
+    return ret;
+}
+
+proceso_en_memoria* buscar_proceso(int id)
+{
+    proceso_en_memoria *p = list_get(procesos_en_memoria, 0);
+
+    //NOTA: REVISAR LOGICA LOOP for PRIMER VUELTA
+    for(int i = 1; p->id_proceso != id; i++)
+    {
+        p = list_get(procesos_en_memoria, i);
+    }
+
+    return p;
+}
+
+
 entrada_tabla_N1* agregar_entrada_tablaN1(t_tablaN1 *tabla)
 {
     entrada_tabla_N1* e = malloc(sizeof(entrada_tabla_N1));
@@ -105,10 +128,9 @@ void eliminar_paginas_proceso(int id, int dir_tablaN1)
     liberar_marcos_proceso(id);
 }
 
-void reservar_marcos_proceso(int id)
+void reservar_marcos_proceso(proceso_en_memoria *p)
 {
-    t_reserva_marcos *aux = malloc(sizeof(t_reserva_marcos));
-
+    p->marcos_reservados = list_create();
     int cantidad_marcos_reservados = 0;
     for(int i = 0; cantidad_marcos_reservados < marcos_por_proceso; i++)
     {
@@ -116,25 +138,23 @@ void reservar_marcos_proceso(int id)
         {
             int *marco = malloc(sizeof(int));
             *marco = i;
-            list_add(aux->marcos_reservados, marco);
+            list_add(p->marcos_reservados, marco);
 
             bitarray_clean_bit(marcos_memoria, i);
             cantidad_marcos_reservados++;
         }
     }
-    aux->id_proceso = id;
-    list_add(marcos_reservados_por_procesos, aux);
 }
 
 void liberar_marcos_proceso(int id)
 {
     int i = 0;
-    t_reserva_marcos *aux = list_get(marcos_reservados_por_procesos, i);
+    proceso_en_memoria *aux = list_get(procesos_en_memoria, i);
     for(i = 1; aux->id_proceso != id; i++)
     {
-        aux = list_get(marcos_reservados_por_procesos, i);
+        aux = list_get(procesos_en_memoria, i);
     }
-    aux = list_remove(marcos_reservados_por_procesos, i);
+    aux = list_remove(procesos_en_memoria, i);
 
     desmarcar_bitmap(aux->marcos_reservados);
 
@@ -196,6 +216,7 @@ void crear_listas_tablas()
 {
     tablasN1 = list_create();
     tablasN2 = list_create();
+    procesos_en_memoria = list_create();
 }
 
 void eliminar_listas_tablas()
@@ -255,10 +276,10 @@ entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag)
 
 t_list* conseguir_numeros_marcos_proceso(int id)
 {
-    t_reserva_marcos *ret = list_get(marcos_reservados_por_procesos, 0);
+    proceso_en_memoria *ret = list_get(procesos_en_memoria, 0);
     for(int i = 1; ret->id_proceso != id; i++)
     {
-        ret = list_get(marcos_reservados_por_procesos, i);
+        ret = list_get(procesos_en_memoria, i);
     }
     return ret->marcos_reservados;
 }
