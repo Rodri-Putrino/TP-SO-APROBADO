@@ -66,6 +66,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
             inicializar_tiempo_bloqueado(pcb_actualizado);
             destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             proceso_finalizar_rafaga(pcb_actualizado);
+            //actualizar_estimacion_anterior(pcb_actualizado);
             encolar_proceso_en_bloqueados(pcb_actualizado);
             break;
 
@@ -76,6 +77,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
             copiar_inicio_rafaga_del_proceso(pcb_actualizado, pcb_en_ejecucion);
             destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             proceso_finalizar_rafaga(pcb_actualizado);
+            //actualizar_estimacion_anterior(pcb_actualizado);
             encolar_proceso_en_listos(pcb_actualizado);
 
             break;

@@ -185,6 +185,7 @@ void ordenar_cola_listos() {
 
     log_info(logger, "Ordenando cola de listos");
     list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
+    log_info(logger, "Actualizadas todas las estimaciones anteriores");
     list_sort(cola_listos, (void*)mayor_prioridad);
 
     pthread_mutex_unlock(&procesos_listos_mutex);
@@ -418,14 +419,18 @@ void proceso_finalizar_rafaga(t_pcb* pcb) {
 
 void actualizar_estimacion_anterior(t_pcb* pcb)
 {
+    pthread_mutex_lock(&proceso_mutex);
 	pcb->estimacion_anterior = proxima_rafaga_estimada(pcb);
+    pthread_mutex_unlock(&proceso_mutex);
+    log_info(logger, "ID: %d, Estimación anterior: %d", pcb->id, pcb->estimacion_anterior);
 }
 
 int proxima_rafaga_estimada(t_pcb* pcb) {
 
   // Fórmula SJF	pr = ur * alpha + (1 - alpha) * t estimado ur
-
-  return pcb->ultima_rafaga * alfa + (1 - alfa) * pcb->estimacion_anterior;
+    uint32_t prox_rafaga_estimada = pcb->ultima_rafaga * alfa + (1 - alfa) * pcb->estimacion_anterior;
+    log_info(logger, "ID: %d, Próxima ráfaga estimada: %d", pcb->id, prox_rafaga_estimada);
+    return prox_rafaga_estimada;
 }
 
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {
