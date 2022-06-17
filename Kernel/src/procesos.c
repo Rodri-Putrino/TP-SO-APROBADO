@@ -59,6 +59,7 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     pcb_nuevo->program_counter = 0;
     pcb_nuevo->estimacion_anterior = estimacion_inicial;
     pcb_nuevo->ultima_rafaga = 0;
+    pcb_nuevo->prox_rafaga_estimada = estimacion_inicial;
     pcb_nuevo->rafaga = malloc(sizeof(rango_tiempo_t));
     pcb_nuevo->tiempo_a_bloquearse = 0;
     pcb_nuevo->rafaga_bloqueado = malloc(sizeof(rango_tiempo_t));
@@ -90,6 +91,15 @@ void copiar_inicio_rafaga_del_proceso(t_pcb* pcb1, t_pcb* pcb2) {
     pthread_mutex_lock(&proceso_mutex);
 
     pcb1->rafaga->inicio = pcb2->rafaga->inicio;
+
+    pthread_mutex_unlock(&proceso_mutex);
+}
+
+void copiar_proxima_rafaga_estimada_del_proceso(t_pcb* pcb1, t_pcb* pcb2) {
+    
+    pthread_mutex_lock(&proceso_mutex);
+
+    pcb1->prox_rafaga_estimada = pcb2->prox_rafaga_estimada;
 
     pthread_mutex_unlock(&proceso_mutex);
 }
@@ -184,9 +194,9 @@ void ordenar_cola_listos() {
     pthread_mutex_lock(&procesos_listos_mutex);
 
     log_info(logger, "Ordenando cola de listos");
-    list_iterate(cola_listos, (void*) actualizar_estimacion_anterior);
-    log_info(logger, "Actualizadas todas las estimaciones anteriores");
     list_sort(cola_listos, (void*)mayor_prioridad);
+    list_iterate(cola_listos, (void*) imprimir_proxima_rafaga);
+    //log_info(logger, "Actualizadas todas las estimaciones anteriores");
 
     pthread_mutex_unlock(&procesos_listos_mutex);
 }
@@ -417,24 +427,33 @@ void proceso_finalizar_rafaga(t_pcb* pcb) {
     pthread_mutex_unlock(&procesos_rafaga_mutex);
 }
 
-void actualizar_estimacion_anterior(t_pcb* pcb)
+void actualizar_proxima_rafaga(t_pcb* pcb)
 {
     pthread_mutex_lock(&proceso_mutex);
-	pcb->estimacion_anterior = proxima_rafaga_estimada(pcb);
+	pcb->prox_rafaga_estimada -= pcb->ultima_rafaga;
     pthread_mutex_unlock(&proceso_mutex);
-    log_info(logger, "ID: %d, Estimación anterior: %d", pcb->id, pcb->estimacion_anterior);
+    log_info(logger, "ID: %d, Próx ráfaga estimada: %d", pcb->id, pcb->prox_rafaga_estimada);
 }
 
-int proxima_rafaga_estimada(t_pcb* pcb) {
+void imprimir_proxima_rafaga(t_pcb* pcb)
+{
+    log_info(logger, "ID: %d, Próxima ráfaga estimada: %d", pcb->id, pcb->prox_rafaga_estimada);
+}
 
-  // Fórmula SJF	pr = ur * alpha + (1 - alpha) * t estimado ur
-    uint32_t prox_rafaga_estimada = pcb->ultima_rafaga * alfa + (1 - alfa) * pcb->estimacion_anterior;
-    log_info(logger, "ID: %d, Próxima ráfaga estimada: %d", pcb->id, prox_rafaga_estimada);
-    return prox_rafaga_estimada;
+void estimar_proxima_rafaga(t_pcb* pcb) {
+
+    pthread_mutex_lock(&proceso_mutex);
+
+    // Fórmula SJF	pr = ur * alpha + (1 - alpha) * t estimado ur
+    pcb->prox_rafaga_estimada = pcb->ultima_rafaga * alfa + (1 - alfa) * pcb->estimacion_anterior;
+    pcb->estimacion_anterior = pcb->prox_rafaga_estimada;
+
+    pthread_mutex_unlock(&proceso_mutex);
+    log_info(logger, "ID: %d, Próxima ráfaga estimada: %d", pcb->id, pcb->prox_rafaga_estimada);
 }
 
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {
-    return proxima_rafaga_estimada(pcb1) <= proxima_rafaga_estimada(pcb2);
+    return pcb1->prox_rafaga_estimada <= pcb2->prox_rafaga_estimada;
 }
 
 int puede_suspenderse(t_pcb* pcb) {

@@ -32,6 +32,7 @@ typedef struct {
 	uint32_t tabla_paginas; //indice a lista general de tablas nivel 1
 	uint32_t estimacion_anterior;
 	uint32_t ultima_rafaga;
+	int prox_rafaga_estimada;
 	uint32_t tiempo_a_bloquearse;
 	uint32_t tiempo_bloqueado;
 	rango_tiempo_t* rafaga;
