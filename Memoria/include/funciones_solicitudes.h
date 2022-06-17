@@ -13,5 +13,5 @@ void pedido_lectura(int socket_cliente, t_log *logger);
 void pedido_escritura(int socket_cliente, t_log *logger);
 void solicitud_tabla_paginas(int socket_cliente, t_log *logger);
 void solicitud_marco(int socket_cliente, t_log *logger);
-
+void eliminar_proceso(int socket_cliente, t_log *logger);
 #endif

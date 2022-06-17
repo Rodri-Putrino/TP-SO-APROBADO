@@ -46,7 +46,11 @@ void suspender_paginas(int PID, int dir_tablaN1)
     {
         entrada_tabla_N2 *e = list_get(marcos, i);
         if(e->bit_modificacion == 1)
+        {
             escribir_en_archivo(PID, e->dir, e->num_pag);
+            log_info(logger, "se guardaron los cambios de la pagina %d correctamente del proceso %d",e->num_pag,PID);
+        }
+            
         
         e->bit_modificacion = 0;
         e->bit_presencia = 0;
@@ -63,8 +67,8 @@ void escribir_en_archivo(int PID, int direccion_pagina, int pagina){
     
     fseek(file,tam_pagina*pagina,SEEK_SET);
 
-    fwrite(memoria + direccion_pagina,tam_pagina,1,file);   
-
+    fwrite(memoria + direccion_pagina,tam_pagina,1,file);    
+    
     fclose(file);
     free(path);
 } //TODO: testear cuando podamos cargar cosas en memoria :D
@@ -80,6 +84,8 @@ void enviar_pagina_a_memoria(int PID, int direccion_pagina, int pagina){
     fseek(file,tam_pagina*pagina,SEEK_SET);
 
     fread(memoria + direccion_pagina,tam_pagina,1,file);
+
+    log_info(logger,"pagina %d enviada a memoria correctamente",pagina);
 
     fclose(file);
     free(path);

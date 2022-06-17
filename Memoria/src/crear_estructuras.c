@@ -109,8 +109,8 @@ void eliminar_paginas_proceso(int dir_tablaN1)
     list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
 }*/
 
-void eliminar_paginas_proceso(int id, int dir_tablaN1)
-{
+void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TODO: chequear con el team que hacer con esta lista que quedaria x cantidad 
+{                                                                                // de procesos con sus paginas en NULL
     t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
     t_list_iterator *iteradorN1 = list_iterator_create(t);
     while(list_iterator_has_next(iteradorN1))
@@ -194,6 +194,27 @@ t_bitarray* crear_bitmap(int tamanio_memoria)
 
     return ret;
 }
+
+void imprimir_bitmap(t_bitarray *bitmap)
+{
+    char* cadenaDeBitmap = malloc(bitmap->size);
+
+    for(int aux=0;aux<bitmap->size;aux++){
+        if(bitarray_test_bit(bitmap, aux)==1){
+            //cadenaDeBitmap[aux] = "1";
+            string_append(&cadenaDeBitmap, "1");
+
+        }
+        else
+            //cadenaDeBitmap[aux] = "0";
+            string_append(&cadenaDeBitmap, "0");
+    }
+
+    log_info(logger,"el estado del bitmap es: %s",cadenaDeBitmap);
+
+    free(cadenaDeBitmap);
+}
+
 
 void eliminar_bitmap(t_bitarray *bitmap)
 {

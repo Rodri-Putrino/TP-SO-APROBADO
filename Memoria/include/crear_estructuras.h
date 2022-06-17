@@ -80,6 +80,11 @@ void iniciar_memoria(void *mem, int tamanio_total);
 t_bitarray* crear_bitmap(int tamanio_memoria);
 
 /*
+    funcion para imprimir un logger del estado actual de un bitmap
+*/
+void imprimir_bitmap(t_bitarray *bitmap);
+
+/*
     Otra forma de llamar a bitarray_destroy()
 */
 void eliminar_bitmap(t_bitarray *bitmap);

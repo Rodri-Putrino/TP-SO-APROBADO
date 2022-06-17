@@ -117,5 +117,6 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
         aux->bit_presencia = 0;
     }
     enviar_pagina_a_memoria(id, dir_marco, e->num_pag);
+    log_info(logger,"pagina %d del proceso %d lista en memoria",e->num_pag,id);
     e->bit_presencia = 1;
 }
