@@ -10,12 +10,12 @@ void iniciar_planificador_corto_plazo() {
 
 void planificar_procesos() {
 
-    log_info(logger, "Planificador de corto plazo iniciado");
+    log_debug(logger, "Planificador de corto plazo iniciado");
 
     while (1) {
 
         sem_wait(&sem_proceso_listo);
-        log_info(logger, "Plani CP notificado proceso listo");
+        log_debug(logger, "Plani CP notificado proceso listo");
 
         int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
 
@@ -28,7 +28,7 @@ void planificar_procesos() {
         t_pcb* pcb = desencolar_proceso_listo();
         encolar_proceso_en_ejecucion(pcb);
         enviar_pcb(RECIBIR_PCB, pcb, conexion_dispatch, logger);
-        log_info(logger, "Id del PCB enviado a CPU: %d", pcb->id);
+        log_info(logger, "PCB ID %d ha sido enviado a CPU", pcb->id);
         recibir_pcb_luego_de_ejecutar(conexion_dispatch);
         close(conexion_dispatch);
 
@@ -52,7 +52,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
             proceso_finalizar_rafaga(pcb_en_ejecucion);
             destruir_proceso(pcb_en_ejecucion); //Porque tenemos que empezar a usar el pcb actulizado
             pcb_actualizado = recibir_pcb(conexion, logger);
-            log_info(logger, "ID del pcb finalizado: %d", pcb_actualizado->id);
+            log_info(logger, "PCB ID %d ha finalizado", pcb_actualizado->id);
             encolar_proceso_en_terminados(pcb_actualizado);
             sem_post(&sem_multiprogramacion);
             enviar_mensaje("El proceso ha finalizado su ejecucion", pcb_actualizado->id, logger);

@@ -270,7 +270,7 @@ void evaluar_suspender_proceso(t_pcb* pcb) {
 
     if(pcb->tiempo_bloqueado > tiempo_max_bloqueado)
     {
-        log_info(logger, "Se suspende proceso %d pq el tiempo bloqueado es: %d", pcb->id, pcb->tiempo_bloqueado);
+        log_info(logger, "PCB ID %d ha sido suspendido", pcb->id);
         modificar_estado_proceso(pcb, BLOQUEADO_SUSPENDIDO);
         sem_post(&sem_multiprogramacion);
         //conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
@@ -422,7 +422,7 @@ void proceso_finalizar_rafaga(t_pcb* pcb) {
     gettimeofday(&pcb->rafaga->fin, NULL);
     //log_debug(logger, "Fin ráfaga: %d", pcb->rafaga->fin);
     pcb->ultima_rafaga = timedifference_msec(pcb->rafaga->inicio, pcb->rafaga->fin);
-    log_info(logger, "Tiempo ráfaga: %d", pcb->ultima_rafaga);
+    log_info(logger, "PCB ID %d - Última ráfaga: %d ms", pcb->id, pcb->ultima_rafaga);
 
     pthread_mutex_unlock(&procesos_rafaga_mutex);
 }
@@ -432,12 +432,12 @@ void actualizar_proxima_rafaga(t_pcb* pcb)
     pthread_mutex_lock(&proceso_mutex);
 	pcb->prox_rafaga_estimada -= pcb->ultima_rafaga;
     pthread_mutex_unlock(&proceso_mutex);
-    log_info(logger, "ID: %d, Próx ráfaga estimada: %d", pcb->id, pcb->prox_rafaga_estimada);
+    log_info(logger, "PCB ID %d - Próxima ráfaga estimada: %d ms", pcb->id, pcb->prox_rafaga_estimada);
 }
 
 void imprimir_proxima_rafaga(t_pcb* pcb)
 {
-    log_info(logger, "ID: %d, Próxima ráfaga estimada: %d", pcb->id, pcb->prox_rafaga_estimada);
+    log_info(logger, "PCB ID %d - Próxima ráfaga estimada: %d ms", pcb->id, pcb->prox_rafaga_estimada);
 }
 
 void estimar_proxima_rafaga(t_pcb* pcb) {
@@ -449,7 +449,7 @@ void estimar_proxima_rafaga(t_pcb* pcb) {
     pcb->estimacion_anterior = pcb->prox_rafaga_estimada;
 
     pthread_mutex_unlock(&proceso_mutex);
-    log_info(logger, "ID: %d, Próxima ráfaga estimada: %d", pcb->id, pcb->prox_rafaga_estimada);
+    log_info(logger, "PCB ID %d - Próxima ráfaga estimada: %d ms", pcb->id, pcb->prox_rafaga_estimada);
 }
 
 int mayor_prioridad(t_pcb *pcb1, t_pcb *pcb2) {

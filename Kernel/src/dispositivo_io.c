@@ -15,11 +15,11 @@ void atender_procesos() {
         sem_wait(&sem_proceso_bloqueado);
 
         t_pcb* pcb = desencolar_proceso_bloqueado();
-        log_info(logger, "Tiempo a bloquearse: %u", pcb->tiempo_a_bloquearse);
+        log_info(logger, "PCB ID %d debe ejecutar I/O %u ms", pcb->id, pcb->tiempo_a_bloquearse);
 
         usleep(pcb->tiempo_a_bloquearse * 1000);
 
-        log_info(logger, "PCB %d terminó de ejecutar I/O", pcb->id);
+        log_info(logger, "PCB ID %d terminó de ejecutar I/O", pcb->id);
 
         if (pcb->estado == BLOQUEADO)
             encolar_proceso_en_listos(pcb);

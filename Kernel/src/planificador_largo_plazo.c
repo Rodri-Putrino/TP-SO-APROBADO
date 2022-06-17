@@ -10,7 +10,7 @@ void iniciar_planificador_largo_plazo() {
 
 void controlar_grado_de_multiprogramacion() {
 
-    log_info(logger, "Planificador de largo plazo iniciado");
+    log_debug(logger, "Planificador de largo plazo iniciado");
 
     while (1) {
 
@@ -19,11 +19,11 @@ void controlar_grado_de_multiprogramacion() {
         mostrar_grado_multiprogramacion_actual();
         sem_wait(&sem_multiprogramacion);
 
-        log_info(logger, "Proceso admitido en sistema");
+        log_info(logger, "Proceso admitido en el sistema");
 
         if (hay_proceso_suspendido_listo()) {
             t_pcb* pcb = desencolar_proceso_suspendido_listo();
-            log_info(logger, "PCB id %d desuspendido", pcb->id);
+            log_info(logger, "PCB ID %d desuspendido", pcb->id);
             encolar_proceso_en_listos(pcb);
         }
         else {
@@ -45,7 +45,7 @@ void mostrar_grado_multiprogramacion_actual() {
     int cantidad_procesos_actual = cantidad_procesos_en_sistema();
 
     if(cantidad_procesos_actual == grado_multiprogramacion) {
-        log_info(logger, "Grado de multiprogramación completo, %d procesos en sistema", cantidad_procesos_actual);
+        log_info(logger, "Grado de multiprogramación completo - Cantidad de procesos en sistema: %d", cantidad_procesos_actual);
     }
     else {
         log_info(logger, "Grado de multiprogramación actual: %d", cantidad_procesos_actual);
