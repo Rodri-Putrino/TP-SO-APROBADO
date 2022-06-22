@@ -107,11 +107,9 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger, int socket_mem
 
 	int *dato = malloc(sizeof(int));
 	int desplazamiento = 0;
-	while(bytes_por_procesar > 0)
-	{
+	while(bytes_por_procesar > 0) {
 		int dir_fisica = traducir_dir_logica(dir_logica, proceso, logger, socket_memoria);
-		if(resto_pag >= bytes_por_procesar)
-		{
+		if(resto_pag >= bytes_por_procesar) {
 			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
 			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
 			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
@@ -125,8 +123,7 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger, int socket_mem
 
 			bytes_por_procesar = 0;
 		}
-		else
-		{
+		else {
 			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
 			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
 			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
@@ -148,7 +145,7 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger, int socket_mem
 	return ret;
 }
 
-int max(int a,int b){
+int max(int a,int b) {
     if(a > b)
         return a;
     return b;

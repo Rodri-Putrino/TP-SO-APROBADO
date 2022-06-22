@@ -36,7 +36,7 @@ void controlar_grado_de_multiprogramacion() {
             //pcb_nuevo->tabla_paginas = recibir identificador de tabla de paginas
             //liberar_conexion(conexion_memoria);
 
-        } 
+        }
     }
 }
 

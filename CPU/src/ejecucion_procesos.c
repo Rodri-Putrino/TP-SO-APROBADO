@@ -56,15 +56,17 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion READ");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
+            //int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+            //int dir_logica = instruccion->arg[0];
             //Pasar a mmu:
-            //pedido_lectura()
+            //pedido_lectura(dir_logica, pcb, logger_CPU, conexion_memoria);
 
-            if(hay_interrupcion_para_atender())
-            {
+            if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
-            else 
+            else {
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
+            }
 
             break;
 
@@ -78,12 +80,12 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             //Pasar a mmu:
             //pedido_escritura(valor, dir_logica, pcb, logger_CPU) //Sacar logger pq es global
 
-            if(hay_interrupcion_para_atender())
-            {
+            if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
-            else 
+            else {
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
+            }
 
             break;
 
@@ -91,11 +93,16 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
          
             log_info(logger_CPU, "Instruccion COPY");
             log_info(logger_CPU, "Etapa FETCH OPERANDS iniciada");
-            //buscar_valor_en_memoria();
+
+            //int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+            //int dir_logica_origen = instruccion->arg[0];
+            //int dir_logica_destino = instruccion->arg[1];
+            //Pasar a mmu:
+            //int dato = pedido_lectura(dir_logica_origen, pcb, logger_CPU, conexion_memoria);
+            //pedido_escritura(dato, dir_logica_destino, pcb, logger_CPU) //Sacar logger pq es global
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
-            if(hay_interrupcion_para_atender())
-            {
+            if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }
             else 
@@ -104,7 +111,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             break;
 
         case EXIT:
-         
+        
             log_info(logger_CPU, "Instruccion EXIT");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
 
@@ -120,18 +127,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 }
 
 int hay_interrupcion_para_atender() {
-    /*
-    if(valor_sem > 0)
-    {
-        sem_wait();
-        return 1;
-    }
-    else
-        return 0
-    */
 
-   if(flag_interrupcion)
-   {
+   if(flag_interrupcion) {
        flag_interrupcion = 0;
        return 1;
    }

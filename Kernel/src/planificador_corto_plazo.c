@@ -44,8 +44,7 @@ void recibir_pcb_luego_de_ejecutar(int conexion) {
     int op_code = recibir_operacion(conexion);
     t_pcb *pcb_en_ejecucion, *pcb_actualizado;
 
-    switch(op_code)
-    {
+    switch(op_code) {
         case EXIT:
             log_info(logger, "Petición recibida: EXIT");
             pcb_en_ejecucion = desencolar_proceso_en_ejecucion();
