@@ -14,11 +14,19 @@ int main(void) {
 
 	crear_listas_tablas();
 	
+	/*t_bitarray* bitmapTest = crear_bitmap(tam_memoria);
+
+	imprimir_bitmap(bitmapTest)
+	*/
+
+	generar_nuevo_archivo(12);
 
 	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);
-
+	
 	pthread_join(hilo_servidor, NULL);
+
+	
 
 //	USADOR PARA PROBAR CREAR Y DESTRUIR TABLAS
 /*

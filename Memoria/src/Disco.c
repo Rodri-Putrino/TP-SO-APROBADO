@@ -3,9 +3,21 @@
 
 void generar_nuevo_archivo(int PID){
     
+    struct stat buffer;
+    //int exist = stat(filename,&buffer);
+    
+    if(stat(path_swap,&buffer)!=0){
+        log_error(logger,"El directorio %s no existe",path_swap);
+
+        system("mkdir /home/utnso/swap");
+
+        //mkdir (char *filename);
+    }    
+
+
     char * aux  = string_new();
     char * idAux = string_itoa(PID);
-
+    
     string_append(&aux, path_swap);
     string_append(&aux, "/");
     string_append(&aux, idAux);

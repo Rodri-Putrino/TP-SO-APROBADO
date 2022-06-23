@@ -190,16 +190,30 @@ t_bitarray* crear_bitmap(int tamanio_memoria)
     for(int i = 0; i < cantidad_bits; i++)
     {
         bitarray_set_bit(ret, i);
-    }
+    }                                                           //CHEQUEAR (para vos joaco) CON QUE VALOR (0,1) SE RELACIONA A VACIO/OCUPADO
 
     return ret;
 }
 
 void imprimir_bitmap(t_bitarray *bitmap)
 {
-    char* cadenaDeBitmap = malloc(bitmap->size);
+    size_t cantidadDeBits =  bitarray_get_max_bit(bitmap);
 
-    for(int aux=0;aux<bitmap->size;aux++){
+    // int bytes_necesarios = ceil(cantidadDeBits / 8); 
+
+    char* cadenaDeBitmap = malloc(cantidadDeBits);
+
+    /*
+    printf("el size del bitmap es: %zu\n",bitmap->size);
+    printf("la cantidad de bits es: %zu\n",cantidadDeBits);
+    printf("el estado de la cadena aux es: %s\n",cadenaDeBitmap);
+    */
+
+    strcpy(cadenaDeBitmap, "\0");           //La usamos para limpiar la basura del char*
+
+    //printf("el estado de la cadena aux es: %s\n",cadenaDeBitmap);
+
+    for(int aux=0;aux<cantidadDeBits;aux++){
         if(bitarray_test_bit(bitmap, aux)==1){
             //cadenaDeBitmap[aux] = "1";
             string_append(&cadenaDeBitmap, "1");
@@ -209,6 +223,8 @@ void imprimir_bitmap(t_bitarray *bitmap)
             //cadenaDeBitmap[aux] = "0";
             string_append(&cadenaDeBitmap, "0");
     }
+
+    //printf("el estado del bitmap es %s \n",cadenaDeBitmap);
 
     log_info(logger,"el estado del bitmap es: %s",cadenaDeBitmap);
 
