@@ -255,7 +255,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 	 		sizeof(size_t) +
 			size_instrucciones + //tamanio lista de instrucciones
 			sizeof(t_instruccion) * length_lista + //tamanio de cada instruccion
-	 		sizeof(uint32_t) * 5;
+	 		sizeof(uint32_t) * 6;
 			//sizeof(rango_tiempo_t);
 
 	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
@@ -279,6 +279,9 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 	memcpy(stream + desplazamiento, &pcb->estimacion_anterior, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	memcpy(stream + desplazamiento, &pcb->ultima_rafaga, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	//AGREGADO
+	memcpy(stream + desplazamiento, &pcb->tabla_paginas, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	
 	memcpy(stream + desplazamiento, &size_instrucciones, sizeof(size_t));
@@ -340,6 +343,9 @@ t_pcb* deserializar_pcb(void* stream) {
 	memcpy(&pcb->estimacion_anterior, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	memcpy(&pcb->ultima_rafaga, stream + desplazamiento, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	//AGREGADO
+	memcpy(&pcb->tabla_paginas, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 
 	memcpy(&size_instrucciones, stream + desplazamiento, sizeof(size_t));
@@ -507,6 +513,11 @@ void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size)
 	for(int i = 0; i < list_size(t); i++)
 	{
 		entrada_tabla_N2 *e = list_get(t, i);
+		printf("Entrada num: %d\nDir pag: %d\nBit presencia: %d\n",
+		e->num_pag,
+		e->dir,
+		e->bit_presencia
+		);
 		memcpy(buffer + desplazamiento, e, sizeof(entrada_tabla_N2));
 		desplazamiento += sizeof(entrada_tabla_N2);
 	}
@@ -525,13 +536,11 @@ void enviar_tabla_N2(int socket_cliente, t_tablaN2 *t, t_log *logger)
 	free(buffer);
 }
 
-t_list* deserializar_tabla_N2(void *stream)
+t_list* deserializar_tabla_N2(void *stream, int tamanio_lista)
 {
 	int desplazamiento = 0;
-
-	int tamanio_lista;
-	memcpy(&tamanio_lista, stream, sizeof(int));
-	desplazamiento += sizeof(int);
+	//memcpy(&tamanio_lista, stream, sizeof(int));
+	//desplazamiento += sizeof(int);
 
 	t_list *ret = list_create();
 	while(desplazamiento < tamanio_lista)
@@ -551,6 +560,8 @@ t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger)
         log_error(logger, "Error al recibir tamanio tabla nivel 2"); 
     }
 
+	size -= sizeof(size_t);
+	size -= sizeof(op_code);
     void* stream = malloc(size);
 	log_info(logger, "Tamanio tabla: %zu", size);
 
@@ -558,7 +569,7 @@ t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger)
 		log_error(logger, "Error al recibir tabla nivel 2");
     }
 
-    t_tablaN2 *ret = deserializar_tabla_N2(stream);
+    t_tablaN2 *ret = deserializar_tabla_N2(stream, size);
     free(stream); 
 	return ret;
 }

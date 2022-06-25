@@ -30,12 +30,12 @@ void atender_peticiones(void* conexion) {
 
         case PEDIDO_LECTURA:
             log_info(logger, "Petición recibida: PEDIDO_LECTURA");
-
+            pedido_lectura(una_conexion, logger);
             break;
 
         case PEDIDO_ESCRITURA:
             log_info(logger, "Petición recibida: PEDIDO_ESCRITURA");
-
+            pedido_escritura(una_conexion, logger);
             break;
 
         case PEDIDO_COPIA:
@@ -45,12 +45,12 @@ void atender_peticiones(void* conexion) {
 
         case SOLICITUD_TABLA_PAGINAS: 
             log_info(logger, "Petición recibida: SOLICITUD_TABLA_PAGINAS");
-
+            solicitud_tabla_paginas(una_conexion, logger);
             break;
 
         case SOLICITUD_MARCO:
             log_info(logger, "Petición recibida: SOLICITUD_MARCO");
-
+            solicitud_marco(una_conexion, logger);
             break;
 
         case SOLICITUD_DIRECCION_FISICA:
@@ -60,12 +60,15 @@ void atender_peticiones(void* conexion) {
 
         case INICIALIZAR_ESTRUCTURAS:
             log_info(logger, "Petición recibida: INICIALIZAR_ESTRUCTURAS");
-
+            inicializar_estructuras(una_conexion, logger);
             break;
 
         case SUSPENDER_PROCESO:
             log_info(logger, "Petición recibida: SUSPENDER_PROCESO");
-
+            //suspender_proceso(una_conexion, logger);
+            break;
+        case EXIT:
+            eliminar_proceso(una_conexion, logger);
             break;
 
         default: 

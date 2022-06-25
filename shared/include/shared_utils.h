@@ -55,9 +55,6 @@ typedef struct {
 typedef t_list t_tablaN2; //elementos tipo entrada_tabla_N2
 typedef t_list t_tablaN1; //elementos tipo entrada_tabla_N1
 
-int tam_pagina;
-int paginas_por_tabla;
-
 void finalizar_programa(t_log*, t_config*);
 
 #endif

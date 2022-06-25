@@ -14,6 +14,7 @@ typedef struct
 
 t_list *tlb;
 
+void iniciar_estructuras();
 void agregar_entrada_tlb(entrada_tabla_N2 *e);
 int buscar_pagina_tlb(int pag);
 /*

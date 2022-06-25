@@ -13,6 +13,8 @@ int main(void) {
 	config_cpu = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_cpu(config_cpu);
 
+	iniciar_estructuras(); //de momento, solo TLB
+
 	pthread_t hilo_servidor_interrupt;
     pthread_create(&hilo_servidor_interrupt, NULL, (void*) servidor_interrupt, NULL);
 

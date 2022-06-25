@@ -12,14 +12,14 @@ int main(void) {
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
 
+	//hacer funcion iniciar_estructuras_memoria()
 	crear_listas_tablas();
+	marcos_memoria = crear_bitmap(tam_memoria);
 	
 	/*t_bitarray* bitmapTest = crear_bitmap(tam_memoria);
 
 	imprimir_bitmap(bitmapTest)
 	*/
-
-	generar_nuevo_archivo(12);
 
 	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);

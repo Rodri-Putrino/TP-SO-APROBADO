@@ -94,9 +94,10 @@ void solicitud_tabla_paginas(int socket_cliente, t_log *logger)
     int *dir_tabla = list_get(parametros, 0);
     int *num_entrada = list_get(parametros, 1);
 
-    log_info(logger,"recibo de parametros solicitud de tabla de paginas: %d", *num_entrada);
+    log_info(logger,"recibo de parametros solicitud de tabla de paginas: %d Entrada: %d", *dir_tabla, *num_entrada);
 
     t_tablaN1 *t = list_get(tablasN1, *dir_tabla);
+    log_info(logger, "Tamanio talba: %d", list_size(t));
     entrada_tabla_N1 *e = list_get(t, *num_entrada);
 
     t_tablaN2 *respuesta = list_get(tablasN2, e->dir);

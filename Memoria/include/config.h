@@ -16,5 +16,7 @@ char* algoritmo_reemplazo;
 int marcos_por_proceso;
 int retardo_swap;
 char* path_swap;
+int tam_pagina;
+int paginas_por_tabla;
 
 #endif

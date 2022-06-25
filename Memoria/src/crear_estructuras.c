@@ -47,7 +47,8 @@ entrada_tabla_N2* agregar_entrada_tablaN2(t_tablaN2 *tabla)
 
 int cantidad_paginas_necesarias(int tamanio_proceso)
 {
-    return ceil(tamanio_proceso / tam_pagina);
+    float division = tamanio_proceso / tam_pagina;
+    return ceil(division);
 }
 
 int cantidad_tablas_necesarias(int paginas_necesarias)
@@ -59,6 +60,7 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
 {
     t_tablaN1 *t = list_create();
     int paginas_necesarias = cantidad_paginas_necesarias(tamanio_proceso);
+    log_info(logger, "Paginas necesarias %d segun tamanio %d", paginas_necesarias, tamanio_proceso);
 
     for(int paginas_reservadas = 0; paginas_reservadas < paginas_necesarias; paginas_reservadas++)
     {
@@ -79,10 +81,9 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
         entrada_tabla_N2 *aux3 = agregar_entrada_tablaN2(aux2);
         
         //DIR = NUMERO PAGINA * TAMANIO PAGINA
+        aux3->num_pag = paginas_reservadas;
         aux3->dir = aux3->num_pag * tam_pagina;
         aux3->bit_presencia = 0;
-        
-        aux3->num_pag = paginas_reservadas;
     }
     return t;
 }

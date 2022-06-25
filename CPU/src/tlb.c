@@ -1,5 +1,10 @@
 #include "../include/tlb.h"
 
+void iniciar_estructuras()
+{
+    tlb = list_create();
+}
+
 void agregar_entrada_tlb(entrada_tabla_N2 *e)
 {
     entrada_tlb *aux = malloc(sizeof(entrada_tlb));
@@ -14,7 +19,7 @@ void agregar_entrada_tlb(entrada_tabla_N2 *e)
 
 int buscar_pagina_tlb(int pag)
 {
-    for(int i = 0; i < entradas_tlb; i++)
+    for(int i = 0; i < list_size(tlb); i++)
     {
         entrada_tlb *info = list_get(tlb, i);
         //SI ES LA PAG, RETORNAR MARCO

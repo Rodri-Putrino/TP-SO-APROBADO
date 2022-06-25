@@ -94,7 +94,7 @@ t_pcb* deserializar_pcb_con_tiempo_bloqueo(void* stream);
 
 void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size);
 void enviar_tabla_N2(int socket_cliente, t_tablaN2 *t, t_log *logger);
-t_list* deserializar_tabla_N2(void *stream);
+t_list* deserializar_tabla_N2(void *stream, int tamanio_lista);
 t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger);
 
 #endif

@@ -72,6 +72,21 @@ t_pcb* crear_proceso(uint32_t id, uint32_t tam, t_list* lista_instrucciones) {
     }
     list_iterator_destroy(iterador_proceso);
 
+    //ENVIAR MENSAJE A MEMORIA
+    int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+
+    t_paquete *info = crear_paquete(INICIALIZAR_ESTRUCTURAS);
+    agregar_a_paquete(info, &id, sizeof(uint32_t));
+    agregar_a_paquete(info, &tam, sizeof(uint32_t));
+    
+    enviar_paquete(info, conexion_memoria, logger);
+    eliminar_paquete(info);
+
+    pcb_nuevo->tabla_paginas = recibir_num(conexion_memoria, logger);
+    log_info(logger, "PCB ID %d Direccion de tabla recibida: %d", pcb_nuevo->id, pcb_nuevo->tabla_paginas);
+    close(conexion_memoria);
+    //FIN ENVIAR MENSAJE
+
     pthread_mutex_unlock(&proceso_mutex);
 
     return pcb_nuevo;

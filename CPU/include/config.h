@@ -16,5 +16,8 @@ char* ip_escucha;
 char* puerto_escucha_dispatch;
 char* puerto_escucha_interrupt;
 int flag_interrupcion;
+//AGREGADOS
+int tam_pagina;
+int paginas_por_tabla;
 
 #endif

@@ -10,4 +10,7 @@ void procesar_archivo_config_cpu(t_config* config_consola) {
     entradas_tlb = config_get_int_value(config_consola, "ENTRADAS_TLB");
     reemplazo_tlb = config_get_string_value(config_consola, "REEMPLAZO_TLB");
     retardo_noop = config_get_int_value(config_consola, "RETARDO_NOOP");
+    //AGREGADOS
+    tam_pagina = config_get_int_value(config_consola, "TAM_PAGINA");
+    paginas_por_tabla = config_get_int_value(config_consola, "PAGINAS_POR_TABLA");
 }

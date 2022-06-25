@@ -8,14 +8,20 @@ int traducir_dir_logica(int dir, t_pcb *proceso, t_log *logger, int socket_memor
 	int result_tlb = buscar_pagina_tlb(numero_pagina);
 	//SI NO ES PAGE FAULT, RETORNAR RESULTADO
 	if(result_tlb != -1)
+	{
+		log_info(logger,"TLB Hit");
 		return result_tlb;
+	}
+	log_info(logger, "TLB Miss");
 
+	int dir_tablaN1 = proceso->tabla_paginas;
+	log_info(logger,"Dir tabla de proceso: %d", proceso->tabla_paginas);
 	int dir_entradaN1 = floor(numero_pagina / paginas_por_tabla);
 
 	//(SOLICITUD TABLA)
 	//ENVIAR DIR TABLA N1 Y NUM ENTRADA TABLA NIVEL 1
 	t_paquete *primer_acceso = crear_paquete(SOLICITUD_TABLA_PAGINAS);
-	agregar_a_paquete(primer_acceso, &(proceso->tabla_paginas), sizeof(int));
+	agregar_a_paquete(primer_acceso, &dir_tablaN1, sizeof(int));
 	agregar_a_paquete(primer_acceso, &dir_entradaN1, sizeof(int));
 	enviar_paquete(primer_acceso, socket_memoria, logger);
 	eliminar_paquete(primer_acceso);
@@ -23,6 +29,16 @@ int traducir_dir_logica(int dir, t_pcb *proceso, t_log *logger, int socket_memor
 	//RECIBIR TABLA N2
 	recibir_operacion(socket_memoria);
 	t_tablaN2 *tablaN2 = recibir_tabla_N2(socket_memoria, logger);
+
+	for(int i = 0; i < list_size(tablaN2); i++)
+	{
+		entrada_tabla_N2 *e = list_get(tablaN2, i);
+		log_info(logger,"Entrada num: %d\nDir pag: %d\nBit presencia: %d",
+		e->num_pag,
+		e->dir,
+		e->bit_presencia
+		);
+	}
 
 	int dir_entradaN2 = numero_pagina % paginas_por_tabla;
 	entrada_tabla_N2 *e2 = list_get(tablaN2, dir_entradaN2);
