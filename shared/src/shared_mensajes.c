@@ -563,7 +563,7 @@ t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger)
 	size -= sizeof(size_t);
 	size -= sizeof(op_code);
     void* stream = malloc(size);
-	log_info(logger, "Tamanio tabla: %zu", size);
+	log_info(logger, "Tamanio tabla (en formato paquete): %zu", size);
 
     if (recv(socket_cliente, stream, size, 0) != size) {
 		log_error(logger, "Error al recibir tabla nivel 2");

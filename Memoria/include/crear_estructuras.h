@@ -44,7 +44,7 @@ entrada_tabla_N1* agregar_entrada_tablaN1(t_tablaN1 *tabla);
     -num_pagina = -1
 */
 entrada_tabla_N2* agregar_entrada_tablaN2(t_tablaN2 *tabla);
-int cantidad_paginas_necesarias(int tamanio_proceso);
+int cantidad_paginas_necesarias(float tamanio_proceso);
 int cantidad_tablas_necesarias(int paginas_necesarias);
 
 /*

@@ -72,10 +72,13 @@ void pedido_escritura(int socket_cliente, t_log *logger)
 
     //DIR FISICA EN DONDE ESCRIBIR
     int *dir = list_get(parametros, 0);
+    log_info(logger, "Direccion fisica recibida: %d", *dir);
     //TAMANIO DE CUANTO ESCRIBIR (no es constante, maximo es 'sizeof(int)')
     int *tamanio = list_get(parametros, 1);
+    log_info(logger, "Tamanio dato recibido: %d", *tamanio);
     //DATO A ESCRIBIR
     void *dato = list_get(parametros, 2);
+    log_info(logger, "Recibio dato");
 
     log_info(logger,"recibo de parametros de escritura");
 
@@ -124,7 +127,6 @@ void solicitud_marco(int socket_cliente, t_log *logger)
     enviar_num(socket_cliente, e2->dir, logger);
     log_info(logger, "envio de marco para el proceso: %d", *id);
     list_destroy_and_destroy_elements(parametros,free);
-
 }
 
 void eliminar_proceso(int socket_cliente, t_log *logger){

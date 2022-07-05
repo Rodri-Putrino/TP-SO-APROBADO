@@ -45,7 +45,7 @@ entrada_tabla_N2* agregar_entrada_tablaN2(t_tablaN2 *tabla)
     return e;
 }
 
-int cantidad_paginas_necesarias(int tamanio_proceso)
+int cantidad_paginas_necesarias(float tamanio_proceso)
 {
     float division = tamanio_proceso / tam_pagina;
     return ceil(division);
