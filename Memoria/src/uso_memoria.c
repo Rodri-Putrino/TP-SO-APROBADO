@@ -51,7 +51,9 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir)
 {
     //CONSIGUE PAGINA EN MARCO
     int marco = conseguir_marco_de_dir_fisica(dir);
+    log_info(logger, "Pedido escritura en marco: %d",marco);
     entrada_tabla_N2 *pag = conseguir_pagina_en_marco(marco);
+    log_info(logger, "Escribir pagina: %d", pag->num_pag);
 
     //PAGINA FUE USADA
     pag->bit_uso = 1;
@@ -116,7 +118,7 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
             escribir_en_archivo(id, aux->dir, aux->num_pag);
         aux->bit_presencia = 0;
     }
+    e->bit_presencia = 1;
     enviar_pagina_a_memoria(id, dir_marco, e->num_pag);
     log_info(logger,"pagina %d del proceso %d lista en memoria",e->num_pag,id);
-    e->bit_presencia = 1;
 }

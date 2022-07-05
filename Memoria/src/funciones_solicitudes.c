@@ -68,7 +68,14 @@ void pedido_lectura(int socket_cliente, t_log *logger)
 
 void pedido_escritura(int socket_cliente, t_log *logger)
 {
-    t_list *parametros = recibir_paquete(socket_cliente, logger);
+    /*
+        RECIBE MAL LA DIRECCION FISICA
+    */
+
+    t_list *parametros = recibir_pedido_escritura(socket_cliente, logger);
+
+    log_info(logger, "Cantidad parametros recibidos: %d", list_size(parametros));
+
 
     //DIR FISICA EN DONDE ESCRIBIR
     int *dir = list_get(parametros, 0);
@@ -81,6 +88,11 @@ void pedido_escritura(int socket_cliente, t_log *logger)
     log_info(logger, "Recibio dato");
 
     log_info(logger,"recibo de parametros de escritura");
+
+    /*
+        ROMPE ACA:
+            BIT PRESENCIA NO CAMBIA A 1 :(
+    */
 
     escribir_memoria(dato, *tamanio, *dir);
     enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)

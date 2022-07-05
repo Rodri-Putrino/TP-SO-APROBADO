@@ -3,21 +3,21 @@
 //NOTA:
 //Los enteros que se envian estan en formato 'int', por ahi hay que cambiarlos a 'uint32_t'
 
-int enviar_num(int coneccion, int num, t_log *logger)
+int enviar_num(int conexion, int num, t_log *logger)
 {
     //send() ENVIA POR conexión EL num Y RETORNA LA CANTIDAD DE BYTES ENVIADOS
-	int ret = send(coneccion, &num, sizeof(uint32_t), 0);
+	int ret = send(conexion, &num, sizeof(uint32_t), 0);
 	if(ret < sizeof(uint32_t))
 		log_error(logger, "Error al enviar numero");
 
 	return ret;
 }
 
-int recibir_num(int coneccion, t_log* logger)
+int recibir_num(int conexion, t_log* logger)
 {
     //recv() RETORNA -1 SI EN CASO DE ERROR
 	int num;
-	if(recv(coneccion, &num, sizeof(int), MSG_WAITALL) > 0)
+	if(recv(conexion, &num, sizeof(int), MSG_WAITALL) > 0)
 		return num;
 	else
 	{
@@ -572,6 +572,77 @@ t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger)
     t_tablaN2 *ret = deserializar_tabla_N2(stream, size);
     free(stream); 
 	return ret;
+}
+
+void* serializar_pedido_escritura(int dir, int tamanio_dato, void *dato)
+{
+	void *buffer = malloc(sizeof(int) * 2 + tamanio_dato);
+
+	int desplazamiento = 0;
+
+	memcpy(buffer + desplazamiento, &dir, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	memcpy(buffer + desplazamiento, &tamanio_dato, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	memcpy(buffer + desplazamiento, dato, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	return buffer;
+}
+
+void enviar_pedido_escritura(int dir, int tamanio_dato, void *dato, int conexion, t_log *logger)
+{
+	void *mensaje = serializar_pedido_escritura(dir, tamanio_dato, dato);
+	if(send(conexion, mensaje, sizeof(int) * 6, 0) < 0)
+		log_error(logger, "Error al enviar pedido");
+}
+
+t_list *deserializar_pedido_escritura(void *buffer)
+{
+	t_list *parametros = list_create();
+	int desplazamiento = 0;
+
+	int *dir = malloc(sizeof(int));
+	memcpy(dir, buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(int);
+	list_add(parametros, dir);
+
+	int *tamanio_dato = malloc(sizeof(int));
+	memcpy(tamanio_dato, buffer + desplazamiento, sizeof(int));
+	desplazamiento += sizeof(int);
+	list_add(parametros, tamanio_dato);
+
+	void *dato = malloc(*tamanio_dato);
+	memcpy(dato, buffer + desplazamiento, *tamanio_dato);
+	desplazamiento += *tamanio_dato;
+	list_add(parametros, dato);
+
+	free(buffer);
+
+	return parametros;
+}
+
+t_list* recibir_pedido_escritura(int conexion, t_log *logger)
+{
+	t_list *parametros = list_create();
+
+	int *dir = malloc(sizeof(int));
+	if(recv(conexion, dir, sizeof(int), 0) < sizeof(int))
+		log_error(logger, "Error al recibir pedido escritura 1");
+	list_add(parametros, dir);
+
+	int *tamanio_dato = malloc(sizeof(int));
+	if(recv(conexion, tamanio_dato, sizeof(int), 0) < sizeof(int))
+		log_error(logger, "Error al recibir pedido escritura 2");
+	list_add(parametros, tamanio_dato);
+
+	void *dato = malloc(*tamanio_dato);
+	if(recv(conexion, dato, *tamanio_dato, 0) < *tamanio_dato)
+		log_error(logger, "Error al recibir pedido escritura 3");
+	list_add(parametros, dato);
+	return parametros;
 }
 
 void enviar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instrucciones, u_int32_t tam_proceso, int socket_cliente, t_log* logger) {

@@ -270,13 +270,21 @@ int conseguir_marco_de_dir_fisica(int dir)
 
 entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco)
 {
-    entrada_tabla_N2 *ret = list_get(t, 0);
-    for(int i = 0; i < paginas_por_tabla; i++)
+    entrada_tabla_N2 *ret;
+    printf("Tamanio lista: %d\n", list_size(t));
+    for(int i = 0; i < list_size(t); i++)
     {
+        ret = list_get(t, i);
+        printf("Entrada %d, presencia %d, dir %d\n",
+         ret->num_pag,
+         ret->bit_presencia,
+         ret->dir
+         );
         if(ret->bit_presencia == 1 && ret->dir == num_marco)
+        {
+            printf("Econtro pagina\n");
             return ret;
-        
-        list_get(t, i);
+        }
     }
     return NULL;
 }
