@@ -23,6 +23,8 @@ t_list *procesos_en_memoria;
 //MEMORIA PRINCIPAL (espacio usuario)
 void *memoria;
 
+void iniciar_estructuras_memoria();
+
 //BITMAP (cuales marcos estan vacios)
 t_bitarray *marcos_memoria;
 

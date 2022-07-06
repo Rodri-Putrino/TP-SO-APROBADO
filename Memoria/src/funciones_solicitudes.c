@@ -99,7 +99,6 @@ void pedido_escritura(int socket_cliente, t_log *logger)
     
     log_info(logger,"paquete de escritura enviado");
     list_destroy_and_destroy_elements(parametros,free);
-
 }
 
 void solicitud_tabla_paginas(int socket_cliente, t_log *logger)
@@ -128,7 +127,11 @@ void solicitud_marco(int socket_cliente, t_log *logger)
 
     int *id = list_get(parametros, 0);
     int *dir_tablaN1 = list_get(parametros, 1);
-    entrada_tabla_N2 *e2 = list_get(parametros, 2);
+    int *num_pag = list_get(parametros, 2);
+    log_info(logger,"el numero de pagina recibido por memoria es: %d",*num_pag);
+
+    entrada_tabla_N2 *e2 = conseguir_entrada_pagina(*dir_tablaN1, *num_pag);
+    
 
     log_info(logger,"el proceso %d solicita direccion fisica de pagina",*id);
 

@@ -62,6 +62,8 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir)
 
     //ESCRIBE DATO
     memcpy(memoria + dir, dato, tamanio_dato);
+
+    printf("un printf muy trucho: %d",*(int*)(memoria +dir));
 }
 
 void* leer_memoria(int tamanio_dato, int dir)
@@ -119,6 +121,7 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
         aux->bit_presencia = 0;
     }
     e->bit_presencia = 1;
+    log_info(logger, "el bit de presencia es: %d",e->bit_presencia);
     enviar_pagina_a_memoria(id, dir_marco, e->num_pag);
     log_info(logger,"pagina %d del proceso %d lista en memoria",e->num_pag,id);
 }

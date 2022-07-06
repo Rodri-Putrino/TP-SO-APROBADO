@@ -1,6 +1,13 @@
 #include "../include/crear_estructuras.h"
 
 /*----------------------MEMORIA PROCESO------------------------------------*/
+void iniciar_estructuras_memoria()
+{
+    memoria = malloc(tam_memoria);
+    crear_listas_tablas();
+	marcos_memoria = crear_bitmap(tam_memoria);
+}
+
 
 proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso)
 {

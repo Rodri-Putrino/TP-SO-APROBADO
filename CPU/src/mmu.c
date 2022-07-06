@@ -53,7 +53,7 @@ int traducir_dir_logica(float dir, t_pcb *proceso, t_log *logger)
 	t_paquete *segundo_acceso = crear_paquete(SOLICITUD_MARCO);
 	agregar_a_paquete(segundo_acceso, &(proceso->id), sizeof(int));
 	agregar_a_paquete(segundo_acceso, &(proceso->tabla_paginas), sizeof(int));
-	agregar_a_paquete(segundo_acceso, e2, sizeof(entrada_tabla_N2));
+	agregar_a_paquete(segundo_acceso, &(e2->num_pag), sizeof(int));
 	
 	conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
 	enviar_paquete(segundo_acceso, conexion_memoria, logger);
