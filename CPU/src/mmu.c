@@ -106,7 +106,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, t_log *logger)
 			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
 			enviar_pedido_escritura(dir_fisica,
 				bytes_por_procesar, 
-				valor + dir_resto_dato(bytes_por_procesar),
+				valor + dir_resto_dato(bytes_por_procesar), //¿No es siempre 0? dir_resto_dato(bytes_por_procesar)
 				conexion_memoria, 
 				logger
 			);
@@ -116,7 +116,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, t_log *logger)
 		else
 		{
 			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
-			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
+			/*t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
 			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
 			agregar_a_paquete(pedido, &resto_pag, sizeof(int));
 			agregar_a_paquete(pedido, (&valor) + dir_resto_dato(bytes_por_procesar), resto_pag);
@@ -127,7 +127,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, t_log *logger)
 			close(conexion_memoria);
 			
 			bytes_por_procesar -= resto_pag;
-			resto_pag = resto_pagina(dir_logica + resto_pag);
+			resto_pag = resto_pagina(dir_logica + resto_pag);*/
 		}
 	}
 }
@@ -143,7 +143,7 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 		int dir_fisica = traducir_dir_logica(dir_logica, proceso, logger);
 		if(resto_pag >= bytes_por_procesar) {
 			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
-			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
+			t_paquete *pedido = crear_paquete(PEDIDO_LECTURA);
 			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
 			agregar_a_paquete(pedido, &bytes_por_procesar, sizeof(int));
 

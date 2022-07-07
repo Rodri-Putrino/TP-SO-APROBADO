@@ -50,6 +50,7 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir, int dir_tabla_pag)
 void escribir_memoria(void *dato, int tamanio_dato, int dir)
 {
     //CONSIGUE PAGINA EN MARCO
+    //void *memoria2 = malloc(4096);
     int marco = conseguir_marco_de_dir_fisica(dir);
     log_info(logger, "Pedido escritura en marco: %d",marco);
     entrada_tabla_N2 *pag = conseguir_pagina_en_marco(marco);
@@ -61,9 +62,15 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir)
     pag->bit_modificacion = 1;
 
     //ESCRIBE DATO
-    memcpy(memoria + dir, dato, tamanio_dato);
+    log_info(logger, "Dirección física: %d", dir);
+    log_info(logger, "Tamanio dato: %d", tamanio_dato);
+    log_info(logger, "Dato: %d", (int) dato);
+    //log_info(logger, "Memoria: %d", (int) memoria);
+    //log_info(logger, "Memoria + Dir física: %d", *(int*) (memoria + dir));
 
-    printf("un printf muy trucho: %d",*(int*)(memoria +dir));
+    memcpy(memoria + dir, &dato, tamanio_dato);
+
+    log_info(logger, "Un log_info muy trucho: %d", *(int*)(memoria +dir));
 }
 
 void* leer_memoria(int tamanio_dato, int dir)

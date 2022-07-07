@@ -96,7 +96,7 @@ void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size);
 void enviar_tabla_N2(int socket_cliente, t_tablaN2 *t, t_log *logger);
 t_list* deserializar_tabla_N2(void *stream, int tamanio_lista);
 t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger);
-void* serializar_pedido_escritura(int dir, int tamanio_dato, void *dato);
+void* serializar_pedido_escritura(int dir, int tamanio_dato, void *dato, size_t *size, t_log* logger);
 void enviar_pedido_escritura(int dir, int tamanio_dato, void *dato, int conexion, t_log *logger);
 t_list *deserializar_pedido_escritura(void *buffer);
 t_list* recibir_pedido_escritura(int conexion, t_log *logger);

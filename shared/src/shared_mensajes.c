@@ -574,125 +574,94 @@ t_tablaN2* recibir_tabla_N2(int socket_cliente, t_log *logger)
 	return ret;
 }
 
-void* serializar_pedido_escritura(int dir, int tamanio_dato, void *dato)
+void* serializar_pedido_escritura(int dir, int tamanio_dato, void *dato, size_t *size, t_log* logger)
 {
-	void *buffer = malloc(sizeof(int) * 2 + tamanio_dato);
+	op_code cod_op = PEDIDO_ESCRITURA;
 
+ 	*size = sizeof(op_code) +
+	 		sizeof(size_t) +
+	 		sizeof(uint32_t) * 3;
+
+	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
+	log_info(logger, "Size payload: %zu", size_payload);
+
+	void* stream = malloc(*size);
 	int desplazamiento = 0;
 
-	memcpy(buffer + desplazamiento, &dir, sizeof(int));
+    memcpy(stream, &cod_op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+
+	memcpy(stream + desplazamiento, &size_payload, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+
+	memcpy(stream + desplazamiento, &dir, sizeof(int));
 	desplazamiento += sizeof(int);
 
-	memcpy(buffer + desplazamiento, &tamanio_dato, sizeof(int));
+	memcpy(stream + desplazamiento, &tamanio_dato, sizeof(int));
 	desplazamiento += sizeof(int);
 
-	memcpy(buffer + desplazamiento, &dato, sizeof(int));
+	memcpy(stream + desplazamiento, &dato, sizeof(int));
 	desplazamiento += sizeof(int);
 
-	return buffer;
+	return stream;
 }
 
-void enviar_pedido_escritura(int dir, int tamanio_dato, void *dato, int conexion, t_log *logger)
+void enviar_pedido_escritura(int dir, int tamanio_dato, void *dato, int socket_cliente, t_log *logger)
 {
-	log_info(logger, "Dir: %d", dir);
+	size_t size;
+	log_info(logger, "Dir física: %d", dir);
 	log_info(logger, "tam_dato: %d", tamanio_dato);
 	log_info(logger, "Dato: %d", dato);
-	void *mensaje = serializar_pedido_escritura(dir, tamanio_dato, dato);
-	
-	if(send(conexion, mensaje, sizeof(int) * 6, 0) < 0)
-		log_error(logger, "Error al enviar pedido");
+
+	void* stream = serializar_pedido_escritura(dir, tamanio_dato, dato, &size, logger);
+	if(send(socket_cliente, stream, size, 0) != size)
+		log_error(logger, "Los datos no se enviaron correctamente");
+
+	free(stream);
 }
 
-t_list *deserializar_pedido_escritura(void *buffer)
+t_list *deserializar_pedido_escritura(void *stream)
 {
 	t_list *parametros = list_create();
 	int desplazamiento = 0;
-
-	//int *dir = malloc(sizeof(int));
 	int dir = 0;
-	memcpy(&dir, buffer + desplazamiento, sizeof(int));
-	desplazamiento += sizeof(int);
-	list_add(parametros, dir);
+	int tamanio_dato = 0;
 
-	//int *tamanio_dato = malloc(sizeof(int));
-	int tamanio_dato;
-	memcpy(&tamanio_dato, buffer + desplazamiento, sizeof(int));
-	desplazamiento += sizeof(int);
-	list_add(parametros, tamanio_dato);
+	memcpy(&dir, stream, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	list_add(parametros, (void*) dir);
+
+	memcpy(&tamanio_dato, stream + desplazamiento, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	list_add(parametros, (void*) tamanio_dato);
 
 	void *dato = malloc(tamanio_dato);
-	memcpy(dato, buffer + desplazamiento, tamanio_dato);
+	memcpy(&dato, stream + desplazamiento, tamanio_dato);
 	desplazamiento += tamanio_dato;
-	list_add(parametros, dato);
+	list_add(parametros, (void*) dato);
 
-	free(buffer);
+	free(stream);
 
 	return parametros;
 }
 
-t_list* recibir_pedido_escritura(int conexion, t_log *logger)
+t_list* recibir_pedido_escritura(int socket_cliente, t_log *logger)
 {
-
-	size_t size;
-    if (recv(conexion, &size, sizeof(size_t), 0) != sizeof(size_t)) {
+ 	size_t size;
+    if (recv(socket_cliente, &size, sizeof(size_t), 0) != sizeof(size_t)) {
         log_error(logger, "Los datos no se recibieron correctamente"); 
     }
 
     void* stream = malloc(size);
 	log_debug(logger, "Size payload: %zu", size);
 
-    if (recv(conexion, stream, size, 0) != size) {
+    if (recv(socket_cliente, stream, size, 0) != size) {
 		log_error(logger, "Los datos no se recibieron correctamente");
     }
+
+	t_list *parametros = deserializar_pedido_escritura(stream);
 	
-	log_info(logger, "Antes de deserializar");
-
-	t_list *parametros = list_create();
-	int desplazamiento = 0;
-
-	//int *dir = malloc(sizeof(int));
-	int dir = 0;
-	memcpy(&dir, stream + desplazamiento, sizeof(int));
-	desplazamiento += sizeof(int);
-	list_add(parametros, dir);
-
-	//int *tamanio_dato = malloc(sizeof(int));
-	int tamanio_dato;
-	memcpy(&tamanio_dato, stream + desplazamiento, sizeof(int));
-	desplazamiento += sizeof(int);
-	list_add(parametros, tamanio_dato);
-
-	void *dato = malloc(tamanio_dato);
-	memcpy(dato, stream + desplazamiento, tamanio_dato);
-	desplazamiento += tamanio_dato;
-	list_add(parametros, dato);
-
-	free(stream);
-
-	log_info(logger, "Post deserializar");
 	return parametros;
-
-
-	/*
-	t_list *parametros = list_create();
-
-	int *dir = malloc(sizeof(int));
-	if(recv(conexion, dir, sizeof(int), 0) < sizeof(int))
-		log_error(logger, "Error al recibir pedido escritura 1");
-	list_add(parametros, dir);
-
-	int *tamanio_dato = malloc(sizeof(int));
-	if(recv(conexion, tamanio_dato, sizeof(int), 0) < sizeof(int))
-		log_error(logger, "Error al recibir pedido escritura 2");
-	list_add(parametros, tamanio_dato);
-
-	void *dato = malloc(*tamanio_dato);
-	if(recv(conexion, dato, *tamanio_dato, 0) < *tamanio_dato)
-		log_error(logger, "Error al recibir pedido escritura 3");
-	list_add(parametros, dato);
-	return parametros;
-	*/
-
 }
 
 void enviar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instrucciones, u_int32_t tam_proceso, int socket_cliente, t_log* logger) {

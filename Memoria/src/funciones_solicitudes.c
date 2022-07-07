@@ -68,37 +68,23 @@ void pedido_lectura(int socket_cliente, t_log *logger)
 
 void pedido_escritura(int socket_cliente, t_log *logger)
 {
-    /*
-        RECIBE MAL LA DIRECCION FISICA
-    */
-
     t_list *parametros = recibir_pedido_escritura(socket_cliente, logger);
 
-    log_info(logger, "Cantidad parametros recibidos: %d", list_size(parametros));
-
-
-    //DIR FISICA EN DONDE ESCRIBIR
-    int dir = list_get(parametros, 0);
-    log_info(logger, "Direccion fisica recibida: %d", dir);
+    int dir_fisica = (int) list_get(parametros, 0);
+    log_info(logger, "Direccion fisica recibida: %d", dir_fisica);
     //TAMANIO DE CUANTO ESCRIBIR (no es constante, maximo es 'sizeof(int)')
-    int tamanio = list_get(parametros, 1);
-    log_info(logger, "Tamanio dato recibido: %d", tamanio);
-    //DATO A ESCRIBIR
+    int tamanio_dato = (int) list_get(parametros, 1);
+    log_info(logger, "Tamanio dato recibido: %d", tamanio_dato);
+
     void* dato = list_get(parametros, 2);
-    log_info(logger, "Recibio dato");
+    log_info(logger, "Recibio dato: %d", dato);
 
-    log_info(logger,"recibo de parametros de escritura");
-
-    /*
-        ROMPE ACA:
-            BIT PRESENCIA NO CAMBIA A 1 :(
-    */
-
-    escribir_memoria(dato, tamanio, dir);
+    escribir_memoria(dato, tamanio_dato, dir_fisica);
     enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
     
     log_info(logger,"paquete de escritura enviado");
-    list_destroy_and_destroy_elements(parametros,free);
+    //list_destroy_and_destroy_elements(parametros,free);
+    list_destroy(parametros);
 }
 
 void solicitud_tabla_paginas(int socket_cliente, t_log *logger)

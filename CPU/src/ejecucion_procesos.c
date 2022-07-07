@@ -58,8 +58,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             int dir_logica = instruccion->arg[0];
             //Pasar a mmu:
-            int valor_leido = pedido_lectura(dir_logica, pcb, logger_CPU);
-            log_info(logger_CPU, "Valor leido: %d", valor_leido);
+            //int valor_leido = pedido_lectura(dir_logica, pcb, logger_CPU);
+            //log_info(logger_CPU, "Valor leido: %d", valor_leido);
             
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
@@ -79,7 +79,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             int valor2 = instruccion->arg[1];
             //Pasar a mmu:
             pedido_escritura(valor2, dir_logica2, pcb, logger_CPU); //Sacar logger pq es global
-
+            //Eventualmente agregar confirmación escritura
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
             }

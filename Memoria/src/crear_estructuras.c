@@ -3,6 +3,7 @@
 /*----------------------MEMORIA PROCESO------------------------------------*/
 void iniciar_estructuras_memoria()
 {
+    log_info(logger, "TAM Memoria: %d", tam_memoria);
     memoria = malloc(tam_memoria);
     crear_listas_tablas();
 	marcos_memoria = crear_bitmap(tam_memoria);
