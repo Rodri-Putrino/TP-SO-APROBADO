@@ -101,11 +101,12 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, t_log *logger)
 		if(resto_pag >= bytes_por_procesar)
 		{
 			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
-			
+			log_info(logger, "Resto pag > bytes");
+			log_info(logger, "Valor: %d", valor);
 			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
 			enviar_pedido_escritura(dir_fisica,
 				bytes_por_procesar, 
-				&valor + dir_resto_dato(bytes_por_procesar),
+				valor + dir_resto_dato(bytes_por_procesar),
 				conexion_memoria, 
 				logger
 			);
