@@ -611,7 +611,7 @@ void enviar_pedido_escritura(int dir, int tamanio_dato, void *dato, int socket_c
 	size_t size;
 	log_info(logger, "Dir física: %d", dir);
 	log_info(logger, "tam_dato: %d", tamanio_dato);
-	log_info(logger, "Dato: %d", dato);
+	log_info(logger, "Dato: %d", (int) dato);
 
 	void* stream = serializar_pedido_escritura(dir, tamanio_dato, dato, &size, logger);
 	if(send(socket_cliente, stream, size, 0) != size)
@@ -635,7 +635,9 @@ t_list *deserializar_pedido_escritura(void *stream)
 	desplazamiento += sizeof(uint32_t);
 	list_add(parametros, (void*) tamanio_dato);
 
-	void *dato = malloc(tamanio_dato);
+	void *dato = malloc(tamanio_dato); 
+	//Si nos dicen de guardar de a bytes, hacer el free cuando se elimina la lista en funciones solicitudes
+	//Si se van a guardar de a 4 bytes, cambiar void* a uint32_t. 
 	memcpy(&dato, stream + desplazamiento, tamanio_dato);
 	desplazamiento += tamanio_dato;
 	list_add(parametros, (void*) dato);
@@ -661,6 +663,87 @@ t_list* recibir_pedido_escritura(int socket_cliente, t_log *logger)
 
 	t_list *parametros = deserializar_pedido_escritura(stream);
 	
+	return parametros;
+}
+
+void enviar_pedido_lectura(int dir, int tamanio_dato, int socket_cliente, t_log *logger)
+{
+	size_t size;
+	log_info(logger, "Dir física: %d", dir);
+	log_info(logger, "tam_dato: %d", tamanio_dato);
+
+	void* stream = serializar_pedido_lectura(dir, tamanio_dato, &size, logger);
+	if(send(socket_cliente, stream, size, 0) != size)
+		log_error(logger, "Los datos no se enviaron correctamente");
+
+	free(stream);
+}
+
+void* serializar_pedido_lectura(int dir, int tamanio_dato, size_t *size, t_log* logger)
+{
+	op_code cod_op = PEDIDO_LECTURA;
+
+ 	*size = sizeof(op_code) +
+	 		sizeof(size_t) +
+	 		sizeof(uint32_t) * 2;
+
+	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
+	log_info(logger, "Size payload: %zu", size_payload);
+
+	void* stream = malloc(*size);
+	int desplazamiento = 0;
+
+    memcpy(stream, &cod_op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+
+	memcpy(stream + desplazamiento, &size_payload, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+
+	memcpy(stream + desplazamiento, &dir, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	memcpy(stream + desplazamiento, &tamanio_dato, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	return stream;
+}
+
+t_list* recibir_pedido_lectura(int socket_cliente, t_log *logger)
+{
+ 	size_t size;
+    if (recv(socket_cliente, &size, sizeof(size_t), 0) != sizeof(size_t)) {
+        log_error(logger, "Los datos no se recibieron correctamente"); 
+    }
+
+    void* stream = malloc(size);
+	log_debug(logger, "Size payload: %zu", size);
+
+    if (recv(socket_cliente, stream, size, 0) != size) {
+		log_error(logger, "Los datos no se recibieron correctamente");
+    }
+
+	t_list *parametros = deserializar_pedido_lectura(stream);
+	
+	return parametros;
+}
+
+t_list *deserializar_pedido_lectura(void *stream)
+{
+	t_list *parametros = list_create();
+	int desplazamiento = 0;
+	int dir = 0;
+	int tamanio_dato = 0;
+
+	memcpy(&dir, stream, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	list_add(parametros, (void*) dir);
+
+	memcpy(&tamanio_dato, stream + desplazamiento, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	list_add(parametros, (void*) tamanio_dato);
+
+	free(stream);
+
 	return parametros;
 }
 

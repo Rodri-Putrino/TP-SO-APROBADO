@@ -45,25 +45,27 @@ void suspender_proceso(int socket_cliente, t_log *logger)
 
 void pedido_lectura(int socket_cliente, t_log *logger)
 {
-    t_list *parametros = recibir_paquete(socket_cliente, logger);
+    t_list *parametros = recibir_pedido_lectura(socket_cliente, logger);
     //DIR FISICA EN DONDE LEER
-    int *dir = list_get(parametros, 0);
+    int dir_fisica = (int) list_get(parametros, 0);
+    log_info(logger, "Direccion fisica recibida: %d", dir_fisica);
     //TAMANIO DE CUANTO LEER (no es constante, maximo es 'sizeof(int)')
-    int *tamanio = list_get(parametros, 1);
+    int tamanio_dato = (int) list_get(parametros, 1);
+    log_info(logger, "Tamanio dato recibido: %d", tamanio_dato);
 
     log_info(logger, "recibo de parametros de lectura");
 
-    void *dato = leer_memoria(*tamanio, *dir);
+    void *dato = leer_memoria(tamanio_dato, dir_fisica);
 
-    //ENVIAR DATO
+    //ENVIAR DATO A CPU
     t_paquete *lectura = crear_paquete(PEDIDO_LECTURA);
-    agregar_a_paquete(lectura, dato, *tamanio);
+    agregar_a_paquete(lectura, dato, tamanio_dato);
     enviar_paquete(lectura, socket_cliente, logger);
 
     log_info(logger,"paquete de lectura enviado");
 
     eliminar_paquete(lectura);
-    list_destroy_and_destroy_elements(parametros,free);
+    list_destroy(parametros);
 }
 
 void pedido_escritura(int socket_cliente, t_log *logger)
@@ -77,10 +79,11 @@ void pedido_escritura(int socket_cliente, t_log *logger)
     log_info(logger, "Tamanio dato recibido: %d", tamanio_dato);
 
     void* dato = list_get(parametros, 2);
-    log_info(logger, "Recibio dato: %d", dato);
+    log_info(logger, "Recibio dato: %d", (int) dato);
 
     escribir_memoria(dato, tamanio_dato, dir_fisica);
-    enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
+    //enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
+    enviar_mensaje("Escritura completa", socket_cliente, logger);
     
     log_info(logger,"paquete de escritura enviado");
     //list_destroy_and_destroy_elements(parametros,free);
