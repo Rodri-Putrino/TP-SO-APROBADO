@@ -1,6 +1,13 @@
 #include "../include/crear_estructuras.h"
 
 /*----------------------MEMORIA PROCESO------------------------------------*/
+void iniciar_estructuras_memoria()
+{
+    memoria = malloc(tam_memoria);
+    crear_listas_tablas();
+	marcos_memoria = crear_bitmap(tam_memoria);
+}
+
 
 proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso)
 {
@@ -45,7 +52,7 @@ entrada_tabla_N2* agregar_entrada_tablaN2(t_tablaN2 *tabla)
     return e;
 }
 
-int cantidad_paginas_necesarias(int tamanio_proceso)
+int cantidad_paginas_necesarias(float tamanio_proceso)
 {
     float division = tamanio_proceso / tam_pagina;
     return ceil(division);
@@ -270,13 +277,21 @@ int conseguir_marco_de_dir_fisica(int dir)
 
 entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco)
 {
-    entrada_tabla_N2 *ret = list_get(t, 0);
-    for(int i = 0; i < paginas_por_tabla; i++)
+    entrada_tabla_N2 *ret;
+    printf("Tamanio lista: %d\n", list_size(t));
+    for(int i = 0; i < list_size(t); i++)
     {
+        ret = list_get(t, i);
+        printf("Entrada %d, presencia %d, dir %d\n",
+         ret->num_pag,
+         ret->bit_presencia,
+         ret->dir
+         );
         if(ret->bit_presencia == 1 && ret->dir == num_marco)
+        {
+            printf("Econtro pagina\n");
             return ret;
-        
-        list_get(t, i);
+        }
     }
     return NULL;
 }

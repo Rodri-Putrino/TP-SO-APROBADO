@@ -68,23 +68,37 @@ void pedido_lectura(int socket_cliente, t_log *logger)
 
 void pedido_escritura(int socket_cliente, t_log *logger)
 {
-    t_list *parametros = recibir_paquete(socket_cliente, logger);
+    /*
+        RECIBE MAL LA DIRECCION FISICA
+    */
+
+    t_list *parametros = recibir_pedido_escritura(socket_cliente, logger);
+
+    log_info(logger, "Cantidad parametros recibidos: %d", list_size(parametros));
+
 
     //DIR FISICA EN DONDE ESCRIBIR
     int *dir = list_get(parametros, 0);
+    log_info(logger, "Direccion fisica recibida: %d", *dir);
     //TAMANIO DE CUANTO ESCRIBIR (no es constante, maximo es 'sizeof(int)')
     int *tamanio = list_get(parametros, 1);
+    log_info(logger, "Tamanio dato recibido: %d", *tamanio);
     //DATO A ESCRIBIR
     void *dato = list_get(parametros, 2);
+    log_info(logger, "Recibio dato");
 
     log_info(logger,"recibo de parametros de escritura");
+
+    /*
+        ROMPE ACA:
+            BIT PRESENCIA NO CAMBIA A 1 :(
+    */
 
     escribir_memoria(dato, *tamanio, *dir);
     enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
     
     log_info(logger,"paquete de escritura enviado");
     list_destroy_and_destroy_elements(parametros,free);
-
 }
 
 void solicitud_tabla_paginas(int socket_cliente, t_log *logger)
@@ -113,7 +127,11 @@ void solicitud_marco(int socket_cliente, t_log *logger)
 
     int *id = list_get(parametros, 0);
     int *dir_tablaN1 = list_get(parametros, 1);
-    entrada_tabla_N2 *e2 = list_get(parametros, 2);
+    int *num_pag = list_get(parametros, 2);
+    log_info(logger,"el numero de pagina recibido por memoria es: %d",*num_pag);
+
+    entrada_tabla_N2 *e2 = conseguir_entrada_pagina(*dir_tablaN1, *num_pag);
+    
 
     log_info(logger,"el proceso %d solicita direccion fisica de pagina",*id);
 
@@ -124,7 +142,6 @@ void solicitud_marco(int socket_cliente, t_log *logger)
     enviar_num(socket_cliente, e2->dir, logger);
     log_info(logger, "envio de marco para el proceso: %d", *id);
     list_destroy_and_destroy_elements(parametros,free);
-
 }
 
 void eliminar_proceso(int socket_cliente, t_log *logger){

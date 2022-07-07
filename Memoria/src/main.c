@@ -12,9 +12,8 @@ int main(void) {
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
 
-	//hacer funcion iniciar_estructuras_memoria()
-	crear_listas_tablas();
-	marcos_memoria = crear_bitmap(tam_memoria);
+	iniciar_estructuras_memoria();
+
 	
 	/*t_bitarray* bitmapTest = crear_bitmap(tam_memoria);
 
