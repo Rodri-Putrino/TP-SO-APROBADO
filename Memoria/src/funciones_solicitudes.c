@@ -78,13 +78,13 @@ void pedido_escritura(int socket_cliente, t_log *logger)
 
 
     //DIR FISICA EN DONDE ESCRIBIR
-    int *dir = list_get(parametros, 0);
-    log_info(logger, "Direccion fisica recibida: %d", *dir);
+    int dir = list_get(parametros, 0);
+    log_info(logger, "Direccion fisica recibida: %d", dir);
     //TAMANIO DE CUANTO ESCRIBIR (no es constante, maximo es 'sizeof(int)')
-    int *tamanio = list_get(parametros, 1);
-    log_info(logger, "Tamanio dato recibido: %d", *tamanio);
+    int tamanio = list_get(parametros, 1);
+    log_info(logger, "Tamanio dato recibido: %d", tamanio);
     //DATO A ESCRIBIR
-    void *dato = list_get(parametros, 2);
+    void* dato = list_get(parametros, 2);
     log_info(logger, "Recibio dato");
 
     log_info(logger,"recibo de parametros de escritura");
@@ -94,7 +94,7 @@ void pedido_escritura(int socket_cliente, t_log *logger)
             BIT PRESENCIA NO CAMBIA A 1 :(
     */
 
-    escribir_memoria(dato, *tamanio, *dir);
+    escribir_memoria(dato, tamanio, dir);
     enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
     
     log_info(logger,"paquete de escritura enviado");
