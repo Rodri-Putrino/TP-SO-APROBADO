@@ -290,7 +290,7 @@ entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco)
          );
         if(ret->bit_presencia == 1 && ret->dir == num_marco)
         {
-            printf("Econtro pagina\n");
+            printf("Encontro pagina\n");
             return ret;
         }
     }
@@ -299,15 +299,32 @@ entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco)
 
 entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco)
 {
-    t_list_iterator *iterador = list_iterator_create(tablasN2);
+    //t_list_iterator *iterador = list_iterator_create(tablasN2);
     entrada_tabla_N2 *ret;
+    int size_tablasN2 = list_size(tablasN2);
+    int indice = 0;
 
-    t_tablaN2 *t = list_iterator_next(iterador);
-    while((ret = tabla_contiene_marco(t, num_marco)) == NULL)
-        t = list_iterator_next(iterador);
-
-    list_iterator_destroy(iterador);
-    return ret;
+    //t_tablaN2 *t = list_iterator_next(iterador);
+    t_tablaN2 *t = (t_tablaN2*) list_get(tablasN2, indice);
+    while(indice < size_tablasN2)
+    {
+        if(t != NULL)
+        {
+            ret = tabla_contiene_marco(t, num_marco);
+            printf("\n\t RET: \n");
+            if(ret == NULL)
+            {
+                t = (t_tablaN2*) list_get(tablasN2, indice);
+            }
+            else
+            {
+                return ret;
+            }
+            indice ++;
+            printf("\n\tIndice: %d\n", indice);
+        }
+    } 
+    return ret;  
 }
 
 entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag)
