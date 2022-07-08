@@ -73,6 +73,10 @@ int traducir_dir_logica(float dir, t_pcb *proceso, t_log *logger)
 
 	//int desplazamiento = dir - numero_pagina * tam_pagina;
 	log_info(logger_CPU, "Direccion fisica: %d", dir_marco + desplazamiento);
+
+	eliminar_paquete(segundo_acceso);
+	list_destroy_and_destroy_elements(tablaN2, free);
+	
 	return dir_marco + desplazamiento;
 }
 
@@ -104,7 +108,6 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, int conexion_me
 		if(resto_pag >= bytes_por_procesar)
 		{
 			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
-			//int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
 			enviar_pedido_escritura(dir_fisica,
 				bytes_por_procesar, 
 				(void*) (valor + dir_resto_dato(bytes_por_procesar)), //¿No es siempre 0? dir_resto_dato(bytes_por_procesar)
@@ -117,7 +120,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, int conexion_me
 		else
 		{
 			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
-			/*t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
+			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
 			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
 			agregar_a_paquete(pedido, &resto_pag, sizeof(int));
 			agregar_a_paquete(pedido, (&valor) + dir_resto_dato(bytes_por_procesar), resto_pag);
@@ -128,7 +131,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, int conexion_me
 			close(conexion_memoria);
 			
 			bytes_por_procesar -= resto_pag;
-			resto_pag = resto_pagina(dir_logica + resto_pag);*/
+			resto_pag = resto_pagina(dir_logica + resto_pag);
 		}
 	}
 }
@@ -164,6 +167,7 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 			memcpy(dato + desplazamiento, aux, bytes_por_procesar);
 
 			bytes_por_procesar = 0;
+			list_destroy_and_destroy_elements(respuesta, free);
 		}
 		else {
 			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
@@ -185,6 +189,8 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 			desplazamiento += resto_pag;
 			bytes_por_procesar -= resto_pag;
 			resto_pag = resto_pagina(dir_logica + resto_pag);
+			list_destroy_and_destroy_elements(respuesta, free);
+			free(pedido);
 		}
 	}
 	int ret = *dato;

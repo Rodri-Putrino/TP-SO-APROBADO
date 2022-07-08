@@ -242,6 +242,7 @@ void enviar_pcb(op_code cod_op, t_pcb* pcb, int socket_cliente, t_log* logger) {
 	if(send(socket_cliente, stream, size, 0) != size)
 		log_error(logger, "Los datos no se enviaron correctamente");
 
+	log_info(logger, "Tamaño stream: %d", *(int*) stream);
 	free(stream);
 }
 
@@ -249,7 +250,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 
 	int length_lista = list_size(pcb->instrucciones);
 	size_t size_instrucciones = sizeof(t_instruccion) * length_lista;
-	log_debug(logger, "Size instrucciones: %zu", size_instrucciones);
+	log_info(logger, "Size instrucciones: %zu", size_instrucciones);
 
  	*size = sizeof(op_code) +
 	 		sizeof(size_t) +
@@ -259,7 +260,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 			//sizeof(rango_tiempo_t);
 
 	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
-	log_debug(logger, "Size payload: %zu", size_payload);
+	log_info(logger, "Size payload: %zu", size_payload);
 
 	void* stream = malloc(*size);
 	int desplazamiento = 0;

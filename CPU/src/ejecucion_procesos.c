@@ -47,6 +47,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Segundos a bloquear: %u", segundos_bloqueado);
             enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, conexion_kernel, logger_CPU);
 
+            destruir_proceso(pcb);
             liberar_conexion(conexion_kernel);
          
             break;
@@ -142,8 +143,8 @@ int hay_interrupcion_para_atender() {
 }
 
 void destruir_proceso(t_pcb* pcb) {
-    //free(pcb->rafaga);
-    //free(pcb->tiempo_bloqueado);
+    free(pcb->rafaga);
+    free(pcb->rafaga_bloqueado);
     list_destroy_and_destroy_elements(pcb->instrucciones, free);
     free(pcb);
 }
