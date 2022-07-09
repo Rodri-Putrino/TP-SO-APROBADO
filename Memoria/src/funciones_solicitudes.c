@@ -16,7 +16,11 @@ void inicializar_estructuras(int socket_cliente, t_log *logger)
     imprimir_bitmap(marcos_memoria);
 
     //CREA ARCHIVO SWAP
-    generar_nuevo_archivo(*id);
+    t_pedido_disco p;
+    p.operacion_disco = CREAR_ARCHIVO;
+    p.argumentos[0] = *id;
+    queue_push(pedidos_disco, &p);
+    sem_post(&lista_tiene_pedidos);
 
     //ENVIAR DIR TABLA NIVEL 1
     enviar_num(socket_cliente, dir_tabla, logger);
@@ -140,8 +144,11 @@ void eliminar_proceso(int socket_cliente, t_log *logger){
     int *id = list_get(parametros, 0);
     int *dir_tablaN1 = list_get(parametros, 1);
 
-    eliminar_archivo(*id);
+    t_pedido_disco p;
+    p.operacion_disco = ELIMINAR_ARCHIVO;
+    p.argumentos[0] = *id;
+    queue_push(pedidos_disco, &p);
+    sem_post(&lista_tiene_pedidos);
+
     eliminar_paginas_proceso(*id , *dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
-
-
 }

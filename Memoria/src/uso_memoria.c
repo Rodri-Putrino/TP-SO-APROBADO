@@ -124,11 +124,27 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
         dir_marco = aux->dir;
         //SI FUE MODIFICADO, ESCRIBIR PAGINA EN MEMORIA
         if(aux->bit_modificacion == 1)
-            escribir_en_archivo(id, aux->dir, aux->num_pag);
+        {
+            t_pedido_disco p;
+            p.operacion_disco = ESCRIBIR_ARCHIVO;
+            p.argumentos[0] = id;
+            p.argumentos[1] = aux->dir;
+            p.argumentos[2] = aux->num_pag;
+            queue_push(pedidos_disco, &p);
+            sem_post(&lista_tiene_pedidos);
+        }
         aux->bit_presencia = 0;
     }
     e->bit_presencia = 1;
     log_info(logger, "el bit de presencia es: %d",e->bit_presencia);
-    enviar_pagina_a_memoria(id, dir_marco, e->num_pag);
+
+    t_pedido_disco p;
+    p.operacion_disco = LEER_ARCHIVO;
+    p.argumentos[0] = id;
+    p.argumentos[1] = dir_marco;
+    p.argumentos[2] = e->num_pag;
+    queue_push(pedidos_disco, &p);
+    sem_post(&lista_tiene_pedidos);
+
     log_info(logger,"pagina %d del proceso %d lista en memoria",e->num_pag,id);
 }

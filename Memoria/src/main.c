@@ -19,6 +19,8 @@ int main(void) {
 
 	imprimir_bitmap(bitmapTest)
 	*/
+	pthread_t hilo_disco;
+	pthread_create(&hilo_disco, NULL, (void*)funciones_disco, NULL);
 
 	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);

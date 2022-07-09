@@ -1,5 +1,55 @@
 #include "../include/Disco.h"
 
+void funciones_disco()
+{
+    pedidos_disco = queue_create();
+    sem_init(&lista_tiene_pedidos, 0, 0);
+    while(1)
+    {
+        //semaforo 'hay pedidos?'
+        sem_wait(&lista_tiene_pedidos);
+        t_pedido_disco *p = queue_pop(pedidos_disco);
+
+        int id, direccion_pag, pag;
+        switch(p->operacion_disco)
+        {
+            case CREAR_ARCHIVO:
+                id = p->argumentos[0];
+                generar_nuevo_archivo(id);
+                free(p);
+            break;
+
+            case ESCRIBIR_ARCHIVO:
+                id = p->argumentos[0];
+                direccion_pag = p->argumentos[1];
+                pag = p->argumentos[2];
+
+                escribir_en_archivo(id, direccion_pag, pag);
+                free(p);
+            break;
+
+            case LEER_ARCHIVO:
+                id = p->argumentos[0];
+                direccion_pag = p->argumentos[1];
+                pag = p->argumentos[2];
+
+                enviar_pagina_a_memoria(id, direccion_pag, pag);
+                free(p);
+            break;
+
+            case ELIMINAR_ARCHIVO:
+                id = p->argumentos[0];
+                eliminar_archivo(id);
+                free(p);
+            break;
+
+            default:
+                log_error(logger, "Operacion de disco invalida");
+            break;
+        }
+        usleep(retardo_swap *1000);
+    }
+}
 
 void generar_nuevo_archivo(int PID){
     

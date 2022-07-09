@@ -20,6 +20,9 @@ void atender_peticiones(void* conexion) {
     int una_conexion = (int) conexion;
     log_info(logger, "Cliente conectado");
     int op_code = recibir_operacion(una_conexion);
+    
+    //TIEMPO RETARDO MEMORIA
+    usleep(retardo_memoria *1000);
 
     switch(op_code)
     {
@@ -77,6 +80,5 @@ void atender_peticiones(void* conexion) {
     }
 
     close(una_conexion);
-
     log_info(logger, "El cliente se ha desconectado");
 }
