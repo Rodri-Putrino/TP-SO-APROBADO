@@ -31,6 +31,7 @@ typedef struct t_pedido_disco
 {
     int operacion_disco;
     int argumentos[3];
+    sem_t pedido_listo;
 }t_pedido_disco;
 
 t_queue *pedidos_disco;
@@ -43,5 +44,10 @@ void escribir_en_archivo(int PID, int direccion_pagina, int pagina);
 void enviar_pagina_a_memoria(int PID, int direccion_pagina, int pagina);
 void suspender_paginas(int PID, int dir_tablaN1);
 void funciones_disco();
+
+t_pedido_disco* crear_pedido_crear_archivo(int id);
+t_pedido_disco* crear_pedido_escribir(int id, int dir_marco, int num_pag);
+t_pedido_disco* crear_pedido_lectura(int id, int dir_marco, int num_pag);
+t_pedido_disco* crear_pedido_eliminar_archvio(int id);
 
 #endif /* HEADERS_DISCO_H_ */
