@@ -46,43 +46,35 @@ void suspender_proceso(int socket_cliente, t_log *logger)
 
 void pedido_lectura(int socket_cliente, t_log *logger)
 {
-    t_list *parametros = recibir_pedido_lectura(socket_cliente, logger);
-    //DIR FISICA EN DONDE LEER
-    int dir_fisica = (int) list_get(parametros, 0);
+    uint32_t dir_fisica = recibir_pedido_lectura(socket_cliente, logger);
+
     log_info(logger, "Direccion fisica recibida: %d", dir_fisica);
-    //TAMANIO DE CUANTO LEER (no es constante, maximo es 'sizeof(int)')
-    int tamanio_dato = (int) list_get(parametros, 1);
-    log_info(logger, "Tamanio dato recibido: %d", tamanio_dato);
 
-    log_info(logger, "recibo de parametros de lectura");
+    uint32_t dato = (uint32_t) leer_memoria(dir_fisica);
 
-    void *dato = leer_memoria(tamanio_dato, dir_fisica);
+    //ENVIAR DATO A CPU ==> TODO
+    //t_paquete *lectura = crear_paquete(PEDIDO_LECTURA);
+    //agregar_a_paquete(lectura, (void*) dato, (int) sizeof(uint32_t));
+    //enviar_paquete(lectura, socket_cliente, logger);
+    //eliminar_paquete(lectura);
 
-    //ENVIAR DATO A CPU
-    t_paquete *lectura = crear_paquete(PEDIDO_LECTURA);
-    agregar_a_paquete(lectura, dato, tamanio_dato);
-    enviar_paquete(lectura, socket_cliente, logger);
+    enviar_valor_leido(dato, socket_cliente, logger);
 
     log_info(logger,"paquete de lectura enviado");
 
-    eliminar_paquete(lectura);
-    list_destroy(parametros);
 }
 
 void pedido_escritura(int socket_cliente, t_log *logger)
 {
     t_list *parametros = recibir_pedido_escritura(socket_cliente, logger);
 
-    int dir_fisica = (int) list_get(parametros, 0);
+    uint32_t dir_fisica = (uint32_t) list_get(parametros, 0);
     log_info(logger, "Direccion fisica recibida: %d", dir_fisica);
-    //TAMANIO DE CUANTO ESCRIBIR (no es constante, maximo es 'sizeof(int)')
-    int tamanio_dato = (int) list_get(parametros, 1);
-    log_info(logger, "Tamanio dato recibido: %d", tamanio_dato);
 
-    void* dato = list_get(parametros, 2);
-    log_info(logger, "Recibio dato: %d", (int) dato);
+    uint32_t dato = (uint32_t) list_get(parametros, 1);
+    log_info(logger, "Recibio dato: %d", dato);
 
-    escribir_memoria(dato, tamanio_dato, dir_fisica);
+    escribir_memoria(dato, dir_fisica);
     //enviar_num(socket_cliente, 1, logger);//ESCRITURA COMPLETA (RESPUESTA OK)
     enviar_mensaje("Escritura completa", socket_cliente, logger);
     

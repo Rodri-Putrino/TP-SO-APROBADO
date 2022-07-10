@@ -110,7 +110,6 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, int conexion_me
 			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
 			enviar_pedido_escritura(dir_fisica,
 				bytes_por_procesar, 
-				(void*) (valor + dir_resto_dato(bytes_por_procesar)), //¿No es siempre 0? dir_resto_dato(bytes_por_procesar)
 				conexion_memoria, 
 				logger
 			);
@@ -141,8 +140,9 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 	int resto_pag = resto_pagina(dir_logica);
 	int bytes_por_procesar = sizeof(int);
 
-	int *dato = malloc(sizeof(int));
-	int desplazamiento = 0;
+	//int *dato = malloc(sizeof(int));
+	uint32_t dato;
+	//int desplazamiento = 0;
 	while(bytes_por_procesar > 0) {
 		int dir_fisica = traducir_dir_logica(dir_logica, proceso, logger);
 		if(resto_pag >= bytes_por_procesar) {
@@ -156,22 +156,24 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 			enviar_paquete(pedido, conexion_memoria, logger);*/
 
 			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
-			enviar_pedido_lectura(dir_fisica, bytes_por_procesar, conexion_memoria, logger);
+			enviar_pedido_lectura(dir_fisica, conexion_memoria, logger);
 
 			//RECIBIR VALOR
 			recibir_operacion(conexion_memoria);
-			t_list *respuesta = recibir_paquete(conexion_memoria, logger);
-			close(conexion_memoria);
+			//t_list *respuesta = recibir_paquete(conexion_memoria, logger);
+			//close(conexion_memoria);
 
-			void *aux = list_get(respuesta, 0);
-			memcpy(dato + desplazamiento, aux, bytes_por_procesar);
+			//void *aux = list_get(respuesta, 0);
+			//memcpy(dato + desplazamiento, aux, bytes_por_procesar);
+
+			dato = recibir_valor_leido(conexion_memoria, logger);
 
 			bytes_por_procesar = 0;
-			list_destroy_and_destroy_elements(respuesta, free);
+			//list_destroy_and_destroy_elements(respuesta, free);
 		}
 		else {
 			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
-			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
+			/*t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
 			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
 			agregar_a_paquete(pedido, &resto_pag, sizeof(int));
 
@@ -190,12 +192,12 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 			bytes_por_procesar -= resto_pag;
 			resto_pag = resto_pagina(dir_logica + resto_pag);
 			list_destroy_and_destroy_elements(respuesta, free);
-			free(pedido);
+			free(pedido);*/
 		}
 	}
-	int ret = *dato;
-	free(dato);
-	return ret;
+	//int ret = *dato;
+	//free(dato);
+	return dato;
 }
 
 int max(int a,int b) {

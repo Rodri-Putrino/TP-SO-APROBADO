@@ -38,7 +38,7 @@ void eliminar_estructura_proceso(int id)
         return p->id_proceso == id;
     }
     
-    list_remove_and_destroy_by_condition(procesos_en_memoria, (void*)id_equals, free);
+    list_remove_by_condition(procesos_en_memoria, (void*)id_equals);
 }
 
 entrada_tabla_N1* agregar_entrada_tablaN1(t_tablaN1 *tabla)

@@ -47,7 +47,7 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir, int dir_tabla_pag)
     }
 }*/
 
-void escribir_memoria(void *dato, int tamanio_dato, int dir)
+void escribir_memoria(uint32_t dato, uint32_t dir)
 {
     //CONSIGUE PAGINA EN MARCO
     //void *memoria2 = malloc(4096);
@@ -63,17 +63,16 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir)
 
     //ESCRIBE DATO
     log_info(logger, "Dirección física: %d", dir);
-    log_info(logger, "Tamanio dato: %d", tamanio_dato);
-    log_info(logger, "Dato: %d", (int) dato);
+    log_info(logger, "Dato: %d", dato);
     //log_info(logger, "Memoria: %d", (int) memoria);
     //log_info(logger, "Memoria + Dir física: %d", *(int*) (memoria + dir));
 
-    memcpy(memoria + dir, &dato, tamanio_dato);
+    memcpy(memoria + dir, &dato, sizeof(uint32_t));
 
     log_info(logger, "Un log_info muy trucho: %d", *(int*)(memoria +dir));
 }
 
-void* leer_memoria(int tamanio_dato, int dir)
+uint32_t leer_memoria(uint32_t dir)
 {
     //CONSIGUE PAGINA EN MARCO
     int marco = conseguir_marco_de_dir_fisica(dir);
@@ -83,9 +82,10 @@ void* leer_memoria(int tamanio_dato, int dir)
     pag->bit_uso = 1;
 
     //LEE Y RETORNA DATO
-    void *ret = malloc(tamanio_dato);
-    memcpy(ret, memoria + dir, tamanio_dato);
-    return ret;
+    //void *ret = malloc(sizeof(uint32_t));
+    uint32_t dato;
+    memcpy(&dato, memoria + dir, sizeof(uint32_t));
+    return dato;
 }
 
 /*------------------------MANEJO PAGINAS--------------------------------*/
