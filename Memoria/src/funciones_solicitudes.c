@@ -136,13 +136,15 @@ void solicitud_marco(int socket_cliente, t_log *logger)
 
 void eliminar_proceso(int socket_cliente, t_log *logger){
 
-    t_list *parametros = recibir_paquete(socket_cliente, logger);
+    t_list *parametros = recibir_pedido_liberar_memoria(socket_cliente, logger);
+    int id = (int)list_get(parametros, 0);
+    int dir_tablaN1 = (int)list_get(parametros, 1);
 
-    int *id = list_get(parametros, 0);
-    int *dir_tablaN1 = list_get(parametros, 1);
+    eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
 
-    eliminar_paginas_proceso(*id , *dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
-
-    t_pedido_disco *p = crear_pedido_eliminar_archivo(*id);
+    t_pedido_disco *p = crear_pedido_eliminar_archivo(id);
+    eliminar_estructura_proceso(id);
     sem_wait(&(p->pedido_listo));
+
+    list_destroy(parametros);
 }

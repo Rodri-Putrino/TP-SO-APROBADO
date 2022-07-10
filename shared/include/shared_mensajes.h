@@ -104,5 +104,10 @@ void enviar_pedido_lectura(int dir, int tamanio_dato, int conexion, t_log *logge
 void* serializar_pedido_lectura(int dir, int tamanio_dato, size_t *size, t_log* logger);
 t_list* recibir_pedido_lectura(int conexion, t_log *logger);
 t_list *deserializar_pedido_lectura(void *buffer);
+void* serializar_pedido_liberar_memoria(uint32_t id, uint32_t dir_tabla, size_t *tamanio_buffer, t_log *logger);
+void enviar_pedido_liberar_memoria(int conexion, uint32_t id, uint32_t dir_tabla, t_log *logger);
+t_list* deserializar_pedido_liberar_memoria(void *stream);
+t_list* recibir_pedido_liberar_memoria(int conexion, t_log *logger);
+
 
 #endif

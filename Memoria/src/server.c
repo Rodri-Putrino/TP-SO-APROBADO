@@ -76,6 +76,7 @@ void atender_peticiones(void* conexion) {
 
         default: 
             log_error(logger, "El OP_CODE recibido es invalido");
+            log_info(logger, "Op code recibido: %d", op_code);
             break;
     }
 

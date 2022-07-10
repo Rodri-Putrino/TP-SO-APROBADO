@@ -48,6 +48,6 @@ void funciones_disco();
 t_pedido_disco* crear_pedido_crear_archivo(int id);
 t_pedido_disco* crear_pedido_escribir(int id, int dir_marco, int num_pag);
 t_pedido_disco* crear_pedido_lectura(int id, int dir_marco, int num_pag);
-t_pedido_disco* crear_pedido_eliminar_archvio(int id);
+t_pedido_disco* crear_pedido_eliminar_archivo(int id);
 
 #endif /* HEADERS_DISCO_H_ */

@@ -210,7 +210,7 @@ t_pedido_disco* crear_pedido_lectura(int id, int dir_marco, int num_pag)
 t_pedido_disco* crear_pedido_eliminar_archivo(int id)
 {   
     t_pedido_disco *p = malloc(sizeof(t_pedido_disco));
-    p->operacion_disco = LEER_ARCHIVO;
+    p->operacion_disco = ELIMINAR_ARCHIVO;
     p->argumentos[0] = id;
     sem_init(&(p->pedido_listo), 0, 0);
 

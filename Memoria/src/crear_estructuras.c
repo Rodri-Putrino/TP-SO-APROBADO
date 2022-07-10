@@ -32,6 +32,14 @@ proceso_en_memoria* buscar_proceso(int id)
     return p;
 }
 
+void eliminar_estructura_proceso(int id)
+{
+    bool id_equals(proceso_en_memoria *p){
+        return p->id_proceso == id;
+    }
+    
+    list_remove_and_destroy_by_condition(procesos_en_memoria, (void*)id_equals, free);
+}
 
 entrada_tabla_N1* agregar_entrada_tablaN1(t_tablaN1 *tabla)
 {
@@ -119,7 +127,7 @@ void eliminar_paginas_proceso(int dir_tablaN1)
 }*/
 
 void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TODO: chequear con el team que hacer con esta lista que quedaria x cantidad 
-{                                                                                // de procesos con sus paginas en NULL
+{                                                                       // de procesos con sus paginas en NULL
     t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
     t_list_iterator *iteradorN1 = list_iterator_create(t);
     while(list_iterator_has_next(iteradorN1))
@@ -157,13 +165,11 @@ void reservar_marcos_proceso(proceso_en_memoria *p)
 
 void liberar_marcos_proceso(int id)
 {
-    int i = 0;
-    proceso_en_memoria *aux = list_get(procesos_en_memoria, i);
-    for(i = 1; aux->id_proceso != id; i++)
-    {
-        aux = list_get(procesos_en_memoria, i);
+    bool id_equals(proceso_en_memoria *p){
+        return p->id_proceso == id;
     }
-    aux = list_remove(procesos_en_memoria, i);
+    
+    proceso_en_memoria *aux = list_find(procesos_en_memoria, (void*)id_equals);
 
     desmarcar_bitmap(aux->marcos_reservados);
 
@@ -181,6 +187,7 @@ void desmarcar_bitmap(t_list *marcos)
         int *marco = list_iterator_next(iterador);
         bitarray_set_bit(marcos_memoria, *marco);
     }
+    list_iterator_destroy(iterador);
 }
 
 void iniciar_memoria(void *mem, int tamanio_total)

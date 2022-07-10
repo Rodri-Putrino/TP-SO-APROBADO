@@ -29,9 +29,8 @@ void iniciar_estructuras_memoria();
 t_bitarray *marcos_memoria;
 
 proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso);
-
 proceso_en_memoria* buscar_proceso(int id);
-
+void eliminar_estructura_proceso(int id);
 /* 
     Crea una entrada de tablaN1
     -Define num_tabla

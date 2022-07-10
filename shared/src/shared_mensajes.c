@@ -636,7 +636,7 @@ t_list *deserializar_pedido_escritura(void *stream)
 	desplazamiento += sizeof(uint32_t);
 	list_add(parametros, (void*) tamanio_dato);
 
-	void *dato = malloc(tamanio_dato); 
+	void *dato = malloc(tamanio_dato);
 	//Si nos dicen de guardar de a bytes, hacer el free cuando se elimina la lista en funciones solicitudes
 	//Si se van a guardar de a 4 bytes, cambiar void* a uint32_t. 
 	memcpy(&dato, stream + desplazamiento, tamanio_dato);
@@ -746,6 +746,78 @@ t_list *deserializar_pedido_lectura(void *stream)
 	free(stream);
 
 	return parametros;
+}
+
+void* serializar_pedido_liberar_memoria(uint32_t id, uint32_t dir_tabla, size_t *tamanio_buffer, t_log *logger)
+{
+	op_code cod_op = EXIT;
+
+ 	*tamanio_buffer = sizeof(op_code) +
+	 		sizeof(size_t) +
+	 		sizeof(uint32_t) * 2;
+
+	size_t size_payload = *tamanio_buffer - sizeof(op_code) - sizeof(size_t);
+	log_info(logger, "Size payload: %zu", size_payload);
+
+	void* stream = malloc(*tamanio_buffer);
+	int desplazamiento = 0;
+
+    memcpy(stream, &cod_op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+
+	memcpy(stream + desplazamiento, &size_payload, sizeof(size_t));
+	desplazamiento += sizeof(size_t);
+
+	memcpy(stream + desplazamiento, &id, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	memcpy(stream + desplazamiento, &dir_tabla, sizeof(int));
+	desplazamiento += sizeof(int);
+
+	return stream;
+}
+
+void enviar_pedido_liberar_memoria(int conexion, uint32_t id, uint32_t dir_tabla, t_log *logger)
+{
+	size_t tamanio_buffer = 0;
+	void *buffer = serializar_pedido_liberar_memoria(id, dir_tabla, &tamanio_buffer, logger);
+	if(send(conexion, buffer, tamanio_buffer, 0) != tamanio_buffer)
+		log_error(logger, "Error al enviar pedido liberar memoria");
+
+	free(buffer);
+}
+
+t_list* deserializar_pedido_liberar_memoria(void *stream)
+{
+	t_list *parametros = list_create();
+	int desplazamiento = 0;
+	int id = 0;
+	int dir_tabla = 0;
+
+	memcpy(&id, stream, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	list_add(parametros, (void*) id);
+
+	memcpy(&dir_tabla, stream + desplazamiento, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+	list_add(parametros, (void*) dir_tabla);
+
+	free(stream);
+	return parametros;
+}
+
+t_list* recibir_pedido_liberar_memoria(int conexion, t_log *logger)
+{
+	size_t tamanio_payload;
+	if(recv(conexion, &tamanio_payload, sizeof(size_t), 0) < sizeof(size_t))
+		log_error(logger, "Error al recibir pedido liberar memoria");
+
+	void *buffer = malloc(tamanio_payload);
+	if(recv(conexion, buffer, tamanio_payload, 0) < tamanio_payload)
+		log_error(logger, "Error al recibir pedido liberar memoria");
+	
+	t_list *ret = deserializar_pedido_liberar_memoria(buffer);
+	return ret;
 }
 
 void enviar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instrucciones, u_int32_t tam_proceso, int socket_cliente, t_log* logger) {
