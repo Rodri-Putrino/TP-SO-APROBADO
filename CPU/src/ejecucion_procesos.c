@@ -83,13 +83,13 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             int dir_logica2 = instruccion->arg[0];
             int valor2 = instruccion->arg[1];
-            int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
+            int conexion_memoria0 = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
             //Pasar a mmu:
-            pedido_escritura(valor2, dir_logica2, pcb, conexion_memoria, logger_CPU); //Sacar logger pq es global
+            pedido_escritura(valor2, dir_logica2, pcb, conexion_memoria0, logger_CPU); //Sacar logger pq es global
 
-            int op_code = recibir_operacion(conexion_memoria);
-            recibir_mensaje(conexion_memoria, logger_CPU);
-            close(conexion_memoria);
+            int op_code = recibir_operacion(conexion_memoria0);
+            recibir_mensaje(conexion_memoria0, logger_CPU);
+            close(conexion_memoria0);
             
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
@@ -108,13 +108,14 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             log_info(logger_CPU, "Instruccion COPY");
             log_info(logger_CPU, "Etapa FETCH OPERANDS iniciada");
 
-            //int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
-            //int dir_logica_origen = instruccion->arg[0];
-            //int dir_logica_destino = instruccion->arg[1];
+            int dir_logica_destino = instruccion->arg[0];
+            int dir_logica_origen = instruccion->arg[1];
             //Pasar a mmu:
-            //int dato = pedido_lectura(dir_logica_origen, pcb, logger_CPU, conexion_memoria);
-            //pedido_escritura(dato, dir_logica_destino, pcb, logger_CPU) //Sacar logger pq es global
+            int dato = pedido_lectura(dir_logica_origen, pcb, logger_CPU);
+            
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
+            int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
+            pedido_escritura(dato, dir_logica_destino, pcb, conexion_memoria,logger_CPU); //Sacar logger pq es global
 
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
@@ -161,12 +162,13 @@ int hay_interrupcion_para_atender() {
 void destruir_proceso(t_pcb* pcb) {
     free(pcb->rafaga);
     free(pcb->rafaga_bloqueado);
-    void eliminar_instruccion(t_instruccion *i)
-    {
+    //void eliminar_instruccion(t_instruccion *i)
+    //{
         //free(i->arg[0]);
         //free(i->arg[1]);
-        free(i);
-    }
-    list_destroy_and_destroy_elements(pcb->instrucciones, (void*)eliminar_instruccion);
+        //free(i);
+    //}
+    //list_destroy_and_destroy_elements(pcb->instrucciones, (void*)eliminar_instruccion);
+    list_destroy_and_destroy_elements(pcb->instrucciones, free);
     free(pcb);
 }
