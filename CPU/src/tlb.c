@@ -12,7 +12,10 @@ void agregar_entrada_tlb(entrada_tabla_N2 *e)
     aux->marco = e->dir;
 
     if(list_size(tlb) == entradas_tlb)
-        reemplazar_pagina(e);
+    {
+        reemplazar_pagina(aux);
+        return;
+    }
 
     list_add(tlb, aux);
 }
@@ -46,8 +49,10 @@ int buscar_pagina_tlb(int pag)
     (se referencia una entrada que esta en la tlb) por lo que ambas funciones
     reemplazan la pagina de la misma forma
 */
-void reemplazar_pagina(entrada_tabla_N2 *e)
+void reemplazar_pagina(entrada_tlb *e)
 {
+    entrada_tlb *aux = list_get(tlb, 0);
+    log_info(logger_CPU, "Pagina reemplazada en TLB: %d", aux->num_pag);
     list_remove_and_destroy_element(tlb, 0, free);
     list_add(tlb, e);
 }

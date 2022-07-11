@@ -126,6 +126,12 @@ void eliminar_paginas_proceso(int dir_tablaN1)
     list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
 }*/
 
+t_list* crear_tabla_vacia()
+{
+    t_list *t = list_create();
+    return t;
+}
+
 void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TODO: chequear con el team que hacer con esta lista que quedaria x cantidad 
 {                                                                       // de procesos con sus paginas en NULL
     t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
@@ -137,10 +143,11 @@ void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TO
 
         list_clean_and_destroy_elements(t2, free);
 
-        list_replace_and_destroy_element(tablasN2, e1->dir, NULL, eliminar_lista);
+        //list_replace_and_destroy_element(tablasN2, e1->dir, crear_tabla_vacia(), eliminar_lista);
     }
+    list_clean_and_destroy_elements(t, free);
     list_iterator_destroy(iteradorN1);
-    list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
+    //list_replace_and_destroy_element(tablasN1, dir_tablaN1, crear_tabla_vacia(), eliminar_lista);
 
     liberar_marcos_proceso(id);
 }
@@ -317,7 +324,10 @@ entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco)
     //while(indice < size_tablasN2)
     while(list_iterator_has_next(iterador))
     {
+        //NOTA: se reemplazan la tablas por NULL cuando se elimina el proceso
+        //por eso list_iterator_next() podria dar valores nulos
         t = list_iterator_next(iterador);
+        
         ret = tabla_contiene_marco(t, num_marco);
         printf("\n\t RET: \n");
         if(ret != NULL)

@@ -30,6 +30,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
                 destruir_proceso(pcb);
+                limpiar_tlb();
                 liberar_conexion(conexion_kernel);
             }
             else {
@@ -48,6 +49,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             enviar_pcb_con_tiempo_bloqueo(IO, pcb, segundos_bloqueado, conexion_kernel, logger_CPU);
 
             destruir_proceso(pcb);
+            limpiar_tlb();
             liberar_conexion(conexion_kernel);
          
             break;
@@ -65,6 +67,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
                 destruir_proceso(pcb);
+                limpiar_tlb();
                 liberar_conexion(conexion_kernel);
             }
             else {
@@ -91,6 +94,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
                 destruir_proceso(pcb);
+                limpiar_tlb();
                 liberar_conexion(conexion_kernel);
             }
             else {
@@ -115,6 +119,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
                 destruir_proceso(pcb);
+                limpiar_tlb();
                 liberar_conexion(conexion_kernel);
             }
             else 
@@ -133,6 +138,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             enviar_pedido_liberar_memoria(conexion_memoria2, pcb->id, pcb->tabla_paginas, logger_CPU);
 
             destruir_proceso(pcb);
+            limpiar_tlb();
             liberar_conexion(conexion_kernel);
 
             break;

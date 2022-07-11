@@ -25,7 +25,7 @@ int buscar_pagina_tlb(int pag);
     (se referencia una entrada que esta en la tlb) por lo que ambas funciones
     reemplazan la pagina de la misma forma
 */
-void reemplazar_pagina(entrada_tabla_N2 *e);
+void reemplazar_pagina(entrada_tlb *e);
 void limpiar_tlb();
 
 #endif
