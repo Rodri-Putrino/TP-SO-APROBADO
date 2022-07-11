@@ -74,6 +74,7 @@ uint32_t recibir_valor_leido(int socket_cliente, t_log* logger)
 	uint32_t dato = 0;
 
 	memcpy(&dato, stream, sizeof(uint32_t));
+	free(stream);
 
 	return dato;
 }
@@ -652,7 +653,7 @@ void* serializar_pedido_escritura(uint32_t dir, uint32_t dato, size_t *size, t_l
 
 	memcpy(stream + desplazamiento, &dato, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
-
+	
 	return stream;
 }
 

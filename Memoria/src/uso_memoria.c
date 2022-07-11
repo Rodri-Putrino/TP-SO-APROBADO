@@ -127,12 +127,14 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
         {
             t_pedido_disco *p = crear_pedido_escribir(id, aux->dir, aux->num_pag);
             sem_wait(&(p->pedido_listo));
+            eliminar_pedido_disco(p);
         }
         aux->bit_presencia = 0;
     }
     
     t_pedido_disco *p = crear_pedido_lectura(id, dir_marco, e->num_pag);
     sem_wait(&(p->pedido_listo));
+    eliminar_pedido_disco(p);
 
     e->bit_presencia = 1;
     log_info(logger, "el bit de presencia es: %d",e->bit_presencia);

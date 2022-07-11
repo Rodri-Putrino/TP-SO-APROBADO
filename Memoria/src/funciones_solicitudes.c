@@ -18,6 +18,7 @@ void inicializar_estructuras(int socket_cliente, t_log *logger)
     //ENVIAR PEDIDO CREAR SWAP
     t_pedido_disco *p = crear_pedido_crear_archivo(*id);
     sem_wait(&(p->pedido_listo));
+    eliminar_pedido_disco(p);
 
     //ENVIAR DIR TABLA NIVEL 1
     enviar_num(socket_cliente, dir_tabla, logger);
@@ -137,6 +138,7 @@ void eliminar_proceso(int socket_cliente, t_log *logger){
     t_pedido_disco *p = crear_pedido_eliminar_archivo(id);
     eliminar_estructura_proceso(id);
     sem_wait(&(p->pedido_listo));
+    eliminar_pedido_disco(p);
 
     list_destroy(parametros);
 }

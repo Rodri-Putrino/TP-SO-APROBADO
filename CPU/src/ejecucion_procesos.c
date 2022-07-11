@@ -29,7 +29,7 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
-
+                destruir_proceso(pcb);
                 liberar_conexion(conexion_kernel);
             }
             else {
@@ -64,6 +64,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
+                destruir_proceso(pcb);
+                liberar_conexion(conexion_kernel);
             }
             else {
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -88,6 +90,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
+                destruir_proceso(pcb);
+                liberar_conexion(conexion_kernel);
             }
             else {
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -110,6 +114,8 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
 
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
+                destruir_proceso(pcb);
+                liberar_conexion(conexion_kernel);
             }
             else 
                 realizar_ciclo_de_instruccion(pcb, conexion_kernel);
@@ -149,6 +155,12 @@ int hay_interrupcion_para_atender() {
 void destruir_proceso(t_pcb* pcb) {
     free(pcb->rafaga);
     free(pcb->rafaga_bloqueado);
-    list_destroy_and_destroy_elements(pcb->instrucciones, free);
+    void eliminar_instruccion(t_instruccion *i)
+    {
+        //free(i->arg[0]);
+        //free(i->arg[1]);
+        free(i);
+    }
+    list_destroy_and_destroy_elements(pcb->instrucciones, (void*)eliminar_instruccion);
     free(pcb);
 }

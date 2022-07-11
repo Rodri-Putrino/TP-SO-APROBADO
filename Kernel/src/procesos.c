@@ -106,6 +106,7 @@ void copiar_inicio_rafaga_del_proceso(t_pcb* pcb1, t_pcb* pcb2) {
     pthread_mutex_lock(&proceso_mutex);
 
     pcb1->rafaga->inicio = pcb2->rafaga->inicio;
+    pcb1->tabla_paginas = pcb2->tabla_paginas;
 
     pthread_mutex_unlock(&proceso_mutex);
 }

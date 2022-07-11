@@ -46,7 +46,6 @@ void funciones_disco()
             break;
         }
         sem_post(&(p->pedido_listo));
-        free(p);
     }
 }
 
@@ -217,4 +216,12 @@ t_pedido_disco* crear_pedido_eliminar_archivo(int id)
     queue_push(pedidos_disco, p);
     sem_post(&lista_tiene_pedidos);
     return p;
+}
+
+void eliminar_pedido_disco(t_pedido_disco *p)
+{
+    //free(p->argumentos[0]);
+    //free(p->argumentos[1]);
+    //free(p->argumentos[2]);
+    free(p);
 }

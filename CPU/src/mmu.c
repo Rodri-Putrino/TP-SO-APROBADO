@@ -109,7 +109,7 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, int conexion_me
 		{
 			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
 			enviar_pedido_escritura(dir_fisica,
-				bytes_por_procesar, 
+				valor, 
 				conexion_memoria, 
 				logger
 			);
