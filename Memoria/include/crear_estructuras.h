@@ -118,7 +118,6 @@ t_list* conseguir_marcos_proceso(int dir_tablaN1);
 
 t_list* conseguir_numeros_marcos_proceso(int id);
 
-t_list* crear_tabla_vacia();
 
 void reservar_marcos_proceso(proceso_en_memoria *p);
 void liberar_marcos_proceso(int id);

@@ -126,12 +126,6 @@ void eliminar_paginas_proceso(int dir_tablaN1)
     list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
 }*/
 
-t_list* crear_tabla_vacia()
-{
-    t_list *t = list_create();
-    return t;
-}
-
 void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TODO: chequear con el team que hacer con esta lista que quedaria x cantidad 
 {                                                                       // de procesos con sus paginas en NULL
     t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);

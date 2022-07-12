@@ -37,11 +37,16 @@ void suspender_proceso(int socket_cliente, t_log *logger)
     log_info(logger, "recibo de parametros de suspencion");
 
     //ESCRIBIR PAGINAS SI FUERON MODIFICADAS
-    suspender_paginas(*id, *dir_tablaN1);
+    t_pedido_disco* p = crear_pedido_suspender_proceso(*id, *dir_tablaN1);
+    sem_wait(&(p->pedido_listo));
+    eliminar_pedido_disco(p);
 
     //LIBERAR MARCOS PARA SER USADOS POR OTROS PROCESOS
     liberar_marcos_proceso(*id);
     imprimir_bitmap(marcos_memoria);
+
+    log_info(logger, "Proceso %d suspendido correctamente", *id);
+
     list_destroy_and_destroy_elements(parametros,free);
 }
 

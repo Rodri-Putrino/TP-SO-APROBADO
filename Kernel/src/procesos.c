@@ -138,6 +138,7 @@ void inicializar_tiempo_bloqueado(t_pcb* pcb) {
 }
 
 void destruir_proceso(t_pcb* pcb) {
+    //TODO: semaforo mutex
     free(pcb->rafaga);
     free(pcb->rafaga_bloqueado);
     list_destroy_and_destroy_elements(pcb->instrucciones, free);
@@ -267,6 +268,17 @@ void encolar_proceso_en_bloqueados(t_pcb* proceso) {
     iniciar_rafaga_bloqueado(proceso);
 
     pthread_mutex_unlock(&procesos_bloqueados_mutex);
+
+    //------------BORRAR DESPUES :(------//
+    /*t_pcb* pcb = desencolar_proceso_bloqueado();
+    log_info(logger, "PCB ID %d debe ejecutar I/O %u ms", pcb->id, pcb->tiempo_a_bloquearse);
+
+    usleep(pcb->tiempo_a_bloquearse * 1000);
+    encolar_proceso_en_listos(pcb);
+
+    log_info(logger, "PCB ID %d ejecuto I/O %u ms", pcb->id, pcb->tiempo_a_bloquearse);
+    //--------------------------------------//
+*/
 
     pthread_t planificador_mediano_plazo;
     pthread_create(&planificador_mediano_plazo, NULL, (void*) evaluar_suspender_proceso, proceso);

@@ -41,11 +41,6 @@ void atender_peticiones(void* conexion) {
             pedido_escritura(una_conexion, logger);
             break;
 
-        case PEDIDO_COPIA:
-            log_info(logger, "Peticion recibida: PEDIDO_COPIA");
-
-            break;
-
         case SOLICITUD_TABLA_PAGINAS: 
             log_info(logger, "Peticion recibida: SOLICITUD_TABLA_PAGINAS");
             solicitud_tabla_paginas(una_conexion, logger);
@@ -56,11 +51,6 @@ void atender_peticiones(void* conexion) {
             solicitud_marco(una_conexion, logger);
             break;
 
-        case SOLICITUD_DIRECCION_FISICA:
-            log_info(logger, "Peticion recibida: SOLICITUD_DIRECCION_FISICA");
-
-            break;
-
         case INICIALIZAR_ESTRUCTURAS:
             log_info(logger, "Peticion recibida: INICIALIZAR_ESTRUCTURAS");
             inicializar_estructuras(una_conexion, logger);
@@ -68,8 +58,9 @@ void atender_peticiones(void* conexion) {
 
         case SUSPENDER_PROCESO:
             log_info(logger, "Peticion recibida: SUSPENDER_PROCESO");
-            //suspender_proceso(una_conexion, logger);
+            suspender_proceso(una_conexion, logger);
             break;
+
         case EXIT:
             eliminar_proceso(una_conexion, logger);
             break;

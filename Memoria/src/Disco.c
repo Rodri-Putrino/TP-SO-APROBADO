@@ -12,7 +12,7 @@ void funciones_disco()
         usleep(retardo_swap *1000);
         t_pedido_disco *p = queue_pop(pedidos_disco);
 
-        int id, direccion_pag, pag;
+        int id, direccion, pag;
         switch(p->operacion_disco)
         {
             case CREAR_ARCHIVO:
@@ -22,23 +22,29 @@ void funciones_disco()
 
             case ESCRIBIR_ARCHIVO:
                 id = p->argumentos[0];
-                direccion_pag = p->argumentos[1];
+                direccion = p->argumentos[1];
                 pag = p->argumentos[2];
 
-                escribir_en_archivo(id, direccion_pag, pag);
+                escribir_en_archivo(id, direccion, pag);
             break;
 
             case LEER_ARCHIVO:
                 id = p->argumentos[0];
-                direccion_pag = p->argumentos[1];
+                direccion = p->argumentos[1];
                 pag = p->argumentos[2];
 
-                enviar_pagina_a_memoria(id, direccion_pag, pag);
+                enviar_pagina_a_memoria(id, direccion, pag);
             break;
 
             case ELIMINAR_ARCHIVO:
                 id = p->argumentos[0];
                 eliminar_archivo(id);
+            break;
+
+            case DISCO_SUSPENDER_PROCESO:
+                id = p->argumentos[0];
+                direccion = p->argumentos[1];
+                suspender_paginas(id, direccion);
             break;
 
             default:
@@ -211,6 +217,19 @@ t_pedido_disco* crear_pedido_eliminar_archivo(int id)
     t_pedido_disco *p = malloc(sizeof(t_pedido_disco));
     p->operacion_disco = ELIMINAR_ARCHIVO;
     p->argumentos[0] = id;
+    sem_init(&(p->pedido_listo), 0, 0);
+
+    queue_push(pedidos_disco, p);
+    sem_post(&lista_tiene_pedidos);
+    return p;
+}
+
+t_pedido_disco* crear_pedido_suspender_proceso(int id, int dir_tabla)
+{   
+    t_pedido_disco *p = malloc(sizeof(t_pedido_disco));
+    p->operacion_disco = DISCO_SUSPENDER_PROCESO;
+    p->argumentos[0] = id;
+    p->argumentos[1] = dir_tabla;
     sem_init(&(p->pedido_listo), 0, 0);
 
     queue_push(pedidos_disco, p);
