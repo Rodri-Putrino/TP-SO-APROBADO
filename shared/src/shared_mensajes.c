@@ -849,6 +849,55 @@ t_list* recibir_pedido_liberar_memoria(int conexion, t_log *logger)
 	return ret;
 }
 
+void* serializar_pedido_desuspender_proceso(int id, size_t *tamanio_buffer)
+{
+	op_code code_op = DESUSPENDER_PROCESO;
+
+	*tamanio_buffer = 
+		sizeof(op_code) +
+		sizeof(uint32_t);
+
+	int desplazamiento = 0;
+	void *buffer = malloc(*tamanio_buffer);
+	memcpy(buffer + desplazamiento, &code_op, sizeof(op_code));
+	desplazamiento += sizeof(op_code);
+
+	memcpy(buffer + desplazamiento, &id, sizeof(uint32_t));
+	desplazamiento += sizeof(uint32_t);
+
+	return buffer;
+}
+
+void enviar_pedido_desuspender_proceso(int conexion, int id, t_log *logger)
+{
+	size_t tamanio_buffer = 0;
+	void *buffer = serializar_pedido_desuspender_proceso(id, &tamanio_buffer);
+	if(send(conexion, buffer, tamanio_buffer, 0) < 0)
+		log_error(logger, "Error al enviar pedido desuspender proceso");
+
+	free(buffer);
+}
+
+int deserializar_pedido_desuspender_proceso(void *buffer)
+{
+	int id;
+	memcpy(&id, buffer, sizeof(int));
+	free(buffer);
+	return id;
+}
+
+int recibir_pedido_desuspender_proceso(int conexion, t_log *logger)
+{
+	void *buffer = malloc(sizeof(uint32_t));
+	if(recv(conexion, buffer,sizeof(uint32_t), 0) < 0)
+		log_error(logger, "Error al recibir pedido desuspender proceso");
+
+	int id = deserializar_pedido_desuspender_proceso(buffer);
+	return id;
+}
+
+//------------------------------------------------------------------//
+
 void enviar_lista_instrucciones_y_tam_proceso(op_code cod_op, t_list* instrucciones, u_int32_t tam_proceso, int socket_cliente, t_log* logger) {
 
 	size_t size;

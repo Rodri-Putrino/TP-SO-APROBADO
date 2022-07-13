@@ -54,17 +54,12 @@ void suspender_proceso(int socket_cliente, t_log *logger)
 
 void desuspender_proceso(int socket_cliente, t_log *logger)
 {
-    t_list *parametros = recibir_paquete(socket_cliente, logger);
-    int id = (int)list_get(parametros, 0);
-
-    printf("\n\n ID %d\n\n", id);
+    int id = recibir_pedido_desuspender_proceso(socket_cliente, logger);
 
     proceso_en_memoria *proceso = buscar_proceso_por_id(id);
 
     reservar_marcos_proceso(proceso);
     imprimir_bitmap(marcos_memoria);
-
-    list_destroy(parametros);
 }
 
 void pedido_lectura(int socket_cliente, t_log *logger)

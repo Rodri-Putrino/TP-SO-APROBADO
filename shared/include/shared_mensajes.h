@@ -111,6 +111,9 @@ void* serializar_pedido_liberar_memoria(op_code cod_op, uint32_t id, uint32_t di
 void enviar_pedido_liberar_memoria(op_code cod_op, int conexion, uint32_t id, uint32_t dir_tabla, t_log *logger);
 t_list* deserializar_pedido_liberar_memoria(void *stream);
 t_list* recibir_pedido_liberar_memoria(int conexion, t_log *logger);
-
+void* serializar_pedido_desuspender_proceso(int id, size_t *tamanio_buffer);
+void enviar_pedido_desuspender_proceso(int conexion, int id, t_log *logger);
+int deserializar_pedido_desuspender_proceso(void *buffer);
+int recibir_pedido_desuspender_proceso(int conexion, t_log *logger);
 
 #endif

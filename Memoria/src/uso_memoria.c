@@ -95,10 +95,10 @@ int dir_marco_vacio_proceso(int id)
     t_list *marcos = conseguir_numeros_marcos_proceso(id);
     for(int i = 0; i < list_size(marcos); i++)
     {
-        int *num_marco = list_get(marcos, i);
+        int num_marco = (int)list_get(marcos, i);
         //SI ENCUENTRA VACIO LO RETORNA
         if(bitarray_test_bit(marcos_memoria, i));
-            return *num_marco;
+            return num_marco;
     }
     //SINO RETORNA -1
     return -1;

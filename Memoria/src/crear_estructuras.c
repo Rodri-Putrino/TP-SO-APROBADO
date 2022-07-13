@@ -127,6 +127,9 @@ void eliminar_paginas_proceso(int dir_tablaN1)
     list_replace_and_destroy_element(tablasN1, dir_tablaN1, NULL, eliminar_lista);
 }*/
 
+
+//TODO: tiene memory leaks
+//Nota al pie: ahora hacemos un list_clean para los marcos_reservados, no un list_destroy, puede ser eso
 void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TODO: chequear con el team que hacer con esta lista que quedaria x cantidad 
 {                                                                       // de procesos con sus paginas en NULL
     t_tablaN1 *t = list_get(tablasN1, dir_tablaN1);
@@ -363,11 +366,12 @@ entrada_tabla_N2* conseguir_entrada_pagina(int dir_tablaN1, int pag)
 
 t_list* conseguir_numeros_marcos_proceso(int id)
 {
-    proceso_en_memoria *ret = list_get(procesos_en_memoria, 0);
-    for(int i = 1; ret->id_proceso != id; i++)
-    {
-        ret = list_get(procesos_en_memoria, i);
-    }
+    proceso_en_memoria *ret = buscar_proceso_por_id(id);
+    //proceso_en_memoria *ret = list_get(procesos_en_memoria, 0);
+    //for(int i = 1; ret->id_proceso != id; i++)
+    //{
+        //ret = list_get(procesos_en_memoria, i);
+    //}
     return ret->marcos_reservados;
 }
 
