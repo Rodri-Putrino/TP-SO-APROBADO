@@ -25,6 +25,14 @@ void controlar_grado_de_multiprogramacion() {
             t_pcb* pcb = desencolar_proceso_suspendido_listo();
             log_info(logger, "PCB ID %d desuspendido", pcb->id);
             encolar_proceso_en_listos(pcb);
+
+            int conexion_memoria = crear_conexion(logger, "MEMORIA", ip_memoria, puerto_memoria);
+            t_paquete *p = crear_paquete(DESUSPENDER_PROCESO);
+            
+            //  TODO: SERIALIZAR PEDIDO, ahora rompe y son las 2:06 :(
+            agregar_a_paquete(p, (void*)pcb->id, sizeof(uint32_t));
+            enviar_paquete(p, conexion_memoria, logger);
+            eliminar_paquete(p);
         }
         else {
             t_pcb* pcb = desencolar_proceso_nuevo();

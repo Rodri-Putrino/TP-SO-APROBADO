@@ -52,7 +52,7 @@ int criterio_clock_mejorado(entrada_tabla_N2 *e, int vuelta)
 
 entrada_tabla_N2* aplicar_busqueda_clock(int id, int dir_tablaN1)
 {
-    proceso_en_memoria *p = buscar_proceso(id);
+    proceso_en_memoria *p = buscar_proceso_por_id(id);
     t_list *marcos_proceso = conseguir_marcos_proceso(dir_tablaN1);
 
     //NOTA: revisar logica en primer vuelta de for()
@@ -75,7 +75,7 @@ entrada_tabla_N2* aplicar_busqueda_clock(int id, int dir_tablaN1)
 
 entrada_tabla_N2* aplicar_busqueda_clock_mejorado(int id, int dir_tablaN1)
 {
-    proceso_en_memoria *p = buscar_proceso(id);
+    proceso_en_memoria *p = buscar_proceso_por_id(id);
     t_list *marcos_proceso = conseguir_marcos_proceso(dir_tablaN1);
 
     entrada_tabla_N2 *ret = list_get(marcos_proceso, 0);

@@ -61,6 +61,11 @@ void atender_peticiones(void* conexion) {
             suspender_proceso(una_conexion, logger);
             break;
 
+        case DESUSPENDER_PROCESO:
+            log_info(logger, "Peticion recibida: DESUSPENDER_PROCESO");
+            desuspender_proceso(una_conexion, logger);
+            break;
+
         case EXIT:
             log_info(logger, "Peticion recibida: EXIT");
             eliminar_proceso(una_conexion, logger);
