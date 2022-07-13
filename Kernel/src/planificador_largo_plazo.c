@@ -31,6 +31,7 @@ void controlar_grado_de_multiprogramacion() {
             
             //  TODO: SERIALIZAR PEDIDO, ahora rompe y son las 2:06 :(
             enviar_pedido_desuspender_proceso(conexion_memoria, pcb->id,logger);
+            recibir_mensaje(conexion_memoria, logger);
             //agregar_a_paquete(p, (void*)pcb->id, sizeof(uint32_t));
             //enviar_paquete(p, conexion_memoria, logger);
             //eliminar_paquete(p);

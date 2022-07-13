@@ -48,6 +48,7 @@ void suspender_proceso(int socket_cliente, t_log *logger)
     imprimir_bitmap(marcos_memoria);
 
     log_info(logger, "Proceso %d suspendido correctamente", id);
+    enviar_mensaje("El proceso ha sido suspendido", socket_cliente, logger);
 
     list_destroy(parametros);
 }
