@@ -779,10 +779,8 @@ uint32_t deserializar_pedido_lectura(void *stream)
 	return dir;
 }
 
-void* serializar_pedido_liberar_memoria(uint32_t id, uint32_t dir_tabla, size_t *tamanio_buffer, t_log *logger)
+void* serializar_pedido_liberar_memoria(op_code cod_op, uint32_t id, uint32_t dir_tabla, size_t *tamanio_buffer, t_log *logger)
 {
-	op_code cod_op = EXIT;
-
  	*tamanio_buffer = sizeof(op_code) +
 	 		sizeof(size_t) +
 	 		sizeof(uint32_t) * 2;
@@ -808,10 +806,10 @@ void* serializar_pedido_liberar_memoria(uint32_t id, uint32_t dir_tabla, size_t 
 	return stream;
 }
 
-void enviar_pedido_liberar_memoria(int conexion, uint32_t id, uint32_t dir_tabla, t_log *logger)
+void enviar_pedido_liberar_memoria(op_code cod_op, int conexion, uint32_t id, uint32_t dir_tabla, t_log *logger)
 {
 	size_t tamanio_buffer = 0;
-	void *buffer = serializar_pedido_liberar_memoria(id, dir_tabla, &tamanio_buffer, logger);
+	void *buffer = serializar_pedido_liberar_memoria(cod_op, id, dir_tabla, &tamanio_buffer, logger);
 	if(send(conexion, buffer, tamanio_buffer, 0) != tamanio_buffer)
 		log_error(logger, "Error al enviar pedido liberar memoria");
 

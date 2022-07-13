@@ -29,25 +29,27 @@ void inicializar_estructuras(int socket_cliente, t_log *logger)
 
 void suspender_proceso(int socket_cliente, t_log *logger)
 {
-    t_list *parametros = recibir_paquete(socket_cliente, logger);
+    t_list *parametros = recibir_pedido_liberar_memoria(socket_cliente, logger);
 
-    int *id = list_get(parametros, 0);
-    int *dir_tablaN1 = list_get(parametros, 1);
+    int id = (int) list_get(parametros, 0);
+    int dir_tablaN1 = (int) list_get(parametros, 1);
 
-    log_info(logger, "recibo de parametros de suspencion");
+    log_info(logger, "recibo de parametros de suspension");
+    log_info(logger, "ID: %d", id);
+    log_info(logger, "Dir tabla: %d", dir_tablaN1);
 
     //ESCRIBIR PAGINAS SI FUERON MODIFICADAS
-    t_pedido_disco* p = crear_pedido_suspender_proceso(*id, *dir_tablaN1);
+    t_pedido_disco* p = crear_pedido_suspender_proceso(id, dir_tablaN1);
     sem_wait(&(p->pedido_listo));
     eliminar_pedido_disco(p);
 
     //LIBERAR MARCOS PARA SER USADOS POR OTROS PROCESOS
-    liberar_marcos_proceso(*id);
+    liberar_marcos_proceso(id);
     imprimir_bitmap(marcos_memoria);
 
-    log_info(logger, "Proceso %d suspendido correctamente", *id);
+    log_info(logger, "Proceso %d suspendido correctamente", id);
 
-    list_destroy_and_destroy_elements(parametros,free);
+    list_destroy(parametros);
 }
 
 void pedido_lectura(int socket_cliente, t_log *logger)
@@ -135,8 +137,8 @@ void solicitud_marco(int socket_cliente, t_log *logger)
 void eliminar_proceso(int socket_cliente, t_log *logger){
 
     t_list *parametros = recibir_pedido_liberar_memoria(socket_cliente, logger);
-    int id = (int)list_get(parametros, 0);
-    int dir_tablaN1 = (int)list_get(parametros, 1);
+    int id = (int) list_get(parametros, 0);
+    int dir_tablaN1 = (int) list_get(parametros, 1);
 
     eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
 

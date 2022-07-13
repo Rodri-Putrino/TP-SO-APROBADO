@@ -292,6 +292,7 @@ void evaluar_suspender_proceso(t_pcb* pcb) {
     //int conexion_memoria;
     while(proceso_esta_bloqueado(pcb))
     {
+        usleep(1000 * 500);
         actualizar_rafaga_bloqueado(pcb);
         //log_info(logger, "Inicio bloqueo: %d", pcb->rafaga_bloqueado->inicio);
     }
@@ -301,13 +302,21 @@ void evaluar_suspender_proceso(t_pcb* pcb) {
         log_info(logger, "PCB ID %d ha sido suspendido", pcb->id);
         modificar_estado_proceso(pcb, BLOQUEADO_SUSPENDIDO);
         sem_post(&sem_multiprogramacion);
-        //conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
-        //Avisar a memoria
+        int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
+        enviar_pedido_liberar_memoria(SUSPENDER_PROCESO, conexion_memoria, pcb->id, pcb->tabla_paginas, logger);
+        close(conexion_memoria);
     }
 }
 
 int proceso_esta_bloqueado(t_pcb* pcb) {
-    return pcb->estado == BLOQUEADO && pcb->tiempo_bloqueado <= tiempo_max_bloqueado;
+
+    pthread_mutex_lock(&procesos_bloqueados_mutex);
+
+    int resultado = pcb->estado == BLOQUEADO && pcb->tiempo_bloqueado <= tiempo_max_bloqueado;
+
+    pthread_mutex_unlock(&procesos_bloqueados_mutex);
+
+    return resultado;
 }
 
 t_pcb* desencolar_proceso_bloqueado() {

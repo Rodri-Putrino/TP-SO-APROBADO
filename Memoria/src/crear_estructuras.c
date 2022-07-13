@@ -154,9 +154,9 @@ void reservar_marcos_proceso(proceso_en_memoria *p)
     {
         if(bitarray_test_bit(marcos_memoria, i))
         {
-            int *marco = malloc(sizeof(int));
-            *marco = i;
-            list_add(p->marcos_reservados, marco);
+            int marco = i;
+
+            list_add(p->marcos_reservados, (void*) marco);
 
             bitarray_clean_bit(marcos_memoria, i);
             cantidad_marcos_reservados++;
@@ -174,8 +174,8 @@ void liberar_marcos_proceso(int id)
 
     desmarcar_bitmap(aux->marcos_reservados);
 
-    list_destroy_and_destroy_elements(aux->marcos_reservados, free);
-    free(aux);
+    list_destroy(aux->marcos_reservados);
+    //free(aux);
 }
 
 /*---------------------MEMORIA GENERAL---------------------------------*/
@@ -185,8 +185,8 @@ void desmarcar_bitmap(t_list *marcos)
     t_list_iterator *iterador = list_iterator_create(marcos);
     while(list_iterator_has_next(iterador))
     {
-        int *marco = list_iterator_next(iterador);
-        bitarray_set_bit(marcos_memoria, *marco);
+        int marco = (int) list_iterator_next(iterador);
+        bitarray_set_bit(marcos_memoria, marco);
     }
     list_iterator_destroy(iterador);
 }

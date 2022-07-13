@@ -62,6 +62,7 @@ void atender_peticiones(void* conexion) {
             break;
 
         case EXIT:
+            log_info(logger, "Peticion recibida: EXIT");
             eliminar_proceso(una_conexion, logger);
             break;
 
