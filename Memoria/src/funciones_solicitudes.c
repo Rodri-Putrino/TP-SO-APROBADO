@@ -131,6 +131,16 @@ void solicitud_marco(int socket_cliente, t_log *logger)
     int *num_pag = list_get(parametros, 2);
     log_info(logger,"el numero de pagina recibido por memoria es: %d",*num_pag);
 
+    proceso_en_memoria *proceso = buscar_proceso_por_id(*id);
+
+    if(list_is_empty(proceso->marcos_reservados)){
+        
+        reservar_marcos_proceso(proceso);
+        imprimir_bitmap(marcos_memoria);
+        log_info(logger,"Proceso desuspendido: %d", *id);
+
+    }
+
     entrada_tabla_N2 *e2 = conseguir_entrada_pagina(*dir_tablaN1, *num_pag);
     
 
@@ -151,7 +161,7 @@ void eliminar_proceso(int socket_cliente, t_log *logger){
     int id = (int) list_get(parametros, 0);
     int dir_tablaN1 = (int) list_get(parametros, 1);
 
-    eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
+    //eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
 
     t_pedido_disco *p = crear_pedido_eliminar_archivo(id);
     eliminar_estructura_proceso(id);

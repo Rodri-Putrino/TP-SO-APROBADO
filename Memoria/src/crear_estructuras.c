@@ -139,11 +139,13 @@ void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TO
         entrada_tabla_N1 *e1 = list_iterator_next(iteradorN1);
         t_tablaN2 *t2 = list_get(tablasN2, e1->dir);
 
-        list_clean_and_destroy_elements(t2, free);
+        //list_clean_and_destroy_elements(t2, free);
+        list_destroy(t2);
 
         //list_replace_and_destroy_element(tablasN2, e1->dir, crear_tabla_vacia(), eliminar_lista);
     }
-    list_clean_and_destroy_elements(t, free);
+    //list_clean_and_destroy_elements(t, free);
+    list_destroy(t);
     list_iterator_destroy(iteradorN1);
     //list_replace_and_destroy_element(tablasN1, dir_tablaN1, crear_tabla_vacia(), eliminar_lista);
 
