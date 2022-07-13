@@ -29,7 +29,7 @@ void iniciar_estructuras_memoria();
 t_bitarray *marcos_memoria;
 
 proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso);
-proceso_en_memoria* buscar_proceso(int id);
+proceso_en_memoria* buscar_proceso_por_id(int id);
 void eliminar_estructura_proceso(int id);
 /* 
     Crea una entrada de tablaN1
@@ -122,6 +122,7 @@ t_list* conseguir_numeros_marcos_proceso(int id);
 void reservar_marcos_proceso(proceso_en_memoria *p);
 void liberar_marcos_proceso(int id);
 void desmarcar_bitmap(t_list *marcos);
+proceso_en_memoria* buscar_proceso_por_id(int id);
 
 //funcion auxiliar
 void eliminar_lista(void *l);

@@ -9,6 +9,7 @@
 
 void inicializar_estructuras(int socket_cliente, t_log *logger);
 void suspender_proceso(int socket_cliente, t_log *logger);
+void desuspender_proceso(int socket_cliente, t_log *logger);
 void pedido_lectura(int socket_cliente, t_log *logger);
 void pedido_escritura(int socket_cliente, t_log *logger);
 void solicitud_tabla_paginas(int socket_cliente, t_log *logger);

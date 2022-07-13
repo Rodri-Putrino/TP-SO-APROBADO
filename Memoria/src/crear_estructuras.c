@@ -16,10 +16,11 @@ proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso)
     ret->id_proceso = id;
     ret->posicion_puntero_clock = 0;
     ret->tablaN1 = crear_tablaN1(tamanio_proceso);
+    ret->marcos_reservados = list_create();
     return ret;
 }
-
-proceso_en_memoria* buscar_proceso(int id)
+/*
+proceso_en_memoria* buscar_proceso_por_id(int id)
 {
     proceso_en_memoria *p = list_get(procesos_en_memoria, 0);
 
@@ -30,7 +31,7 @@ proceso_en_memoria* buscar_proceso(int id)
     }
 
     return p;
-}
+}*/
 
 void eliminar_estructura_proceso(int id)
 {
@@ -148,7 +149,7 @@ void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TO
 
 void reservar_marcos_proceso(proceso_en_memoria *p)
 {
-    p->marcos_reservados = list_create();
+    //p->marcos_reservados = list_create();
     int cantidad_marcos_reservados = 0;
     for(int i = 0; cantidad_marcos_reservados < marcos_por_proceso; i++)
     {
@@ -165,17 +166,24 @@ void reservar_marcos_proceso(proceso_en_memoria *p)
 }
 
 void liberar_marcos_proceso(int id)
+{    
+    proceso_en_memoria *aux = buscar_proceso_por_id(id);
+
+    desmarcar_bitmap(aux->marcos_reservados);
+
+    list_clean(aux->marcos_reservados);
+    //free(aux);
+}
+
+proceso_en_memoria* buscar_proceso_por_id(int id)
 {
+    
     bool id_equals(proceso_en_memoria *p){
         return p->id_proceso == id;
     }
     
-    proceso_en_memoria *aux = list_find(procesos_en_memoria, (void*)id_equals);
-
-    desmarcar_bitmap(aux->marcos_reservados);
-
-    list_destroy(aux->marcos_reservados);
-    //free(aux);
+    proceso_en_memoria *aux = (proceso_en_memoria*)list_find(procesos_en_memoria, (void*)id_equals);
+    return aux;
 }
 
 /*---------------------MEMORIA GENERAL---------------------------------*/
