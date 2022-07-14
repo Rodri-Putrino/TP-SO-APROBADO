@@ -20,60 +20,63 @@ void atender_peticiones(void* conexion) {
     int una_conexion = (int) conexion;
     log_info(logger, "Cliente conectado");
     int op_code = recibir_operacion(una_conexion);
+    
+    //TIEMPO RETARDO MEMORIA
+    usleep(retardo_memoria *1000);
 
     switch(op_code)
     {
         case ENVIAR_HANDSHAKE:
-            log_info(logger, "Petición recibida: ENVIAR_HANDSHAKE"); 
+            log_info(logger, "Peticion recibida: ENVIAR_HANDSHAKE"); 
 
             break;
 
         case PEDIDO_LECTURA:
-            log_info(logger, "Petición recibida: PEDIDO_LECTURA");
-
+            log_info(logger, "Peticion recibida: PEDIDO_LECTURA");
+            pedido_lectura(una_conexion, logger);
             break;
 
         case PEDIDO_ESCRITURA:
-            log_info(logger, "Petición recibida: PEDIDO_ESCRITURA");
-
-            break;
-
-        case PEDIDO_COPIA:
-            log_info(logger, "Petición recibida: PEDIDO_COPIA");
-
+            log_info(logger, "Peticion recibida: PEDIDO_ESCRITURA");
+            pedido_escritura(una_conexion, logger);
             break;
 
         case SOLICITUD_TABLA_PAGINAS: 
-            log_info(logger, "Petición recibida: SOLICITUD_TABLA_PAGINAS");
-
+            log_info(logger, "Peticion recibida: SOLICITUD_TABLA_PAGINAS");
+            solicitud_tabla_paginas(una_conexion, logger);
             break;
 
         case SOLICITUD_MARCO:
-            log_info(logger, "Petición recibida: SOLICITUD_MARCO");
-
-            break;
-
-        case SOLICITUD_DIRECCION_FISICA:
-            log_info(logger, "Petición recibida: SOLICITUD_DIRECCION_FISICA");
-
+            log_info(logger, "Peticion recibida: SOLICITUD_MARCO");
+            solicitud_marco(una_conexion, logger);
             break;
 
         case INICIALIZAR_ESTRUCTURAS:
-            log_info(logger, "Petición recibida: INICIALIZAR_ESTRUCTURAS");
-
+            log_info(logger, "Peticion recibida: INICIALIZAR_ESTRUCTURAS");
+            inicializar_estructuras(una_conexion, logger);
             break;
 
         case SUSPENDER_PROCESO:
-            log_info(logger, "Petición recibida: SUSPENDER_PROCESO");
+            log_info(logger, "Peticion recibida: SUSPENDER_PROCESO");
+            suspender_proceso(una_conexion, logger);
+            break;
 
+        case DESUSPENDER_PROCESO:
+            log_info(logger, "Peticion recibida: DESUSPENDER_PROCESO");
+            desuspender_proceso(una_conexion, logger);
+            break;
+
+        case EXIT:
+            log_info(logger, "Peticion recibida: EXIT");
+            eliminar_proceso(una_conexion, logger);
             break;
 
         default: 
-            log_error(logger, "El OP_CODE recibido es inválido");
+            log_error(logger, "El OP_CODE recibido es invalido");
+            log_info(logger, "Op code recibido: %d", op_code);
             break;
     }
 
     close(una_conexion);
-
     log_info(logger, "El cliente se ha desconectado");
 }

@@ -9,27 +9,28 @@ static char* codigos_instrucciones[6] = {
     "EXIT"
 };
 
-t_paquete* leer_archivo(char *path)
+t_list* leer_archivo(char *path)
 {
     FILE *codigo = fopen(path, "r");
     char *linea = (char*)malloc(LARGO_LINEA_MAX);
 
-    t_paquete *paquete = crear_paquete(NUEVO_PROCESO);
+    t_list* lista_instrucciones = list_create();
+
     while(!feof(codigo))
     {
         fgets(linea, LARGO_LINEA_MAX, codigo);
         if(strcmp(linea, "") != 0)
         {
-            agregar_instruccion_a_paquete(linea, paquete);
+            agregar_instruccion_a_lista(linea,lista_instrucciones);
         }
     }
 
     free(linea);
     fclose(codigo);
-    return paquete;
+    return lista_instrucciones;
 }
 
-void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
+void agregar_instruccion_a_lista(char* linea, t_list* lista_instrucciones) {
     t_instruccion *instruccion = malloc(sizeof(t_instruccion));
 
     char **palabras_linea = string_split(linea, " ");
@@ -44,7 +45,7 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             instruccion->arg[0] = -1;
             instruccion->arg[1] = -1;
             for(int i = 0; i< atoi(palabras_linea[1]); i++) {
-                agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
+                list_add(lista_instrucciones, instruccion);
             }
             free(palabras_linea[0]);
             free(palabras_linea[1]);
@@ -55,7 +56,7 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             instruccion->arg[1] = -1;
             free(palabras_linea[0]);
             free(palabras_linea[1]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
+            list_add(lista_instrucciones, instruccion);
             
             break;
 
@@ -64,7 +65,7 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             instruccion->arg[1] = -1;
             free(palabras_linea[0]);
             free(palabras_linea[1]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
+            list_add(lista_instrucciones, instruccion);
             break;
 
         case WRITE:
@@ -73,7 +74,7 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             free(palabras_linea[0]);
             free(palabras_linea[1]);
             free(palabras_linea[2]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
+            list_add(lista_instrucciones, instruccion);
             break;
 
         case COPY:
@@ -82,14 +83,14 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
             free(palabras_linea[0]);
             free(palabras_linea[1]);
             free(palabras_linea[2]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
+            list_add(lista_instrucciones, instruccion);
             break;
 
         case EXIT_INST:
             instruccion->arg[0] = -1;
             instruccion->arg[1] = -1;
             free(palabras_linea[0]);
-            agregar_a_paquete(paquete, instruccion, sizeof(t_instruccion));
+            list_add(lista_instrucciones, instruccion);
             break;
 
         default:
@@ -98,25 +99,5 @@ void agregar_instruccion_a_paquete(char* linea, t_paquete* paquete) {
     }
 
     free(palabras_linea);
-    free(instruccion);
+    //free(instruccion);
 }
-
-/* VERSION ANTERIOR
-t_paquete* leer_archivo(char *path)
-{
-    FILE *codigo = fopen(path, "r");
-    char *linea = (char*)malloc(LARGO_LINEA_MAX);
-
-    t_paquete *paquete = crear_paquete(NUEVO_PROCESO);
-    
-    while(!feof(codigo))
-    {
-        fgets(linea, LARGO_LINEA_MAX, codigo);
-        agregar_a_paquete(paquete, linea, strlen(linea) + 1);
-    }
-
-    free(linea);
-    fclose(codigo);
-
-    return paquete;
-}*/

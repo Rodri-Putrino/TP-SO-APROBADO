@@ -12,20 +12,25 @@
 typedef struct
 {
     int id_proceso;
-    t_list *marcos_reservados;
-}t_reserva_marcos;
+	int posicion_puntero_clock;
+	t_tablaN1 *tablaN1;
+    t_list *marcos_reservados; //tipo int
+}proceso_en_memoria;
 
 t_list *tablasN1, *tablasN2;
+t_list *procesos_en_memoria;
 
 //MEMORIA PRINCIPAL (espacio usuario)
 void *memoria;
 
+void iniciar_estructuras_memoria();
+
 //BITMAP (cuales marcos estan vacios)
 t_bitarray *marcos_memoria;
 
-//LISTA DE PROCESOS EN MEMORIA CON SUS MARCOS RESERVADOS (TIPO t_resrva_marcos)
-t_list *marcos_reservados_por_procesos;
-
+proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso);
+proceso_en_memoria* buscar_proceso_por_id(int id);
+void eliminar_estructura_proceso(int id);
 /* 
     Crea una entrada de tablaN1
     -Define num_tabla
@@ -40,7 +45,7 @@ entrada_tabla_N1* agregar_entrada_tablaN1(t_tablaN1 *tabla);
     -num_pagina = -1
 */
 entrada_tabla_N2* agregar_entrada_tablaN2(t_tablaN2 *tabla);
-int cantidad_paginas_necesarias(int tamanio_proceso);
+int cantidad_paginas_necesarias(float tamanio_proceso);
 int cantidad_tablas_necesarias(int paginas_necesarias);
 
 /*
@@ -76,6 +81,11 @@ void iniciar_memoria(void *mem, int tamanio_total);
 t_bitarray* crear_bitmap(int tamanio_memoria);
 
 /*
+    funcion para imprimir un logger del estado actual de un bitmap
+*/
+void imprimir_bitmap(t_bitarray *bitmap);
+
+/*
     Otra forma de llamar a bitarray_destroy()
 */
 void eliminar_bitmap(t_bitarray *bitmap);
@@ -109,9 +119,10 @@ t_list* conseguir_marcos_proceso(int dir_tablaN1);
 t_list* conseguir_numeros_marcos_proceso(int id);
 
 
-void reservar_marcos_proceso(int id);
+void reservar_marcos_proceso(proceso_en_memoria *p);
 void liberar_marcos_proceso(int id);
 void desmarcar_bitmap(t_list *marcos);
+proceso_en_memoria* buscar_proceso_por_id(int id);
 
 //funcion auxiliar
 void eliminar_lista(void *l);

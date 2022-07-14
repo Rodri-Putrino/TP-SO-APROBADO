@@ -2,4 +2,4 @@
 
 make
 
-valgrind ./CPU.out
+valgrind --leak-check=full --track-origins=yes ./CPU.out

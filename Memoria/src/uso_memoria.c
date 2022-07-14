@@ -47,11 +47,14 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir, int dir_tabla_pag)
     }
 }*/
 
-void escribir_memoria(void *dato, int tamanio_dato, int dir)
+void escribir_memoria(uint32_t dato, uint32_t dir)
 {
     //CONSIGUE PAGINA EN MARCO
+    //void *memoria2 = malloc(4096);
     int marco = conseguir_marco_de_dir_fisica(dir);
+    log_info(logger, "Pedido escritura en marco: %d",marco);
     entrada_tabla_N2 *pag = conseguir_pagina_en_marco(marco);
+    log_info(logger, "Escribir pagina: %d", pag->num_pag);
 
     //PAGINA FUE USADA
     pag->bit_uso = 1;
@@ -59,10 +62,17 @@ void escribir_memoria(void *dato, int tamanio_dato, int dir)
     pag->bit_modificacion = 1;
 
     //ESCRIBE DATO
-    memcpy(memoria + dir, dato, tamanio_dato);
+    log_info(logger, "Dirección física: %d", dir);
+    log_info(logger, "Dato: %d", dato);
+    //log_info(logger, "Memoria: %d", (int) memoria);
+    //log_info(logger, "Memoria + Dir física: %d", *(int*) (memoria + dir));
+
+    memcpy(memoria + dir, &dato, sizeof(uint32_t));
+
+    log_info(logger, "Un log_info muy trucho: %d", *(int*)(memoria +dir));
 }
 
-void* leer_memoria(int tamanio_dato, int dir)
+uint32_t leer_memoria(uint32_t dir)
 {
     //CONSIGUE PAGINA EN MARCO
     int marco = conseguir_marco_de_dir_fisica(dir);
@@ -72,15 +82,62 @@ void* leer_memoria(int tamanio_dato, int dir)
     pag->bit_uso = 1;
 
     //LEE Y RETORNA DATO
-    void *ret = malloc(tamanio_dato);
-    memcpy(ret, memoria + dir, tamanio_dato);
-    return ret;
+    //void *ret = malloc(sizeof(uint32_t));
+    uint32_t dato;
+    memcpy(&dato, memoria + dir, sizeof(uint32_t));
+    return dato;
 }
 
 /*------------------------MANEJO PAGINAS--------------------------------*/
 
-void traer_pagina_a_memoria(entrada_tabla_N2 *e)
+int dir_marco_vacio_proceso(int id)
 {
-    e->dir = 0;//aplicar algoritmo
+    t_list *marcos = conseguir_numeros_marcos_proceso(id);
+    for(int i = 0; i < list_size(marcos); i++)
+    {
+        int num_marco = (int)list_get(marcos, i);
+        //SI ENCUENTRA VACIO LO RETORNA
+        if(bitarray_test_bit(marcos_memoria, i));
+            return num_marco;
+    }
+    //SINO RETORNA -1
+    return -1;
+}
+
+void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
+{
+    //DIR MARCO VACIO O -1 SI NO ENCUENTRA
+    int dir_marco = dir_marco_vacio_proceso(id);
+    //BUSCAR PAGINA PARA REEMPLAZAR
+    if(dir_marco == -1)
+    {
+        entrada_tabla_N2 *aux;
+        if(strcmp(algoritmo_reemplazo, "CLOCK"))
+        {
+            aux = aplicar_busqueda_clock(id, dir_tablaN1);
+        }
+        else if(strcmp(algoritmo_reemplazo, "CLOCK-M"))
+        {
+            aux = aplicar_busqueda_clock_mejorado(id, dir_tablaN1);
+        }
+        //GUARDAR DIR MARCO ELEGIDO
+        dir_marco = aux->dir;
+        //SI FUE MODIFICADO, ESCRIBIR PAGINA EN MEMORIA
+        if(aux->bit_modificacion == 1)
+        {
+            t_pedido_disco *p = crear_pedido_escribir(id, aux->dir, aux->num_pag);
+            sem_wait(&(p->pedido_listo));
+            eliminar_pedido_disco(p);
+        }
+        aux->bit_presencia = 0;
+    }
+    
+    t_pedido_disco *p = crear_pedido_lectura(id, dir_marco, e->num_pag);
+    sem_wait(&(p->pedido_listo));
+    eliminar_pedido_disco(p);
+
     e->bit_presencia = 1;
+    log_info(logger, "el bit de presencia es: %d",e->bit_presencia);
+
+    log_info(logger,"pagina %d del proceso %d lista en memoria",e->num_pag,id);
 }

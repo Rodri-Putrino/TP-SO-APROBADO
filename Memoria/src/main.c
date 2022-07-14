@@ -12,13 +12,22 @@ int main(void) {
 	config_memoria = iniciar_config(CONFIG_FILE_PATH);
 	procesar_archivo_config_memoria(config_memoria);
 
-	crear_listas_tablas();
+	iniciar_estructuras_memoria();
+
 	
+	/*t_bitarray* bitmapTest = crear_bitmap(tam_memoria);
+
+	imprimir_bitmap(bitmapTest)
+	*/
+	pthread_t hilo_disco;
+	pthread_create(&hilo_disco, NULL, (void*)funciones_disco, NULL);
 
 	pthread_t hilo_servidor;
     pthread_create(&hilo_servidor, NULL, (void*) servidor, NULL);
-
+	
 	pthread_join(hilo_servidor, NULL);
+
+	
 
 //	USADOR PARA PROBAR CREAR Y DESTRUIR TABLAS
 /*

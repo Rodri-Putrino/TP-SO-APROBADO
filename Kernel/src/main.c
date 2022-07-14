@@ -14,27 +14,11 @@ int main(void) {
 
     iniciar_estructuras_de_estados_de_procesos();
     iniciar_planificador_largo_plazo();
-    iniciar_planificador_mediano_plazo();
     iniciar_planificador_corto_plazo();
+    iniciar_dispositivo_io();
 
     pthread_t hilo_escucha;
     pthread_create(&hilo_escucha, NULL, (void*) escuchar_procesos_nuevos, NULL);
-
-    /* ----- Caso de prueba de conexiones ----
-    
-    Conexiones con módulo CPU
-
-    int conexion_dispatch = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_dispatch);
-    int conexion_interrupt = crear_conexion(logger, "CPU", ip_cpu, puerto_cpu_interrupt);
-
-    Conexion con módulo Memoria
-
-    int conexion_memoria = crear_conexion(logger, "Memoria", ip_memoria, puerto_memoria);
-    
-    liberar_conexion(conexion_dispatch);
-    liberar_conexion(conexion_interrupt);
-    liberar_conexion(conexion_memoria);
-    */
 
     pthread_join(hilo_escucha, NULL);
 

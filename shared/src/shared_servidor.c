@@ -88,7 +88,7 @@ int crear_conexion(t_log* logger, const char* server_name, char* ip, char* puert
         freeaddrinfo(servinfo);
         return 0;
     } else
-        log_info(logger, "Cliente conectado en %s:%s (a %s)", ip, puerto, server_name);
+        log_debug(logger, "Cliente conectado en %s:%s (a %s)", ip, puerto, server_name);
 
     freeaddrinfo(servinfo); //free
 
