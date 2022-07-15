@@ -136,11 +136,15 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
         
             log_info(logger_CPU, "Instruccion EXIT");
             log_info(logger_CPU, "Etapa EXECUTE iniciada");
+            int conexion_memoria2 = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
+            enviar_pedido_liberar_memoria(EXIT, conexion_memoria2, pcb->id, pcb->tabla_paginas, logger_CPU);
+
+            int op_code3 = recibir_operacion(conexion_memoria2);
+            recibir_mensaje(conexion_memoria2, logger_CPU);
+            close(conexion_memoria2);
 
             enviar_pcb(EXIT, pcb, conexion_kernel, logger_CPU);
             
-            int conexion_memoria2 = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
-            enviar_pedido_liberar_memoria(EXIT, conexion_memoria2, pcb->id, pcb->tabla_paginas, logger_CPU);
 
             destruir_proceso(pcb);
             limpiar_tlb();

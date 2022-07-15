@@ -28,7 +28,7 @@ int buscar_pagina_tlb(int pag)
         //SI ES LA PAG, RETORNAR MARCO
         if(info->num_pag == pag)
         {
-            if(strcmp(reemplazo_tlb, "LRU"))
+            if(strcmp(reemplazo_tlb, "LRU") == 0)
             {
                 //PONER ENTRADA AL FINAL (ahora tiene mayor prioridad)
                 entrada_tabla_N2 *e = list_remove(tlb, i);
