@@ -303,7 +303,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 
 	int length_lista = list_size(pcb->instrucciones);
 	size_t size_instrucciones = sizeof(t_instruccion) * length_lista;
-	log_info(logger, "Size instrucciones: %zu", size_instrucciones);
+	log_debug(logger, "Size instrucciones: %zu", size_instrucciones);
 
  	*size = sizeof(op_code) +
 	 		sizeof(size_t) +
@@ -313,7 +313,7 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 			//sizeof(rango_tiempo_t);
 
 	size_t size_payload = *size - sizeof(op_code) - sizeof(size_t);
-	log_info(logger, "Size payload: %zu", size_payload);
+	log_debug(logger, "Size payload: %zu", size_payload);
 
 	void* stream = malloc(*size);
 	int desplazamiento = 0;
@@ -334,7 +334,6 @@ void* serializar_pcb(op_code cod_op, t_pcb* pcb, size_t* size, t_log* logger) {
 	desplazamiento += sizeof(uint32_t);
 	memcpy(stream + desplazamiento, &pcb->ultima_rafaga, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
-	//AGREGADO
 	memcpy(stream + desplazamiento, &pcb->tabla_paginas, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	
@@ -398,7 +397,7 @@ t_pcb* deserializar_pcb(void* stream) {
 	desplazamiento += sizeof(uint32_t);
 	memcpy(&pcb->ultima_rafaga, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
-	//AGREGADO
+
 	memcpy(&pcb->tabla_paginas, stream + desplazamiento, sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 
