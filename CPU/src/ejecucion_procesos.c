@@ -117,6 +117,10 @@ void interpretar_instruccion_y_ejecutar_pcb(t_instruccion* instruccion, t_pcb* p
             int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
             pedido_escritura(dato, dir_logica_destino, pcb, conexion_memoria,logger_CPU); //Sacar logger pq es global
 
+            int op_code2 = recibir_operacion(conexion_memoria);
+            recibir_mensaje(conexion_memoria, logger_CPU);
+            close(conexion_memoria);
+
             if(hay_interrupcion_para_atender()) {
                 enviar_pcb(ACTUALIZAR_PCB, pcb, conexion_kernel, logger_CPU);
                 destruir_proceso(pcb);

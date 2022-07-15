@@ -5,11 +5,11 @@ void iniciar_estructuras()
     tlb = list_create();
 }
 
-void agregar_entrada_tlb(entrada_tabla_N2 *e)
+void agregar_entrada_tlb(int num_pag, int dir_marco)
 {
     entrada_tlb *aux = malloc(sizeof(entrada_tlb));
-    aux->num_pag = e->num_pag;
-    aux->marco = e->dir;
+    aux->num_pag = num_pag;
+    aux->marco = dir_marco;
 
     if(list_size(tlb) == entradas_tlb)
     {

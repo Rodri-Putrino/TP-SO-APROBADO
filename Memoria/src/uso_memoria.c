@@ -73,7 +73,10 @@ void escribir_memoria(uint32_t dato, uint32_t dir)
 uint32_t leer_memoria(uint32_t dir)
 {
     //CONSIGUE PAGINA EN MARCO
-    int marco = conseguir_marco_de_dir_fisica(dir);
+    int marco = conseguir_marco_de_dir_fisica((int)dir);
+
+    printf("\n\n MARCO A LEER %d", marco);
+
     entrada_tabla_N2 *pag = conseguir_pagina_en_marco(marco);
 
     //PAGINA FUE USADA
@@ -96,7 +99,8 @@ int dir_marco_vacio_proceso(int id)
         int num_marco = (int)list_get(marcos, i);
         //SI ENCUENTRA VACIO LO RETORNA
         //TODO: corregir (que sea por entrada de pagina, no bitmap)
-        if(bitarray_test_bit(marcos_memoria, i));
+        //if(bitarray_test_bit(marcos_memoria, i));
+        if(conseguir_pagina_en_marco(num_marco) == NULL)
             return num_marco;
     }
     //SINO RETORNA -1
@@ -106,9 +110,11 @@ int dir_marco_vacio_proceso(int id)
 void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
 {
     //DIR MARCO VACIO O -1 SI NO ENCUENTRA
-    int dir_marco = dir_marco_vacio_proceso(id);
+    int num_marco = dir_marco_vacio_proceso(id);
+    int dir_marco = num_marco * tam_pagina;
+    printf("\n\n Marco de reemplazo %d \n\n", num_marco);
     //BUSCAR PAGINA PARA REEMPLAZAR
-    if(dir_marco == -1)
+    if(num_marco == -1)
     {
         entrada_tabla_N2 *aux;
         if(strcmp(algoritmo_reemplazo, "CLOCK") == 0)
@@ -137,6 +143,7 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
     sem_wait(&(p->pedido_listo));
     eliminar_pedido_disco(p);
 
+    e->dir = dir_marco;
     e->bit_presencia = 1;
     log_info(logger, "el bit de presencia es: %d",e->bit_presencia);
 

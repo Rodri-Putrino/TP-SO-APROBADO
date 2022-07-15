@@ -2,6 +2,7 @@
 #define FUNCIONES_SOLICITUDES
 
 #include <stdio.h>
+#include <semaphore.h>
 #include "./crear_estructuras.h"
 #include "./uso_memoria.h"
 #include "./Disco.h"

@@ -38,6 +38,9 @@ void suspender_proceso(int socket_cliente, t_log *logger)
     log_info(logger, "ID: %d", id);
     log_info(logger, "Dir tabla: %d", dir_tablaN1);
 
+    proceso_en_memoria *proceso = buscar_proceso_por_id(id);
+    proceso->esta_suspendido = 1;
+
     //ESCRIBIR PAGINAS SI FUERON MODIFICADAS
     t_pedido_disco* p = crear_pedido_suspender_proceso(id, dir_tablaN1);
     sem_wait(&(p->pedido_listo));
@@ -49,6 +52,8 @@ void suspender_proceso(int socket_cliente, t_log *logger)
 
     log_info(logger, "Proceso %d suspendido correctamente", id);
     enviar_mensaje("El proceso ha sido suspendido", socket_cliente, logger);
+
+    sem_post(&(proceso->suspension_completa));
 
     list_destroy(parametros);
 }
@@ -133,10 +138,13 @@ void solicitud_marco(int socket_cliente, t_log *logger)
 
     proceso_en_memoria *proceso = buscar_proceso_por_id(*id);
 
-    if(list_is_empty(proceso->marcos_reservados)){
+    if(proceso->esta_suspendido == 1){
+        
+        sem_wait(&(proceso->suspension_completa));
         
         reservar_marcos_proceso(proceso);
         imprimir_bitmap(marcos_memoria);
+        proceso->esta_suspendido = 0;
         log_info(logger,"Proceso desuspendido: %d", *id);
 
     }

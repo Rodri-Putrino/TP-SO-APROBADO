@@ -17,6 +17,8 @@ proceso_en_memoria* asignar_proceso(int id, int tamanio_proceso)
     ret->posicion_puntero_clock = 0;
     ret->tablaN1 = crear_tablaN1(tamanio_proceso);
     ret->marcos_reservados = list_create();
+    sem_init(&(ret->suspension_completa), 0, 0);
+    ret->esta_suspendido = 0;
     return ret;
 }
 /*
@@ -314,7 +316,7 @@ entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco)
 entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco)
 {
     t_list_iterator *iterador = list_iterator_create(tablasN2);
-    entrada_tabla_N2 *ret;
+    entrada_tabla_N2 *ret = NULL;
     //int size_tablasN2 = list_size(tablasN2);
     int indice = 0;
 

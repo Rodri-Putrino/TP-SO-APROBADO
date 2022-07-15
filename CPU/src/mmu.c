@@ -69,7 +69,7 @@ int traducir_dir_logica(float dir, t_pcb *proceso, t_log *logger)
 
 	//NO HUBO TLB HIT, ENTONCES LA AGREGA
 	if(result_tlb == -1)
-		agregar_entrada_tlb(e2);
+		agregar_entrada_tlb(numero_pagina, dir_marco);
 
 	//int desplazamiento = dir - numero_pagina * tam_pagina;
 	log_info(logger_CPU, "Direccion fisica: %d", dir_marco + desplazamiento);

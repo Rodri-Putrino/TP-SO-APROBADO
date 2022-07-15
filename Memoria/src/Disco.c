@@ -108,11 +108,19 @@ char* devolver_path_archivo(int PID){
 void suspender_paginas(int PID, int dir_tablaN1)
 {
     t_list *marcos = conseguir_marcos_proceso(dir_tablaN1);
+    /*
+        NOTA: este valor se usa para que en la primer vuelta
+        disco no haga un usleep dos veces (una por el pedido suspension
+        y otra por el primer pedido de escribir pagina)
+    */
+    int contador = 0;
     for(int i = 0; i < list_size(marcos); i++)
     {
         entrada_tabla_N2 *e = list_get(marcos, i);
         if(e->bit_modificacion == 1)
         {
+            usleep(contador * 1000);
+            contador = retardo_swap;
             escribir_en_archivo(PID, e->dir, e->num_pag);
             log_info(logger, "se guardaron los cambios de la pagina %d correctamente del proceso %d",e->num_pag,PID);
         }
