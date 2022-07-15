@@ -2,6 +2,8 @@
 
 int criterio_clock(entrada_tabla_N2 *e)
 {
+    if(e == NULL)
+        return 0;
     if(e->bit_uso == 1)
     {
         //CAMBIAR BIT DE USO Y SIGUE BUSCANDO
@@ -57,7 +59,8 @@ entrada_tabla_N2* aplicar_busqueda_clock(int id, int dir_tablaN1)
 
     //NOTA: revisar logica en primer vuelta de for()
     //se toma valor en siguiente linea para no empezar el for con valor nulo en ret
-    entrada_tabla_N2 *ret = list_get(marcos_proceso, 0);
+    //entrada_tabla_N2 *ret = list_get(marcos_proceso, 0);
+    entrada_tabla_N2 *ret = NULL;
     while(criterio_clock(ret))
     {
         //DIO UNA VUELTA
@@ -78,19 +81,32 @@ entrada_tabla_N2* aplicar_busqueda_clock_mejorado(int id, int dir_tablaN1)
     proceso_en_memoria *p = buscar_proceso_por_id(id);
     t_list *marcos_proceso = conseguir_marcos_proceso(dir_tablaN1);
 
-    entrada_tabla_N2 *ret = list_get(marcos_proceso, 0);
+    entrada_tabla_N2 *ret = list_get(marcos_proceso, p->posicion_puntero_clock);
     int vuelta = 0;
-    while(criterio_clock_mejorado(ret, vuelta))
+    int pos_inicial = p->posicion_puntero_clock;
+    /*for(int i = 0; i < marcos_por_proceso; i++)
     {
-        //DIO UNA VUELTA
         if(p->posicion_puntero_clock == list_size(marcos_proceso))
         {
             p->posicion_puntero_clock = 0;
-            vuelta++;
         }
+        if(criterio_clock_mejorado(ret, vuelta))
+            break;
+    }
+    return ret;*/
 
+    while(criterio_clock_mejorado(ret, vuelta))
+    {
         ret = list_get(marcos_proceso, p->posicion_puntero_clock);
         p->posicion_puntero_clock++;
+        if(p->posicion_puntero_clock == list_size(marcos_proceso))
+        {
+            p->posicion_puntero_clock = 0;
+        }
+        if(p->posicion_puntero_clock == pos_inicial)
+        {
+            vuelta++;
+        }
     }
 
     list_destroy_and_destroy_elements(marcos_proceso, free);

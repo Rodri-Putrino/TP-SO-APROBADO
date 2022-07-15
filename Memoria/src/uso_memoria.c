@@ -68,8 +68,6 @@ void escribir_memoria(uint32_t dato, uint32_t dir)
     //log_info(logger, "Memoria + Dir física: %d", *(int*) (memoria + dir));
 
     memcpy(memoria + dir, &dato, sizeof(uint32_t));
-
-    log_info(logger, "Un log_info muy trucho: %d", *(int*)(memoria +dir));
 }
 
 uint32_t leer_memoria(uint32_t dir)
@@ -97,6 +95,7 @@ int dir_marco_vacio_proceso(int id)
     {
         int num_marco = (int)list_get(marcos, i);
         //SI ENCUENTRA VACIO LO RETORNA
+        //TODO: corregir (que sea por entrada de pagina, no bitmap)
         if(bitarray_test_bit(marcos_memoria, i));
             return num_marco;
     }
@@ -112,12 +111,14 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
     if(dir_marco == -1)
     {
         entrada_tabla_N2 *aux;
-        if(strcmp(algoritmo_reemplazo, "CLOCK"))
+        if(strcmp(algoritmo_reemplazo, "CLOCK") == 0)
         {
+            log_info(logger, "Buscando por criterio CLOCK");
             aux = aplicar_busqueda_clock(id, dir_tablaN1);
         }
-        else if(strcmp(algoritmo_reemplazo, "CLOCK-M"))
+        else if(strcmp(algoritmo_reemplazo, "CLOCK-M") == 0)
         {
+            log_info(logger, "Buscando por criterio CLOCK-M");
             aux = aplicar_busqueda_clock_mejorado(id, dir_tablaN1);
         }
         //GUARDAR DIR MARCO ELEGIDO

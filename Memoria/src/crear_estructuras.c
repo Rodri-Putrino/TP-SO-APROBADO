@@ -300,18 +300,11 @@ int conseguir_marco_de_dir_fisica(int dir)
 entrada_tabla_N2* tabla_contiene_marco(t_tablaN2 *t, int num_marco)
 {
     entrada_tabla_N2 *ret;
-    printf("Tamanio lista: %d\n", list_size(t));
     for(int i = 0; i < list_size(t); i++)
     {
         ret = list_get(t, i);
-        printf("Entrada %d, presencia %d, dir %d\n",
-         ret->num_pag,
-         ret->bit_presencia,
-         ret->dir
-         );
         if(ret->bit_presencia == 1 && ret->dir == num_marco * tam_pagina)
         {
-            printf("Encontro pagina\n");
             return ret;
         }
     }
@@ -336,13 +329,11 @@ entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco)
         t = list_iterator_next(iterador);
         
         ret = tabla_contiene_marco(t, num_marco);
-        printf("\n\t RET: \n");
         if(ret != NULL)
         {
             list_iterator_destroy(iterador);
             return ret;
         }
-        printf("\n\tIndice: %d\n", indice);
     }
     list_iterator_destroy(iterador);
     return ret;  
