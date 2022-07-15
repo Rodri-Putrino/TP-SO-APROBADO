@@ -289,15 +289,9 @@ void encolar_proceso_en_bloqueados(t_pcb* proceso) {
 
 void evaluar_suspender_proceso(t_pcb* pcb) {
     
-    //int conexion_memoria;
-    while(proceso_esta_bloqueado(pcb))
-    {
-        usleep(1000 * 500);
-        actualizar_rafaga_bloqueado(pcb);
-        //log_info(logger, "Inicio bloqueo: %d", pcb->rafaga_bloqueado->inicio);
-    }
+    usleep(tiempo_max_bloqueado * 1000);
 
-    if(pcb->tiempo_bloqueado > tiempo_max_bloqueado)
+    if(proceso_esta_bloqueado(pcb))
     {
         log_info(logger, "PCB ID %d ha sido suspendido", pcb->id);
         modificar_estado_proceso(pcb, BLOQUEADO_SUSPENDIDO);
@@ -312,7 +306,7 @@ int proceso_esta_bloqueado(t_pcb* pcb) {
 
     pthread_mutex_lock(&procesos_bloqueados_mutex);
 
-    int resultado = pcb->estado == BLOQUEADO && pcb->tiempo_bloqueado <= tiempo_max_bloqueado;
+    int resultado = pcb->estado == BLOQUEADO;
 
     pthread_mutex_unlock(&procesos_bloqueados_mutex);
 
