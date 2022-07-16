@@ -1,6 +1,4 @@
 #!/bin/bash
 
-make clean
 make
-
-./Memoria.out
+./Memoria.out ./cfg/memoria.config

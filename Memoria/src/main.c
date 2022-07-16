@@ -4,12 +4,18 @@
 #define LOG_FILE_PATH "./cfg/Memoria.log"
 #define NOMBRE_MODULO "MEMORIA"
 
-int main(void) {
+int main(int argc, char** argv) {
 
 	t_config* config_memoria;
 	logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
-	config_memoria = iniciar_config(CONFIG_FILE_PATH);
+    if(argc < 2) {
+        log_error(logger, "Cantidad de argumentos insuficientes");
+        return EXIT_FAILURE;
+    }
+
+	config_memoria = iniciar_config(argv[1]);
+
 	procesar_archivo_config_memoria(config_memoria);
 
 	iniciar_estructuras_memoria();
