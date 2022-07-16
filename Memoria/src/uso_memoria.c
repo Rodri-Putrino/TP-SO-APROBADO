@@ -75,8 +75,6 @@ uint32_t leer_memoria(uint32_t dir)
     //CONSIGUE PAGINA EN MARCO
     int marco = conseguir_marco_de_dir_fisica((int)dir);
 
-    printf("\n\n MARCO A LEER %d", marco);
-
     entrada_tabla_N2 *pag = conseguir_pagina_en_marco(marco);
 
     //PAGINA FUE USADA
@@ -112,7 +110,6 @@ void traer_pagina_a_memoria(int id, int dir_tablaN1 ,entrada_tabla_N2 *e)
     //DIR MARCO VACIO O -1 SI NO ENCUENTRA
     int num_marco = dir_marco_vacio_proceso(id);
     int dir_marco = num_marco * tam_pagina;
-    printf("\n\n Marco de reemplazo %d \n\n", num_marco);
     //BUSCAR PAGINA PARA REEMPLAZAR
     if(num_marco == -1)
     {

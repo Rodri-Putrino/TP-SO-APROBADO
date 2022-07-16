@@ -24,7 +24,7 @@ void gestionar_mensajes (t_paquete* paquete_recibido, int socket_cliente, t_log*
             break;
 
         default:
-            printf("Hubo problemas con gestionar_mensajes");
+            log_error(logger, "Hubo problemas con gestionar_mensajes");
             break;
     }
 }

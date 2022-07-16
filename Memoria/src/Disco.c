@@ -10,8 +10,11 @@ void funciones_disco()
         sem_wait(&lista_tiene_pedidos);
         log_info(logger, "Pedido a disco");
         usleep(retardo_swap *1000);
+        
+        pthread_mutex_lock(&mutex_cola_pedidos);
         t_pedido_disco *p = queue_pop(pedidos_disco);
-
+        pthread_mutex_unlock(&mutex_cola_pedidos);
+        
         int id, direccion, pag;
         switch(p->operacion_disco)
         {
@@ -187,7 +190,10 @@ t_pedido_disco* crear_pedido_crear_archivo(int id)
     p->argumentos[0] = id;
     sem_init(&(p->pedido_listo), 0,0);
 
+    pthread_mutex_lock(&mutex_cola_pedidos);
     queue_push(pedidos_disco, p);
+    pthread_mutex_unlock(&mutex_cola_pedidos);
+
     sem_post(&lista_tiene_pedidos);
     return p;
 }
@@ -201,7 +207,10 @@ t_pedido_disco* crear_pedido_escribir(int id, int dir_marco, int num_pag)
     p->argumentos[2] = num_pag;
     sem_init(&(p->pedido_listo), 0, 0);
 
+    pthread_mutex_lock(&mutex_cola_pedidos);
     queue_push(pedidos_disco, p);
+    pthread_mutex_unlock(&mutex_cola_pedidos);
+
     sem_post(&lista_tiene_pedidos);
     return p;
 }
@@ -215,7 +224,10 @@ t_pedido_disco* crear_pedido_lectura(int id, int dir_marco, int num_pag)
     p->argumentos[2] = num_pag;
     sem_init(&(p->pedido_listo), 0, 0);
     
+    pthread_mutex_lock(&mutex_cola_pedidos);    
     queue_push(pedidos_disco, p);
+    pthread_mutex_unlock(&mutex_cola_pedidos);
+    
     sem_post(&lista_tiene_pedidos);
     return p;
 }
@@ -227,7 +239,10 @@ t_pedido_disco* crear_pedido_eliminar_archivo(int id)
     p->argumentos[0] = id;
     sem_init(&(p->pedido_listo), 0, 0);
 
+    pthread_mutex_lock(&mutex_cola_pedidos);
     queue_push(pedidos_disco, p);
+    pthread_mutex_unlock(&mutex_cola_pedidos);
+    
     sem_post(&lista_tiene_pedidos);
     return p;
 }
@@ -237,10 +252,13 @@ t_pedido_disco* crear_pedido_suspender_proceso(int id, int dir_tabla)
     t_pedido_disco *p = malloc(sizeof(t_pedido_disco));
     p->operacion_disco = DISCO_SUSPENDER_PROCESO;
     p->argumentos[0] = id;
-    p->argumentos[1] = dir_tabla;
+    p->argumentos[1] = dir_tabla;    
     sem_init(&(p->pedido_listo), 0, 0);
 
+    pthread_mutex_lock(&mutex_cola_pedidos);
     queue_push(pedidos_disco, p);
+    pthread_mutex_unlock(&mutex_cola_pedidos);
+
     sem_post(&lista_tiene_pedidos);
     return p;
 }

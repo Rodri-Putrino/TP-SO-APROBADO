@@ -43,7 +43,7 @@ void gestionar_mensaje (t_paquete* paquete_recibido, int socket_cliente, t_log* 
 				break;
 
 			default:
-				printf("default de gestionarMensajes");
+				log_error(logger, "default de gestionarMensajes");
 				break;
 		}
 }

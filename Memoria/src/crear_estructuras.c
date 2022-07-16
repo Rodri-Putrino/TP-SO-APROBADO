@@ -7,6 +7,11 @@ void iniciar_estructuras_memoria()
     memoria = malloc(tam_memoria);
     crear_listas_tablas();
 	marcos_memoria = crear_bitmap(tam_memoria);
+
+    pthread_mutex_init(&mutex_procesos_en_memoria, NULL);
+    pthread_mutex_init(&mutex_tablasN1, NULL);
+    pthread_mutex_init(&mutex_tablasN2, NULL);
+    pthread_mutex_init(&mutex_cola_pedidos, NULL);
 }
 
 
@@ -35,13 +40,20 @@ proceso_en_memoria* buscar_proceso_por_id(int id)
     return p;
 }*/
 
+void eliminador_proceso(proceso_en_memoria *p)
+{
+    sem_destroy(&(p->suspension_completa));
+    free(p);
+}
+
 void eliminar_estructura_proceso(int id)
 {
     bool id_equals(proceso_en_memoria *p){
         return p->id_proceso == id;
     }
-    
-    list_remove_by_condition(procesos_en_memoria, (void*)id_equals);
+    pthread_mutex_lock(&mutex_procesos_en_memoria);
+    list_remove_and_destroy_by_condition(procesos_en_memoria, (void*)id_equals, (void*)eliminador_proceso);
+    pthread_mutex_unlock(&mutex_procesos_en_memoria);
 }
 
 entrada_tabla_N1* agregar_entrada_tablaN1(t_tablaN1 *tabla)
@@ -91,7 +103,9 @@ t_tablaN1* crear_tablaN1(int tamanio_proceso)
             //creo tabla nivel 2
             t_tablaN2 *t2 = list_create();
             //dir = index en lista general
+            pthread_mutex_lock(&mutex_tablasN2);
             e->dir = list_add(tablasN2, t2);
+            pthread_mutex_unlock(&mutex_tablasN2);
         }
         //conseguir ultima entrada (ultima tabla 2)
         entrada_tabla_N1 *aux = list_get(t, list_size(t) -1);
@@ -141,13 +155,11 @@ void eliminar_paginas_proceso(int id, int dir_tablaN1)                      //TO
         entrada_tabla_N1 *e1 = list_iterator_next(iteradorN1);
         t_tablaN2 *t2 = list_get(tablasN2, e1->dir);
 
-        //list_clean_and_destroy_elements(t2, free);
-        list_destroy(t2);
+        list_clean_and_destroy_elements(t2, free);
 
         //list_replace_and_destroy_element(tablasN2, e1->dir, crear_tabla_vacia(), eliminar_lista);
     }
-    //list_clean_and_destroy_elements(t, free);
-    list_destroy(t);
+    list_clean_and_destroy_elements(t, free);
     list_iterator_destroy(iteradorN1);
     //list_replace_and_destroy_element(tablasN1, dir_tablaN1, crear_tabla_vacia(), eliminar_lista);
 
@@ -235,15 +247,7 @@ void imprimir_bitmap(t_bitarray *bitmap)
 
     char* cadenaDeBitmap = malloc(cantidadDeBits);
 
-    /*
-    printf("el size del bitmap es: %zu\n",bitmap->size);
-    printf("la cantidad de bits es: %zu\n",cantidadDeBits);
-    printf("el estado de la cadena aux es: %s\n",cadenaDeBitmap);
-    */
-
     strcpy(cadenaDeBitmap, "\0");           //La usamos para limpiar la basura del char*
-
-    //printf("el estado de la cadena aux es: %s\n",cadenaDeBitmap);
 
     for(int aux=0;aux<cantidadDeBits;aux++){
         if(bitarray_test_bit(bitmap, aux)==1){
@@ -255,8 +259,6 @@ void imprimir_bitmap(t_bitarray *bitmap)
             //cadenaDeBitmap[aux] = "0";
             string_append(&cadenaDeBitmap, "0");
     }
-
-    //printf("el estado del bitmap es %s \n",cadenaDeBitmap);
 
     log_info(logger,"el estado del bitmap es: %s",cadenaDeBitmap);
 
@@ -318,7 +320,6 @@ entrada_tabla_N2* conseguir_pagina_en_marco(int num_marco)
     t_list_iterator *iterador = list_iterator_create(tablasN2);
     entrada_tabla_N2 *ret = NULL;
     //int size_tablasN2 = list_size(tablasN2);
-    int indice = 0;
 
     //t_tablaN2 *t = list_iterator_next(iterador);
     //t_tablaN2 *t = (t_tablaN2*) list_get(tablasN2, indice);

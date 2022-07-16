@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     logger_consola = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
     if(argc < 3) {
-        printf("Cantidad de argumentos insuficientes \n");
+        log_error(logger_consola, "Cantidad de argumentos insuficientes");
         return EXIT_FAILURE;
     }
     
