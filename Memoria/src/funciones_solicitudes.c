@@ -38,6 +38,9 @@ void suspender_proceso(int socket_cliente, t_log *logger)
     log_info(logger, "ID: %d", id);
     log_info(logger, "Dir tabla: %d", dir_tablaN1);
 
+    proceso_en_memoria *proceso = buscar_proceso_por_id(id);
+    proceso->esta_suspendido = 1;
+
     //ESCRIBIR PAGINAS SI FUERON MODIFICADAS
     t_pedido_disco* p = crear_pedido_suspender_proceso(id, dir_tablaN1);
     sem_wait(&(p->pedido_listo));
@@ -49,6 +52,8 @@ void suspender_proceso(int socket_cliente, t_log *logger)
 
     log_info(logger, "Proceso %d suspendido correctamente", id);
     enviar_mensaje("El proceso ha sido suspendido", socket_cliente, logger);
+
+    sem_post(&(proceso->suspension_completa));
 
     list_destroy(parametros);
 }
@@ -133,10 +138,13 @@ void solicitud_marco(int socket_cliente, t_log *logger)
 
     proceso_en_memoria *proceso = buscar_proceso_por_id(*id);
 
-    if(list_is_empty(proceso->marcos_reservados)){
+    if(proceso->esta_suspendido == 1){
+        
+        sem_wait(&(proceso->suspension_completa));
         
         reservar_marcos_proceso(proceso);
         imprimir_bitmap(marcos_memoria);
+        proceso->esta_suspendido = 0;
         log_info(logger,"Proceso desuspendido: %d", *id);
 
     }
@@ -161,12 +169,28 @@ void eliminar_proceso(int socket_cliente, t_log *logger){
     int id = (int) list_get(parametros, 0);
     int dir_tablaN1 = (int) list_get(parametros, 1);
 
+    proceso_en_memoria *proceso = buscar_proceso_por_id(id);
+
+    if(proceso->esta_suspendido == 1){
+        
+        sem_wait(&(proceso->suspension_completa));
+        
+        reservar_marcos_proceso(proceso);
+        imprimir_bitmap(marcos_memoria);
+        proceso->esta_suspendido = 0;
+        log_info(logger,"Proceso desuspendido: %d", id);
+
+    }
+    
     //eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
 
     t_pedido_disco *p = crear_pedido_eliminar_archivo(id);
-    eliminar_estructura_proceso(id);
     sem_wait(&(p->pedido_listo));
     eliminar_pedido_disco(p);
+
+    eliminar_estructura_proceso(id);
+    
+    enviar_mensaje("Estructuras de memoria eliminadas", socket_cliente, logger);
 
     list_destroy(parametros);
 }

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <semaphore.h>
 #include <commons/collections/list.h>
 #include <commons/bitarray.h>
 #include "./config.h"
@@ -15,6 +16,8 @@ typedef struct
 	int posicion_puntero_clock;
 	t_tablaN1 *tablaN1;
     t_list *marcos_reservados; //tipo int
+    int esta_suspendido;
+    sem_t suspension_completa;
 }proceso_en_memoria;
 
 t_list *tablasN1, *tablasN2;

@@ -2,4 +2,4 @@
 
 make
 
-valgrind ./Kernel.out
+valgrind -v ./Kernel.out
