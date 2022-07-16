@@ -4,12 +4,17 @@
 #define LOG_FILE_PATH "./cfg/Kernel.log"
 #define NOMBRE_MODULO "KERNEL"
 
-int main(void) {
+int main(int argc, char** argv) {
 
     t_config* config_kernel;
 	logger = iniciar_logger(LOG_FILE_PATH, NOMBRE_MODULO);
 
-	config_kernel = iniciar_config(CONFIG_FILE_PATH);
+    if(argc < 2) {
+        log_error(logger, "Cantidad de argumentos insuficientes");
+        return EXIT_FAILURE;
+    }
+
+	config_kernel = iniciar_config(argv[1]);
 	procesar_archivo_config_kernel(config_kernel);
 
     iniciar_estructuras_de_estados_de_procesos();
