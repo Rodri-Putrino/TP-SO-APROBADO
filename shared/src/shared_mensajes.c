@@ -169,13 +169,11 @@ void enviar_mensaje(char* mensaje, int socket_cliente, t_log *logger)
 	//De paquete a *void
 	void* a_enviar = serializar_paquete(paquete, bytes);
 	send(socket_cliente, a_enviar, bytes, 0);
-	/*printf("Msg %s \n", (char*)(a_enviar + 2*sizeof(int)));
-
+	/*
 	int check;
 	if( (check = send(socket_cliente, a_enviar, bytes, 0)) <= 0)
 		log_error(logger, "Mensaje no se envio correctamente");
-
-	log_info(logger, "Se enviaron %d bytes", check);*/
+	*/
 	free(a_enviar);
 	eliminar_paquete(paquete);
 }
@@ -566,11 +564,6 @@ void* serializar_tabla_N2(op_code op, t_tablaN2 *t, size_t *size)
 	for(int i = 0; i < list_size(t); i++)
 	{
 		entrada_tabla_N2 *e = list_get(t, i);
-		printf("Entrada num: %d\nDir pag: %d\nBit presencia: %d\n",
-		e->num_pag,
-		e->dir,
-		e->bit_presencia
-		);
 		memcpy(buffer + desplazamiento, e, sizeof(entrada_tabla_N2));
 		desplazamiento += sizeof(entrada_tabla_N2);
 	}

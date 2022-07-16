@@ -36,6 +36,8 @@ typedef struct t_pedido_disco
 
 t_queue *pedidos_disco;
 sem_t lista_tiene_pedidos;
+pthread_mutex_t mutex_cola_pedidos;
+
 
 void generar_nuevo_archivo(int);
 void eliminar_archivo(int);

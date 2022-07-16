@@ -40,11 +40,11 @@ int traducir_dir_logica(float dir, t_pcb *proceso, t_log *logger)
 	for(int i = 0; i < list_size(tablaN2); i++)
 	{
 		entrada_tabla_N2 *e = list_get(tablaN2, i);
-		log_info(logger,"Entrada num: %d\nDir pag: %d\nBit presencia: %d",
+		/*log_info(logger,"Entrada num: %d Dir pag: %d Bit presencia: %d",
 		e->num_pag,
 		e->dir,
 		e->bit_presencia
-		);
+		);*/
 	}
 
 	int dir_entradaN2 = numero_pagina % paginas_por_tabla;
@@ -105,33 +105,13 @@ void pedido_escritura(int valor, int dir_logica, t_pcb *proceso, int conexion_me
 	while(bytes_por_procesar > 0)
 	{
 		int dir_fisica = traducir_dir_logica(dir_logica, proceso, logger);
-		if(resto_pag >= bytes_por_procesar)
-		{
-			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
-			enviar_pedido_escritura(dir_fisica,
-				valor, 
-				conexion_memoria, 
-				logger
-			);
-			//close(conexion_memoria);
-			bytes_por_procesar = 0;
-		}
-		else
-		{
-			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
-			t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
-			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
-			agregar_a_paquete(pedido, &resto_pag, sizeof(int));
-			agregar_a_paquete(pedido, (&valor) + dir_resto_dato(bytes_por_procesar), resto_pag);
-
-			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
-			enviar_paquete(pedido, conexion_memoria, logger);
-			eliminar_paquete(pedido);
-			close(conexion_memoria);
-			
-			bytes_por_procesar -= resto_pag;
-			resto_pag = resto_pagina(dir_logica + resto_pag);
-		}
+		//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
+		enviar_pedido_escritura(dir_fisica,
+			valor, 
+			conexion_memoria, 
+			logger
+		);
+		bytes_por_procesar = 0;
 	}
 }
 
@@ -145,58 +125,17 @@ int pedido_lectura(int dir_logica, t_pcb *proceso, t_log *logger)
 	//int desplazamiento = 0;
 	while(bytes_por_procesar > 0) {
 		int dir_fisica = traducir_dir_logica(dir_logica, proceso, logger);
-		if(resto_pag >= bytes_por_procesar) {
-			//ENVIAR DIR CON PEDIDO Y TAMAÑO bytes_por_procesar
-			/*t_paquete *pedido = crear_paquete(PEDIDO_LECTURA);
-			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
-			agregar_a_paquete(pedido, &bytes_por_procesar, sizeof(int));
+		int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
+		enviar_pedido_lectura(dir_fisica, conexion_memoria, logger);
 
-			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
+		//RECIBIR VALOR
+		recibir_operacion(conexion_memoria);
 
-			enviar_paquete(pedido, conexion_memoria, logger);*/
+		dato = recibir_valor_leido(conexion_memoria, logger);
 
-			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
-			enviar_pedido_lectura(dir_fisica, conexion_memoria, logger);
+		bytes_por_procesar = 0;
 
-			//RECIBIR VALOR
-			recibir_operacion(conexion_memoria);
-			//t_list *respuesta = recibir_paquete(conexion_memoria, logger);
-			//close(conexion_memoria);
-
-			//void *aux = list_get(respuesta, 0);
-			//memcpy(dato + desplazamiento, aux, bytes_por_procesar);
-
-			dato = recibir_valor_leido(conexion_memoria, logger);
-
-			bytes_por_procesar = 0;
-			//list_destroy_and_destroy_elements(respuesta, free);
-		}
-		else {
-			//ENVIAR DIR CON PEDIDO Y TAMANIO resto_pag
-			/*t_paquete *pedido = crear_paquete(PEDIDO_ESCRITURA);
-			agregar_a_paquete(pedido, &dir_fisica, sizeof(int));
-			agregar_a_paquete(pedido, &resto_pag, sizeof(int));
-
-			int conexion_memoria = crear_conexion(logger_CPU, "Memoria", ip_memoria, puerto_memoria);
-			enviar_paquete(pedido, conexion_memoria, logger);
-
-			//RECIBIR VALOR
-			recibir_operacion(conexion_memoria);
-			t_list *respuesta = recibir_paquete(conexion_memoria, logger);
-			close(conexion_memoria);
-
-			void *aux = list_get(respuesta, 0);
-			memcpy(dato + desplazamiento, aux, resto_pag);
-
-			desplazamiento += resto_pag;
-			bytes_por_procesar -= resto_pag;
-			resto_pag = resto_pagina(dir_logica + resto_pag);
-			list_destroy_and_destroy_elements(respuesta, free);
-			free(pedido);*/
-		}
 	}
-	//int ret = *dato;
-	//free(dato);
 	return dato;
 }
 

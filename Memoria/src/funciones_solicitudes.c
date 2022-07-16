@@ -8,8 +8,14 @@ void inicializar_estructuras(int socket_cliente, t_log *logger)
 
     //CREA TABLA NIVEL 1 Y TABLAS NIVEL 2
     proceso_en_memoria *proceso = asignar_proceso(*id, *tamanio_proceso);
+    
+    pthread_mutex_lock(&mutex_tablasN1);
     int dir_tabla = list_add(tablasN1, proceso->tablaN1);
+    pthread_mutex_unlock(&mutex_tablasN1);
+    
+    pthread_mutex_lock(&mutex_procesos_en_memoria);
     list_add(procesos_en_memoria, proceso);
+    pthread_mutex_unlock(&mutex_procesos_en_memoria);
 
     //RESERVA MARCOS
     reservar_marcos_proceso(proceso);
@@ -182,7 +188,7 @@ void eliminar_proceso(int socket_cliente, t_log *logger){
 
     }
     
-    //eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
+    eliminar_paginas_proceso(id , dir_tablaN1); //chequear si podemos hacerlo sin que envien la dir XD POSTDATA: son la 1:20 no da pa pensar ahora :D
 
     t_pedido_disco *p = crear_pedido_eliminar_archivo(id);
     sem_wait(&(p->pedido_listo));

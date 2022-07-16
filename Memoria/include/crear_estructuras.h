@@ -6,6 +6,7 @@
 #include <semaphore.h>
 #include <commons/collections/list.h>
 #include <commons/bitarray.h>
+#include <pthread.h>
 #include "./config.h"
 #include "../../shared/include/shared_utils.h"
 #include "./uso_memoria.h"
@@ -22,6 +23,10 @@ typedef struct
 
 t_list *tablasN1, *tablasN2;
 t_list *procesos_en_memoria;
+
+pthread_mutex_t mutex_tablasN1;
+pthread_mutex_t mutex_tablasN2;
+pthread_mutex_t mutex_procesos_en_memoria;
 
 //MEMORIA PRINCIPAL (espacio usuario)
 void *memoria;
@@ -126,6 +131,7 @@ void reservar_marcos_proceso(proceso_en_memoria *p);
 void liberar_marcos_proceso(int id);
 void desmarcar_bitmap(t_list *marcos);
 proceso_en_memoria* buscar_proceso_por_id(int id);
+void eliminador_proceso(proceso_en_memoria *p);
 
 //funcion auxiliar
 void eliminar_lista(void *l);
